@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String?
+  password   String   // Hashed
+  role       String   @default("USER") // USER, ADMIN
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Employee {
+  id          String       @id @default(cuid())
+  name        String
+  email       String       @unique
+  position    String?
+  department  String?
+  attendance  Attendance[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Attendance {
+  id         String   @id @default(cuid())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+  checkIn    DateTime @default(now())
+  checkOut   DateTime?
+  status     String   @default("PRESENT") // PRESENT, LATE, ABSENT
+  notes      String?
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  status    String     @default("NEW") // NEW, CONTACTED, QUALIFIED, PROPOSAL_SENT, CLOSED
+  source    String?
+  notes     String?
+  proposals Proposal[]
+  calls     Call[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Proposal {
+  id         String   @id @default(cuid())
+  name       String
+  type       String   // WEBSITE, SOCIAL_MEDIA, SEO, OTHER
+  status     String   @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
+  value      Float?
+  content      String?
+  brandLogo    String?
+  signature    String?
+  proposalDate String?
+  lead         Lead     @relation(fields: [leadId], references: [id])
+  leadId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  company   String?
+  email     String?
+  phone     String?
+  website   String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Call {
+  id        String   @id @default(cuid())
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  leadId    String
+  duration  Int?     // In seconds
+  status    String   // BUSY, NO_ANSWER, COMPLETED
+  notes     String?
+  timestamp DateTime @default(now())
+}
