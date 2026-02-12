@@ -23,7 +23,7 @@ import {
     Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { generateProposalPDF } from "@/lib/pdf-generator";
+import { generateDocumentPDF } from "@/lib/pdf-generator";
 import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal";
 
 interface ProposalData {
@@ -103,9 +103,25 @@ export default function ProposalDetailPage() {
         if (!proposal) return;
         setDownloading(true);
         try {
-            const pdfBlob = await generateProposalPDF(proposal);
+            // Transform proposal data to DocumentData format for the unified generator
+            const docData: any = {
+                ...proposal,
+                type: 'PROPOSAL',
+                content: {
+                    projectOverview: proposal.content,
+                    packages: proposal.items.map(item => ({
+                        name: item.package.name,
+                        description: item.package.description,
+                        price: item.price,
+                        quantity: item.quantity
+                    })),
+                    objectives: [] // Proposals in this view don't seem to have objectives list
+                }
+            };
+
+            const pdfBlob = await generateDocumentPDF(docData);
             const url = URL.createObjectURL(pdfBlob);
-            const link = document.createElement("a");
+            const link = window.document.createElement("a");
             link.href = url;
             link.download = `${proposal.name.replace(/\s+/g, "_")}_${proposal.id.slice(-6)}.pdf`;
             link.click();
