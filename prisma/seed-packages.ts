@@ -127,15 +127,23 @@ const SEED_PACKAGES = [
 async function seedPackages() {
     console.log('Seeding packages...');
 
-    for (const pkg of SEED_PACKAGES) {
-        await prisma.package.upsert({
-            where: { id: `seed-${pkg.name.toLowerCase().replace(/\s+/g, '-')}` },
-            update: pkg,
-            create: {
-                id: `seed-${pkg.name.toLowerCase().replace(/\s+/g, '-')}`,
-                ...pkg,
-            },
+    for (const pkgData of SEED_PACKAGES) {
+        const existing = await prisma.package.findFirst({
+            where: { name: pkgData.name }
         });
+
+        if (existing) {
+            await prisma.package.update({
+                where: { id: existing.id },
+                data: pkgData
+            });
+            console.log(`Updated: ${pkgData.name}`);
+        } else {
+            await prisma.package.create({
+                data: pkgData
+            });
+            console.log(`Created: ${pkgData.name}`);
+        }
     }
 
     console.log(`✅ Seeded ${SEED_PACKAGES.length} packages`);

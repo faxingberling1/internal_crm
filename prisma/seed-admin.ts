@@ -9,16 +9,6 @@ async function seedAdminUser() {
     const adminEmail = 'admin@antigravity.com';
     const adminPassword = 'Admin123!'; // Change this in production!
 
-    // Check if admin already exists
-    const existingAdmin = await prisma.user.findUnique({
-        where: { email: adminEmail },
-    });
-
-    if (existingAdmin) {
-        console.log('✅ Admin user already exists');
-        return;
-    }
-
     // Create admin user
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
