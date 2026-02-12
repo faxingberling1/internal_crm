@@ -15,8 +15,25 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface Employee {
+    id: string;
+    name: string;
+    email: string;
+    position?: string;
+    department?: string;
+    createdAt: string;
+    user?: {
+        isApproved: boolean;
+        role: string;
+        createdAt: string;
+    };
+    _count?: {
+        attendance: number;
+    };
+}
+
 export default function AdminEmployeesPage() {
-    const [employees, setEmployees] = useState([]);
+    const [employees, setEmployees] = useState<Employee[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 
@@ -40,8 +57,8 @@ export default function AdminEmployeesPage() {
     };
 
     const filteredEmployees = employees.filter(emp =>
-        emp.name.toLowerCase().includes(search.toLowerCase()) ||
-        emp.email.toLowerCase().includes(search.toLowerCase())
+    (emp.name?.toLowerCase().includes(search.toLowerCase()) ||
+        emp.email?.toLowerCase().includes(search.toLowerCase()))
     );
 
     return (

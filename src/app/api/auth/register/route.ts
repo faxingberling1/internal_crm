@@ -37,12 +37,14 @@ export async function POST(req: Request) {
                 },
             });
 
+            const employeeData: any = {
+                email,
+                name: name || email.split("@")[0],
+                userId: user.id,
+            };
+
             const employee = await tx.employee.create({
-                data: {
-                    email,
-                    name: name || email.split("@")[0],
-                    user: { connect: { id: user.id } },
-                },
+                data: employeeData,
             });
 
             return { user, employee };

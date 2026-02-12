@@ -18,17 +18,11 @@ export async function GET() {
 
         const employees = await prisma.employee.findMany({
             include: {
-                user: {
-                    select: {
-                        isApproved: true,
-                        role: true,
-                        createdAt: true
-                    }
-                },
+                user: true,
                 _count: {
                     select: { attendance: true }
                 }
-            },
+            } as any,
             orderBy: { createdAt: "desc" }
         });
 
