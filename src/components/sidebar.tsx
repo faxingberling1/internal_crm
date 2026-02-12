@@ -20,7 +20,8 @@ import { useUser } from "@/components/user-context";
 import { LogOut } from "lucide-react";
 
 const navigation = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "My Dashboard", href: "/employee/dashboard", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/", icon: BarChart3 },
     { name: "Leads", href: "/leads", icon: Users },
     { name: "Proposals", href: "/proposals", icon: FileText },
     { name: "Packages", href: "/packages", icon: Package },
@@ -31,6 +32,7 @@ const navigation = [
 
 const adminNavigation = [
     { name: "Approvals", href: "/admin/approvals", icon: ShieldCheck },
+    { name: "User Management", href: "/admin/employees", icon: Users },
     { name: "Admin Attendance", href: "/admin/attendance", icon: BarChart3 },
 ];
 
@@ -41,12 +43,22 @@ export function Sidebar() {
     if (!user) return null;
 
     const isAdmin = user.role === "ADMIN";
-    const allNavigation = [...navigation, ...(isAdmin ? adminNavigation : [])];
+
+    // Filtering navigation based on role
+    const filteredNavigation = navigation.filter(item => {
+        if (item.name === "My Dashboard") return !isAdmin; // Only for employees
+        if (item.name === "Dashboard") return isAdmin; // Only for admin
+        return true;
+    });
+
+    const allNavigation = [...filteredNavigation, ...(isAdmin ? adminNavigation : [])];
 
     return (
         <div className="flex h-full w-64 flex-col bg-zinc-50 border-r border-zinc-200">
             <div className="flex h-20 items-center px-6">
-                <h1 className="text-2xl font-bold gradient-text">Antigravity CRM</h1>
+                <h1 className="text-2xl font-black tracking-tighter text-zinc-900">
+                    NBT <span className="text-purple-600">CRM</span>
+                </h1>
             </div>
             <nav className="flex-1 space-y-1 px-3 py-4">
                 {allNavigation.map((item) => {

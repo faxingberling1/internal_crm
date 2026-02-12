@@ -14,6 +14,7 @@ model User {
   password   String   // Hashed
   role       String   @default("USER") // USER, ADMIN
   isApproved Boolean  @default(false)
+  employee   Employee?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -24,6 +25,8 @@ model Employee {
   email       String       @unique
   position    String?
   department  String?
+  userId      String?      @unique @db.ObjectId
+  user        User?        @relation(fields: [userId], references: [id])
   attendance  Attendance[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt

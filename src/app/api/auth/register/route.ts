@@ -25,19 +25,32 @@ export async function POST(req: Request) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await prisma.user.create({
-            data: {
-                email,
-                password: hashedPassword,
-                name,
-                role: "USER",
-                isApproved: false, // Admin needs to approve
-            },
+        // Use a transaction to ensure both user and employee are created
+        const result = await prisma.$transaction(async (tx) => {
+            const user = await tx.user.create({
+                data: {
+                    email,
+                    password: hashedPassword,
+                    name,
+                    role: "USER",
+                    isApproved: false,
+                },
+            });
+
+            const employee = await tx.employee.create({
+                data: {
+                    email,
+                    name: name || email.split("@")[0],
+                    user: { connect: { id: user.id } },
+                },
+            });
+
+            return { user, employee };
         });
 
         return NextResponse.json({
             message: "Account created and pending approval",
-            user: { id: user.id, email: user.email, name: user.name }
+            user: { id: result.user.id, email: result.user.email, name: result.user.name }
         });
     } catch (error) {
         console.error("Registration error:", error);
