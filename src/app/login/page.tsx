@@ -76,7 +76,7 @@ export default function LoginPage() {
                                 <input
                                     type="email"
                                     required
-                                    placeholder="admin@antigravity.com"
+                                    placeholder="admin@nbt.com"
                                     className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-4 pl-12 pr-6 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}

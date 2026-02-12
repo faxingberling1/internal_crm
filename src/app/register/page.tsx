@@ -66,7 +66,7 @@ export default function RegisterPage() {
     return (
         <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full mb-8 text-center">
-                <h1 className="text-3xl font-black text-zinc-900 tracking-tight">Antigravity CRM</h1>
+                <h1 className="text-3xl font-black text-zinc-900 tracking-tight">NBT CRM</h1>
                 <p className="text-zinc-500 mt-2 font-medium">Create your agent account to get started.</p>
             </div>
 
@@ -94,7 +94,7 @@ export default function RegisterPage() {
                                 <input
                                     required
                                     type="email"
-                                    placeholder="alex@antigravity.com"
+                                    placeholder="alex@nbt.com"
                                     className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3.5 pl-12 pr-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />

@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function seedAdminUser() {
     console.log('🌱 Seeding admin user...');
 
-    const adminEmail = 'admin@antigravity.com';
+    const adminEmail = 'admin@nbt.com';
     const adminPassword = 'Admin123!'; // Change this in production!
 
     // Create admin user
