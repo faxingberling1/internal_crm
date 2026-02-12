@@ -16,8 +16,22 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface Attendance {
+    id: string;
+    employeeId: string;
+    checkIn: string;
+    checkOut?: string;
+    status: string;
+    notes?: string;
+    employee: {
+        id: string;
+        name: string;
+        email: string;
+    };
+}
+
 export default function AdminAttendancePage() {
-    const [attendance, setAttendance] = useState([]);
+    const [attendance, setAttendance] = useState<Attendance[]>([]);
     const [viewMode, setViewMode] = useState<"LIST" | "SUMMARY">("LIST");
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -50,7 +64,7 @@ export default function AdminAttendancePage() {
     const calculateTotals = () => {
         const summary: Record<string, { name: string, email: string, totalMs: number, count: number }> = {};
 
-        attendance.forEach((record: any) => {
+        attendance.forEach((record: Attendance) => {
             if (!record.employee) return;
             const empId = record.employeeId;
             if (!summary[empId]) {
@@ -79,7 +93,7 @@ export default function AdminAttendancePage() {
         return `${hrs}h ${mins}m`;
     };
 
-    const filteredAttendance = attendance.filter((record: any) =>
+    const filteredAttendance = attendance.filter((record: Attendance) =>
         record.employee?.name?.toLowerCase().includes(search.toLowerCase()) ||
         record.employee?.email?.toLowerCase().includes(search.toLowerCase())
     );
@@ -301,7 +315,7 @@ export default function AdminAttendancePage() {
                                                 </td>
                                             </tr>
                                         ) : (
-                                            filteredAttendance.map((record: any) => (
+                                            filteredAttendance.map((record: Attendance) => (
                                                 <tr key={record.id} className="hover:bg-zinc-50 transition-colors group">
                                                     <td className="px-8 py-6">
                                                         <div className="flex items-center space-x-3">
