@@ -34,12 +34,12 @@ export async function POST(
                 name: `${mainDoc.name} (Pre-Restore Snapshot v${mainDoc.version})`,
                 status: mainDoc.status,
                 parentId: mainDoc.id,
-                content: mainDoc.content,
+                content: mainDoc.content as any,
                 value: mainDoc.value,
                 brandLogo: mainDoc.brandLogo,
-                brandColors: mainDoc.brandColors,
+                brandColors: mainDoc.brandColors as any,
                 clientLogo: mainDoc.clientLogo,
-                clientBrandColors: mainDoc.clientBrandColors,
+                clientBrandColors: mainDoc.clientBrandColors as any,
                 version: mainDoc.version,
                 validUntil: mainDoc.validUntil,
                 leadId: mainDoc.leadId,
@@ -51,12 +51,12 @@ export async function POST(
         const updatedDoc = await prisma.document.update({
             where: { id },
             data: {
-                content: snapshot.content,
+                content: snapshot.content as any,
                 value: snapshot.value,
                 brandLogo: snapshot.brandLogo,
-                brandColors: snapshot.brandColors,
+                brandColors: snapshot.brandColors as any,
                 clientLogo: snapshot.clientLogo,
-                clientBrandColors: snapshot.clientBrandColors,
+                clientBrandColors: snapshot.clientBrandColors as any,
                 version: mainDoc.version + 1, // Increment version counter
                 validUntil: snapshot.validUntil,
             }
