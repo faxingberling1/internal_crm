@@ -15,9 +15,6 @@ export async function GET(
             },
             orderBy: {
                 createdAt: 'desc',
-            },
-            include: {
-                createdBy: false, // We don't have a user model in standard detail yet, but it's in schema
             }
         });
 
