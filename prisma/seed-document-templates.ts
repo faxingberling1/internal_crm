@@ -518,7 +518,7 @@ async function main() {
 
     for (const template of documentTemplates) {
         await prisma.documentTemplate.create({
-            data: template,
+            data: template as any,
         });
         console.log(`✓ Created ${template.type} template: ${template.name}`);
     }
