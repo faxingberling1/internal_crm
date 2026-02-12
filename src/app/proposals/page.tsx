@@ -98,7 +98,11 @@ export default function ProposalsPage() {
                     </div>
                 ) : (
                     proposals.map((proposal: any) => (
-                        <div key={proposal.id} className="premium-card card-purple flex flex-col h-full hover:scale-[1.02] cursor-pointer group">
+                        <Link
+                            key={proposal.id}
+                            href={`/proposals/${proposal.id}`}
+                            className="premium-card card-purple flex flex-col h-full hover:scale-[1.02] cursor-pointer group"
+                        >
                             <div className="flex items-center justify-between mb-6">
                                 <div className="px-3 py-1 rounded-full bg-zinc-50 border border-zinc-100 text-[10px] font-black text-zinc-500 uppercase tracking-tighter">
                                     ID: {proposal.id.slice(-6).toUpperCase()}
@@ -137,12 +141,13 @@ export default function ProposalsPage() {
                                     <span className="text-[10px] font-black text-purple-600 bg-purple-50 px-2 py-1 rounded border border-purple-100 uppercase tracking-widest">
                                         {proposal.type}
                                     </span>
-                                    <button className="p-2 rounded-xl text-zinc-400 hover:text-purple-600 hover:bg-purple-50 transition-all border border-transparent hover:border-purple-100">
+                                    <div className="flex items-center space-x-2 text-xs font-bold text-purple-600 group-hover:text-purple-700">
+                                        <span>View Details</span>
                                         <ArrowUpRight className="h-5 w-5" />
-                                    </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))
                 )}
             </div>

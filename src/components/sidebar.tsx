@@ -11,7 +11,8 @@ import {
     UserPlus,
     BarChart3,
     Clock,
-    ShieldCheck
+    ShieldCheck,
+    Package
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const navigation = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Leads", href: "/leads", icon: Users },
     { name: "Proposals", href: "/proposals", icon: FileText },
+    { name: "Packages", href: "/packages", icon: Package },
     { name: "Clients", href: "/clients", icon: UserPlus },
     { name: "Calls", href: "/calls", icon: PhoneCall },
     { name: "Attendance", href: "/attendance", icon: Clock },

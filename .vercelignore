@@ -1,0 +1,16 @@
+# Vercel deployment files
+.vercel
+
+# Local database
+*.db
+*.db-journal
+
+# Development
+.env.local
+.env.development.local
+
+# Testing
+.env.test.local
+
+# Prisma
+prisma/migrations/migration_lock.toml

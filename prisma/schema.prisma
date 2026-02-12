@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -54,19 +54,44 @@ model Lead {
 }
 
 model Proposal {
-  id         String   @id @default(cuid())
-  name       String
-  type       String   // WEBSITE, SOCIAL_MEDIA, SEO, OTHER
-  status     String   @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
-  value      Float?
+  id           String         @id @default(cuid())
+  name         String
+  type         String         // WEBSITE, SOCIAL_MEDIA, SEO, OTHER
+  status       String         @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
+  value        Float?
   content      String?
   brandLogo    String?
   signature    String?
   proposalDate String?
-  lead         Lead     @relation(fields: [leadId], references: [id])
-  leadId     String
+  lead         Lead           @relation(fields: [leadId], references: [id])
+  leadId       String
+  items        ProposalItem[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model Package {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  category    String         // WEB_DESIGN, SEO, MARKETING, COPYWRITING, PORTAL_DESIGN, BRANDING, OTHER
+  price       Float
+  features    String?        // JSON string array of features
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  proposals   ProposalItem[]
+}
+
+model ProposalItem {
+  id         String   @id @default(cuid())
+  proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  proposalId String
+  package    Package  @relation(fields: [packageId], references: [id])
+  packageId  String
+  quantity   Int      @default(1)
+  price      Float    // Price at time of proposal (may differ from current package price)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 }
 
 model Client {
