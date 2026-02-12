@@ -8,7 +8,8 @@ import {
     User,
     ShieldAlert,
     CheckCircle2,
-    ArrowRight
+    ArrowRight,
+    Activity
 } from "lucide-react";
 import Link from "next/link";
 
@@ -66,7 +67,12 @@ export default function RegisterPage() {
     return (
         <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full mb-8 text-center">
-                <h1 className="text-3xl font-black text-zinc-900 tracking-tight">NBT CRM</h1>
+                <div className="flex items-center justify-center space-x-2 mb-4">
+                    <div className="p-2 bg-zinc-900 rounded-lg">
+                        <Activity className="h-6 w-6 text-white" />
+                    </div>
+                    <span className="text-2xl font-black tracking-tighter text-zinc-900">INTERNAL PORTAL</span>
+                </div>
                 <p className="text-zinc-500 mt-2 font-medium">Create your agent account to get started.</p>
             </div>
 
@@ -94,7 +100,7 @@ export default function RegisterPage() {
                                 <input
                                     required
                                     type="email"
-                                    placeholder="alex@nbt.com"
+                                    placeholder="alex@example.com"
                                     className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3.5 pl-12 pr-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />

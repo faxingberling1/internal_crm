@@ -123,21 +123,21 @@ export default function BrandingSettingsPage() {
                             type="text"
                             value={formData.companyName}
                             onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                            placeholder="NBT"
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                            placeholder="Your Company Name"
+                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none"
                         />
                     </div>
 
                     <div className="space-y-2">
                         <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Email
+                            Company Email
                         </label>
                         <input
                             type="email"
                             value={formData.companyEmail}
                             onChange={(e) => setFormData({ ...formData, companyEmail: e.target.value })}
-                            placeholder="contact@nbt.com"
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                            placeholder="hello@example.com"
+                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none"
                         />
                     </div>
 

@@ -12,8 +12,8 @@ export async function GET() {
         if (!settings) {
             settings = await prisma.brandingSettings.create({
                 data: {
-                    companyName: 'NBT',
-                    companyEmail: 'contact@nbt.com',
+                    companyName: 'My Company',
+                    companyEmail: 'contact@brand.com',
                     primaryColor: '#9333ea', // Purple-600
                     secondaryColor: '#6366f1', // Indigo-600
                     accentColor: '#8b5cf6', // Violet-600

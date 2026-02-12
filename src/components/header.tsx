@@ -49,7 +49,7 @@ export function Header() {
                     </div>
                     <div className="flex items-center space-x-2 overflow-hidden">
                         <div className="flex items-center space-x-1 text-zinc-400">
-                            <span className="text-[10px] font-black uppercase tracking-wider">NBT</span>
+                            <span className="text-[10px] font-black uppercase tracking-wider">PORTAL</span>
                         </div>
                         <ChevronRight className="h-4 w-4 text-zinc-200" />
                         <div className="flex items-center space-x-2">

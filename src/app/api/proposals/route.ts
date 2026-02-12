@@ -36,13 +36,29 @@ export async function POST(request: Request) {
                 signature: json.signature,
                 proposalDate: json.proposalDate,
 
-                // New custom fields
+                // Company branding
                 customFields: json.customFields || undefined,
                 brandColors: json.brandColors || undefined,
                 headerText: json.headerText,
                 footerText: json.footerText,
                 terms: json.terms,
                 notes: json.notes,
+
+                // Client branding
+                clientLogo: json.clientLogo,
+                clientBrandColors: json.clientBrandColors || undefined,
+
+                // Structured content
+                projectOverview: json.projectOverview,
+                objectives: json.objectives || undefined,
+                scopeOfWork: json.scopeOfWork,
+                timeline: json.timeline || undefined,
+                deliverables: json.deliverables || undefined,
+                paymentTerms: json.paymentTerms || undefined,
+                nextSteps: json.nextSteps,
+
+                // Template reference
+                templateId: json.templateId,
 
                 leadId: json.leadId,
                 items: json.packages ? {
@@ -60,6 +76,7 @@ export async function POST(request: Request) {
                         package: true,
                     },
                 },
+                template: true,
             },
         });
 

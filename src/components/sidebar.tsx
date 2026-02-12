@@ -26,9 +26,9 @@ const commonNavigation = [
 
 const operationalNavigation = [
     { name: "Leads", href: "/leads", icon: Users },
-    { name: "Proposals", href: "/proposals", icon: FileText },
-    { name: "Clients", href: "/clients", icon: UserPlus },
+    { name: "Documents", href: "/documents", icon: FileText },
     { name: "Packages", href: "/packages", icon: Package },
+    { name: "Clients", href: "/clients", icon: UserPlus },
     { name: "Calls", href: "/calls", icon: PhoneCall },
 ];
 
@@ -69,7 +69,7 @@ export function Sidebar() {
         <div className="flex h-full w-64 flex-col bg-zinc-50 border-r border-zinc-200 relative isolate z-[100] pointer-events-auto">
             <div className="flex h-20 items-center px-6">
                 <h1 className="text-2xl font-black tracking-tighter text-zinc-900">
-                    NBT <span className="text-purple-600">CRM</span>
+                    INTERNAL <span className="text-purple-600">PORTAL</span>
                 </h1>
             </div>
 

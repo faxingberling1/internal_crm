@@ -57,6 +57,7 @@ model Lead {
   source    String?
   notes     String?
   proposals Proposal[]
+  documents Document[]
   calls     Call[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -73,13 +74,30 @@ model Proposal {
   signature    String?
   proposalDate String?
   
-  // Advanced customization fields
+  // Company branding
   customFields Json?          // Store custom key-value pairs
   brandColors  Json?          // Store brand color overrides {primary, secondary, accent}
   headerText   String?        // Custom header content
   footerText   String?        // Custom footer content
   terms        String?        // Terms and conditions
   notes        String?        // Internal notes
+  
+  // Client branding
+  clientLogo        String?   // Client's logo URL
+  clientBrandColors Json?     // Client brand colors {primary, secondary, accent}
+  
+  // Structured content fields
+  projectOverview String?     // Brief project description
+  objectives      Json?       // Array of objective strings
+  scopeOfWork     String?     // Detailed scope description
+  timeline        Json?       // Array of {phase, description, duration}
+  deliverables    Json?       // Array of deliverable strings
+  paymentTerms    Json?       // {schedule: [], milestones: []}
+  nextSteps       String?     // Call to action / next steps
+  
+  // Template reference
+  templateId   String?           @db.ObjectId
+  template     ProposalTemplate? @relation(fields: [templateId], references: [id])
   
   lead         Lead           @relation(fields: [leadId], references: [id])
   leadId       String         @db.ObjectId
@@ -113,12 +131,13 @@ model ProposalItem {
 }
 
 model Client {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   company   String?
   email     String?
   phone     String?
   website   String?
+  documents Document[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }
@@ -131,6 +150,29 @@ model Call {
   status    String   // BUSY, NO_ANSWER, COMPLETED
   notes     String?
   timestamp DateTime @default(now())
+}
+
+model ProposalTemplate {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  category        String   // WEB_DESIGN, SEO, MARKETING, BRANDING, COPYWRITING, OTHER
+  description     String?
+  
+  // Template content with variable placeholders
+  projectOverview String?
+  objectives      Json?    // Array of objective strings
+  scopeOfWork     String?
+  timeline        Json?    // Array of {phase, description, duration}
+  deliverables    Json?    // Array of deliverable strings
+  paymentTerms    Json?    // {schedule: [], milestones: []}
+  nextSteps       String?
+  terms           String?
+  
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  proposals       Proposal[]
 }
 
 model BrandingSettings {
@@ -149,4 +191,91 @@ model BrandingSettings {
   defaultTerms    String?  // Default terms and conditions
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+// ==================== DOCUMENT MANAGEMENT SYSTEM ====================
+
+enum DocumentType {
+  PROPOSAL
+  CUSTOM_PLAN
+  NDA
+  AGREEMENT
+}
+
+enum DocumentStatus {
+  DRAFT
+  SENT
+  VIEWED
+  SIGNED
+  REJECTED
+  EXPIRED
+}
+
+model Document {
+  id                String         @id @default(auto()) @map("_id") @db.ObjectId
+  type              DocumentType
+  name              String
+  status            DocumentStatus @default(DRAFT)
+  
+  // Client relationship (can be lead or client)
+  leadId            String?        @db.ObjectId
+  lead              Lead?          @relation(fields: [leadId], references: [id])
+  clientId          String?        @db.ObjectId
+  client            Client?        @relation(fields: [clientId], references: [id])
+  
+  // Branding
+  brandName         String?
+  brandLogo         String?
+  brandColors       Json?          // {primary, secondary, accent}
+  clientLogo        String?
+  clientBrandColors Json?          // {primary, secondary, accent}
+  
+  // Content (type-specific JSON structure)
+  content           Json           // Flexible JSON for different document types
+  
+  // Metadata
+  value             Float?         // For proposals/plans
+  validUntil        DateTime?      // Expiration date
+  signedAt          DateTime?
+  signedBy          String?
+  signature         String?
+  
+  // Template reference
+  templateId        String?        @db.ObjectId
+  template          DocumentTemplate? @relation(fields: [templateId], references: [id])
+  
+  // Version control
+  version           Int            @default(1)
+  parentId          String?        @db.ObjectId
+  parent            Document?      @relation("DocumentVersions", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  versions          Document[]     @relation("DocumentVersions")
+  
+  // Audit trail
+  sentAt            DateTime?
+  viewedAt          DateTime?
+  
+  createdBy         String?        @db.ObjectId
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model DocumentTemplate {
+  id                String         @id @default(auto()) @map("_id") @db.ObjectId
+  type              DocumentType
+  name              String
+  category          String
+  description       String?
+  
+  // Template content (type-specific JSON structure)
+  content           Json
+  
+  // Default settings
+  defaultValidDays  Int?           // Auto-expiration in days
+  requiresSignature Boolean        @default(false)
+  
+  isActive          Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  
+  documents         Document[]
 }
