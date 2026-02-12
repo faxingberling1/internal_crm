@@ -6,11 +6,12 @@ const prisma = new PrismaClient();
 // GET single proposal with full details
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const proposal = await prisma.proposal.findUnique({
-            where: { id: params.id },
+            where: { id },
             include: {
                 lead: true,
                 items: {
@@ -35,14 +36,15 @@ export async function GET(
 // PUT update proposal
 export async function PUT(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const body = await request.json();
         const { name, type, status, value, content, brandLogo, signature, proposalDate } = body;
 
         const proposal = await prisma.proposal.update({
-            where: { id: params.id },
+            where: { id },
             data: {
                 ...(name && { name }),
                 ...(type && { type }),
@@ -73,11 +75,12 @@ export async function PUT(
 // DELETE proposal
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         await prisma.proposal.delete({
-            where: { id: params.id },
+            where: { id },
         });
 
         return NextResponse.json({ success: true });
