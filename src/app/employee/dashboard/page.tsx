@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 export default function EmployeeDashboard() {
     const [employee, setEmployee] = useState<any>(null);
     const [stats, setStats] = useState({ today: "0.0", weekly: "0.0", monthly: "0.0" });
+    const [duration, setDuration] = useState("00:00:00");
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [error, setError] = useState("");
@@ -26,6 +27,31 @@ export default function EmployeeDashboard() {
         fetchEmployeeData();
         fetchStatsData();
     }, []);
+
+    useEffect(() => {
+        const latestAttendance = employee?.attendance?.[0];
+        const isClockedIn = latestAttendance && !latestAttendance.checkOut;
+
+        if (isClockedIn && latestAttendance.checkIn) {
+            const interval = setInterval(() => {
+                const start = new Date(latestAttendance.checkIn).getTime();
+                const now = new Date().getTime();
+                const diff = now - start;
+
+                const hrs = Math.floor(diff / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+                setDuration(
+                    `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+                );
+            }, 1000);
+
+            return () => clearInterval(interval);
+        } else {
+            setDuration("00:00:00");
+        }
+    }, [employee]);
 
     const fetchEmployeeData = async () => {
         setLoading(true);
@@ -164,10 +190,16 @@ export default function EmployeeDashboard() {
                                     {isClockedIn ? "You are clocked in." : "Ready to start your shift?"}
                                 </h2>
                                 {isClockedIn && latestAttendance && (
-                                    <p className="text-green-50 font-medium flex items-center">
-                                        <Timer className="h-4 w-4 mr-2" />
-                                        Shift started at {new Date(latestAttendance.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </p>
+                                    <div className="flex flex-col space-y-1">
+                                        <p className="text-green-50 font-medium flex items-center">
+                                            <Timer className="h-4 w-4 mr-2" />
+                                            Shift started at {new Date(latestAttendance.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </p>
+                                        <div className="flex items-center space-x-2 bg-white/20 w-fit px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">
+                                            <Clock className="h-3 w-3 text-white" />
+                                            <span className="text-xl font-black tabular-nums tracking-tighter">{duration}</span>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
 

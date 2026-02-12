@@ -1,48 +1,54 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
     try {
+        const cookieStore = await cookies();
+        const session = cookieStore.get("crm-session");
+        if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        const userData = JSON.parse(session.value);
         const { searchParams } = new URL(req.url);
         const day = searchParams.get("day");
         const month = searchParams.get("month");
         const year = searchParams.get("year");
+        const employeeIdParam = searchParams.get("employeeId");
 
         let where: any = {};
+
+        // Force employees to only see their own records
+        if (userData.role !== "ADMIN") {
+            const employee = await prisma.employee.findFirst({
+                where: { userId: userData.id }
+            });
+            if (!employee) return NextResponse.json({ error: "Employee profile not found" }, { status: 404 });
+            where.employeeId = employee.id;
+        } else if (employeeIdParam) {
+            where.employeeId = employeeIdParam;
+        }
 
         if (day && month && year) {
             const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
             const nextDay = new Date(date);
             nextDay.setDate(date.getDate() + 1);
-            where.checkIn = {
-                gte: date,
-                lt: nextDay
-            };
+            where.checkIn = { gte: date, lt: nextDay };
         } else if (month && year) {
             const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
             const endDate = new Date(parseInt(year), parseInt(month), 1);
-            where.checkIn = {
-                gte: startDate,
-                lt: endDate
-            };
+            where.checkIn = { gte: startDate, lt: endDate };
         } else if (year) {
             const startDate = new Date(parseInt(year), 0, 1);
             const endDate = new Date(parseInt(year) + 1, 0, 1);
-            where.checkIn = {
-                gte: startDate,
-                lt: endDate
-            };
+            where.checkIn = { gte: startDate, lt: endDate };
         }
 
         const attendance = await prisma.attendance.findMany({
             where,
-            include: {
-                employee: true,
-            },
-            orderBy: {
-                checkIn: "desc",
-            },
+            include: { employee: true },
+            orderBy: { checkIn: "desc" },
         });
+
         return NextResponse.json(attendance);
     } catch (error) {
         return NextResponse.json({ error: "Failed to fetch attendance" }, { status: 500 });
@@ -51,7 +57,22 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
     try {
+        const cookieStore = await cookies();
+        const session = cookieStore.get("crm-session");
+        if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        const userData = JSON.parse(session.value);
         const { employeeId, type, notes } = await req.json();
+
+        // Validation: Verify the employeeId belongs to the user if they're not an admin
+        if (userData.role !== "ADMIN") {
+            const employee = await prisma.employee.findFirst({
+                where: { userId: userData.id }
+            });
+            if (!employee || employee.id !== employeeId) {
+                return NextResponse.json({ error: "Forbidden: You can only log your own attendance" }, { status: 403 });
+            }
+        }
 
         if (type === "CLOCK_IN") {
             const record = await prisma.attendance.create({
@@ -64,15 +85,12 @@ export async function POST(req: Request) {
             });
             return NextResponse.json(record);
         } else if (type === "CLOCK_OUT") {
-            // Find the latest open record for this employee
             const latestRecord = await prisma.attendance.findFirst({
                 where: {
                     employeeId,
                     checkOut: null,
                 },
-                orderBy: {
-                    checkIn: "desc",
-                },
+                orderBy: { checkIn: "desc" },
             });
 
             if (!latestRecord) {
@@ -81,9 +99,7 @@ export async function POST(req: Request) {
 
             const record = await prisma.attendance.update({
                 where: { id: latestRecord.id },
-                data: {
-                    checkOut: new Date(),
-                },
+                data: { checkOut: new Date() },
             });
             return NextResponse.json(record);
         }
@@ -93,3 +109,4 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Failed to log attendance" }, { status: 500 });
     }
 }
+
