@@ -6,24 +6,31 @@ import { cookies } from "next/headers";
 export async function POST(req: Request) {
     try {
         const { email, password } = await req.json();
+        console.log("Login attempt for:", email);
 
         if (!email || !password) {
             return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
         }
 
+        console.log("Querying user from prisma...");
         const user = await prisma.user.findUnique({
             where: { email },
         });
 
         if (!user) {
+            console.log("User not found");
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
         }
 
+        console.log("Checking approval status...");
         if (!user.isApproved) {
+            console.log("User not approved");
             return NextResponse.json({ error: "Account pending admin approval" }, { status: 403 });
         }
 
+        console.log("Verifying password...");
         const isPasswordValid = await bcrypt.compare(password, user.password);
+        console.log("Password valid:", isPasswordValid);
 
         if (!isPasswordValid) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
@@ -38,6 +45,7 @@ export async function POST(req: Request) {
             isApproved: user.isApproved
         };
 
+        console.log("Setting session cookie...");
         const cookieStore = await cookies();
         cookieStore.set("crm-session", JSON.stringify(sessionData), {
             httpOnly: true,
@@ -47,12 +55,13 @@ export async function POST(req: Request) {
             path: "/",
         });
 
+        console.log("Login successful");
         return NextResponse.json({
             message: "Login successful",
             user: { id: user.id, email: user.email, name: user.name, role: user.role }
         });
-    } catch (error) {
-        console.error("Login error:", error);
-        return NextResponse.json({ error: "Failed to login" }, { status: 500 });
+    } catch (error: any) {
+        console.error("Login error detail:", error);
+        return NextResponse.json({ error: "Failed to login", details: error.message }, { status: 500 });
     }
 }
