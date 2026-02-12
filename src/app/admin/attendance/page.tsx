@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
     Calendar,
     User,
@@ -41,9 +41,22 @@ export default function AdminAttendancePage() {
         year: new Date().getFullYear().toString()
     });
 
+    const [employees, setEmployees] = useState<any[]>([]);
+
     useEffect(() => {
         fetchAttendance();
+        fetchEmployees();
     }, [filters]);
+
+    const fetchEmployees = async () => {
+        try {
+            const res = await fetch("/api/admin/employees");
+            const data = await res.json();
+            if (Array.isArray(data)) setEmployees(data);
+        } catch (error) {
+            console.error("Fetch employees error:", error);
+        }
+    };
 
     const fetchAttendance = async () => {
         setLoading(true);
@@ -51,20 +64,26 @@ export default function AdminAttendancePage() {
             const query = new URLSearchParams(filters).toString();
             const res = await fetch(`/api/attendance?${query}`);
             const data = await res.json();
-            if (Array.isArray(data)) {
+
+            if (data && Array.isArray(data)) {
                 setAttendance(data);
+            } else {
+                setAttendance([]);
             }
         } catch (error) {
-            console.error(error);
+            console.error("Fetch attendance error:", error);
+            setAttendance([]);
         } finally {
             setLoading(false);
         }
     };
 
-    const calculateTotals = () => {
+    const totals = useMemo(() => {
         const summary: Record<string, { name: string, email: string, totalMs: number, count: number }> = {};
 
-        attendance.forEach((record: Attendance) => {
+        const attendanceData = Array.isArray(attendance) ? attendance : [];
+
+        attendanceData.forEach((record: Attendance) => {
             if (!record.employee) return;
             const empId = record.employeeId;
             if (!summary[empId]) {
@@ -85,7 +104,7 @@ export default function AdminAttendancePage() {
             emp.name.toLowerCase().includes(search.toLowerCase()) ||
             emp.email.toLowerCase().includes(search.toLowerCase())
         );
-    };
+    }, [attendance, search]);
 
     const formatDuration = (ms: number) => {
         const hrs = Math.floor(ms / (1000 * 60 * 60));
@@ -93,10 +112,70 @@ export default function AdminAttendancePage() {
         return `${hrs}h ${mins}m`;
     };
 
-    const filteredAttendance = attendance.filter((record: Attendance) =>
-        record.employee?.name?.toLowerCase().includes(search.toLowerCase()) ||
-        record.employee?.email?.toLowerCase().includes(search.toLowerCase())
-    );
+    const formatToPKT = (dateStr: string) => {
+        if (!dateStr) return "---";
+        const date = new Date(dateStr);
+        const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+        const pkt = new Date(utc + (3600000 * 5));
+        return pkt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    };
+
+    const filteredAttendance = useMemo(() => {
+        const attendanceData = Array.isArray(attendance) ? attendance : [];
+        const baseFiltered = attendanceData.filter((record: Attendance) =>
+            record.employee?.name?.toLowerCase().includes(search.toLowerCase()) ||
+            record.employee?.email?.toLowerCase().includes(search.toLowerCase())
+        );
+
+        // If viewing Today, we could inject Absences here or in a separate view
+        // For now, let's ensure the list reflects what we have
+        return baseFiltered;
+    }, [attendance, search]);
+
+    const employeesWithAbsences = useMemo(() => {
+        const attendanceData = Array.isArray(attendance) ? attendance : [];
+        const baseFiltered = attendanceData.filter((record: any) =>
+            record.employee?.name?.toLowerCase().includes(search.toLowerCase()) ||
+            record.employee?.email?.toLowerCase().includes(search.toLowerCase())
+        );
+
+        // Map existing attendance by employeeId for easy lookup
+        const attendanceMap = new Map();
+        attendanceData.forEach(rec => attendanceMap.set(rec.employeeId, rec));
+
+        // Detect Absences: If viewing today (or a specific date), find employees with NO records
+        const today = new Date();
+        const isViewingToday = filters.day === today.getDate().toString() &&
+            filters.month === (today.getMonth() + 1).toString() &&
+            filters.year === today.getFullYear().toString();
+
+        if (isViewingToday && employees.length > 0) {
+            const absences: any[] = [];
+            employees.forEach(emp => {
+                if (!attendanceMap.has(emp.id) && emp.user?.role !== "ADMIN") {
+                    // This employee hasn't clocked in today
+                    absences.push({
+                        id: `absent-${emp.id}`,
+                        employeeId: emp.id,
+                        checkIn: null,
+                        checkOut: null,
+                        status: "ABSENT",
+                        employee: emp,
+                        isAbsent: true
+                    });
+                }
+            });
+
+            // Merge and filter by search
+            const merged = [...baseFiltered, ...absences.filter(a =>
+                a.employee.name.toLowerCase().includes(search.toLowerCase()) ||
+                a.employee.email.toLowerCase().includes(search.toLowerCase())
+            )];
+            return merged;
+        }
+
+        return baseFiltered;
+    }, [attendance, employees, search, filters]);
 
     const months = [
         "January", "February", "March", "April", "May", "June",
@@ -254,12 +333,12 @@ export default function AdminAttendancePage() {
                                                     <td colSpan={3} className="px-8 py-8"><div className="h-4 bg-zinc-100 rounded w-full" /></td>
                                                 </tr>
                                             ))
-                                        ) : calculateTotals().length === 0 ? (
+                                        ) : totals.length === 0 ? (
                                             <tr>
                                                 <td colSpan={3} className="px-8 py-20 text-center text-zinc-400 italic font-medium">No performance data found for this selection.</td>
                                             </tr>
                                         ) : (
-                                            calculateTotals().map((sum: any) => (
+                                            totals.map((sum: any) => (
                                                 <tr key={sum.email} className="hover:bg-zinc-50 transition-all group">
                                                     <td className="px-8 py-6">
                                                         <div className="flex items-center space-x-3">
@@ -315,14 +394,24 @@ export default function AdminAttendancePage() {
                                                 </td>
                                             </tr>
                                         ) : (
-                                            filteredAttendance.map((record: Attendance) => (
-                                                <tr key={record.id} className="hover:bg-zinc-50 transition-colors group">
+                                            employeesWithAbsences.map((record: any) => (
+                                                <tr key={record.id} className={cn(
+                                                    "hover:bg-zinc-50 transition-colors group",
+                                                    record.isAbsent && "bg-red-50/30 opacity-80"
+                                                )}>
                                                     <td className="px-8 py-6">
                                                         <div className="flex items-center space-x-3">
-                                                            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center border border-zinc-200 group-hover:from-blue-50 group-hover:to-blue-100 transition-all">
-                                                                <User className="h-5 w-5 text-zinc-500 group-hover:text-blue-600" />
+                                                            <div className={cn(
+                                                                "h-10 w-10 rounded-xl flex items-center justify-center border transition-all",
+                                                                record.isAbsent
+                                                                    ? "bg-red-50 border-red-100 text-red-400"
+                                                                    : "bg-gradient-to-br from-zinc-100 to-zinc-200 border-zinc-200 group-hover:from-blue-50 group-hover:to-blue-100"
+                                                            )}>
+                                                                <User className={cn("h-5 w-5", !record.isAbsent && "text-zinc-500 group-hover:text-blue-600")} />
                                                             </div>
-                                                            <span className="font-black text-zinc-900 tracking-tight">{record.employee?.name || "Anonymous"}</span>
+                                                            <span className={cn("font-black tracking-tight", record.isAbsent ? "text-red-900" : "text-zinc-900")}>
+                                                                {record.employee?.name || "Anonymous"}
+                                                            </span>
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-6">
@@ -332,19 +421,27 @@ export default function AdminAttendancePage() {
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-6">
-                                                        <span className="font-bold text-zinc-700">{new Date(record.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                        <span className={cn("font-bold tabular-nums", record.isAbsent ? "text-red-300 italic" : "text-zinc-700")}>
+                                                            {record.checkIn ? formatToPKT(record.checkIn) : "Not Reported"}
+                                                        </span>
                                                     </td>
                                                     <td className="px-8 py-6">
-                                                        <span className="font-bold text-zinc-700">
-                                                            {record.checkOut ? new Date(record.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "---"}
+                                                        <span className={cn("font-bold tabular-nums", record.isAbsent ? "text-red-300 italic" : "text-zinc-700")}>
+                                                            {record.checkOut ? formatToPKT(record.checkOut) : record.isAbsent ? "Not Reported" : "---"}
                                                         </span>
                                                     </td>
                                                     <td className="px-8 py-6 text-right">
                                                         <span className={cn(
                                                             "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
-                                                            record.checkOut ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"
+                                                            record.isAbsent
+                                                                ? "bg-red-600 text-white shadow-lg shadow-red-500/20"
+                                                                : record.isOnBreak
+                                                                    ? "bg-amber-100 text-amber-700 border border-amber-200"
+                                                                    : record.checkOut
+                                                                        ? "bg-green-100 text-green-700"
+                                                                        : "bg-blue-600 text-white shadow-lg shadow-blue-500/20 animate-pulse"
                                                         )}>
-                                                            {record.checkOut ? "Shift End" : "Active"}
+                                                            {record.isAbsent ? "Absent" : record.isOnBreak ? "On Break" : record.checkOut ? "Shift End" : "Active"}
                                                         </span>
                                                     </td>
                                                 </tr>

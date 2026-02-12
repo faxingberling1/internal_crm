@@ -45,6 +45,24 @@ export async function GET() {
             orderBy: { timestamp: "desc" },
         });
 
+        // Fetch employee data if not admin
+        let employee = null;
+        try {
+            if (!isAdmin) {
+                employee = await prisma.employee.findFirst({
+                    where: { userId: userData.id },
+                    include: {
+                        attendance: {
+                            orderBy: { checkIn: "desc" },
+                            take: 1
+                        }
+                    }
+                });
+            }
+        } catch (e) {
+            console.error("Employee fetching error:", e);
+        }
+
         return NextResponse.json({
             stats: [
                 { name: "Total Leads", value: totalLeads.toString(), change: "+2.5%", icon: "Users", color: "text-blue-600", bg: "bg-blue-100", glow: "card-blue" },
@@ -54,7 +72,10 @@ export async function GET() {
             ],
             recentLeads,
             upcomingCalls,
-            user: userData
+            user: {
+                ...userData,
+                employee
+            }
         });
     } catch (error) {
         console.error("Dashboard stats error:", error);

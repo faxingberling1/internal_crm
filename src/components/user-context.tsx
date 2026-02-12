@@ -8,6 +8,10 @@ interface User {
     email: string;
     name: string;
     role: string;
+    employee?: {
+        id: string;
+        attendance?: any[];
+    };
 }
 
 interface UserContextType {

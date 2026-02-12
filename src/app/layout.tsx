@@ -13,13 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 import { Sidebar } from "@/components/sidebar";
+import { Header } from "@/components/header";
+import { UserProvider } from "@/components/user-context";
 
 export const metadata: Metadata = {
   title: "Internal CRM Dashboard",
   description: "State-of-the-art CRM for proposal and lead management",
 };
-
-import { UserProvider } from "@/components/user-context";
 
 export default function RootLayout({
   children,
@@ -32,13 +32,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-zinc-900 h-screen overflow-hidden`}
       >
         <UserProvider>
-          <div className="flex h-screen w-full">
+          <div className="flex h-screen w-full overflow-hidden">
             <Sidebar />
-            <main className="flex-1 overflow-y-auto p-8">
-              <div className="max-w-7xl mx-auto">
-                {children}
-              </div>
-            </main>
+            <div className="flex-1 flex flex-col min-w-0 bg-white overflow-hidden relative">
+              <Header />
+              <main className="flex-1 overflow-y-auto p-10">
+                <div className="max-w-[1600px] mx-auto">
+                  {children}
+                </div>
+              </main>
+            </div>
           </div>
         </UserProvider>
       </body>

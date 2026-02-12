@@ -4,7 +4,14 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
     try {
         const proposals = await prisma.proposal.findMany({
-            include: { lead: true },
+            include: {
+                lead: true,
+                items: {
+                    include: {
+                        package: true,
+                    },
+                },
+            },
             orderBy: { createdAt: "desc" },
         });
         return NextResponse.json(proposals);
@@ -17,7 +24,7 @@ export async function POST(request: Request) {
     try {
         const json = await request.json();
 
-        // Create proposal with package items in a transaction
+        // Create proposal with all custom fields and package items
         const proposal = await prisma.proposal.create({
             data: {
                 name: json.name,
@@ -27,10 +34,19 @@ export async function POST(request: Request) {
                 content: json.content,
                 brandLogo: json.brandLogo,
                 signature: json.signature,
-                proposalDate: json.date,
+                proposalDate: json.proposalDate,
+
+                // New custom fields
+                customFields: json.customFields || undefined,
+                brandColors: json.brandColors || undefined,
+                headerText: json.headerText,
+                footerText: json.footerText,
+                terms: json.terms,
+                notes: json.notes,
+
                 leadId: json.leadId,
-                items: json.items ? {
-                    create: json.items.map((item: any) => ({
+                items: json.packages ? {
+                    create: json.packages.map((item: any) => ({
                         packageId: item.packageId,
                         quantity: item.quantity || 1,
                         price: parseFloat(item.price),

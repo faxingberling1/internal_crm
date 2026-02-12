@@ -41,6 +41,7 @@ export async function POST(req: Request) {
                 email,
                 name: name || email.split("@")[0],
                 userId: user.id,
+                employeeNumber: `EMP-${Date.now().toString().slice(-6)}`
             };
 
             const employee = await tx.employee.create({

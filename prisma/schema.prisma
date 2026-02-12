@@ -21,10 +21,13 @@ model User {
 
 model Employee {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  employeeNumber String?   @unique
   name        String
   email       String       @unique
   position    String?
   department  String?
+  shiftStart  String?      // Format: "HH:mm" (Karachi Time)
+  shiftEnd    String?      // Format: "HH:mm" (Karachi Time)
   userId      String?      @unique @db.ObjectId
   user        User?        @relation(fields: [userId], references: [id])
   attendance  Attendance[]
@@ -38,6 +41,9 @@ model Attendance {
   employeeId String   @db.ObjectId
   checkIn    DateTime @default(now())
   checkOut   DateTime?
+  breakStart DateTime?
+  breakEnd   DateTime?
+  isOnBreak  Boolean  @default(false)
   status     String   @default("PRESENT") // PRESENT, LATE, ABSENT
   notes      String?
 }
@@ -66,6 +72,15 @@ model Proposal {
   brandLogo    String?
   signature    String?
   proposalDate String?
+  
+  // Advanced customization fields
+  customFields Json?          // Store custom key-value pairs
+  brandColors  Json?          // Store brand color overrides {primary, secondary, accent}
+  headerText   String?        // Custom header content
+  footerText   String?        // Custom footer content
+  terms        String?        // Terms and conditions
+  notes        String?        // Internal notes
+  
   lead         Lead           @relation(fields: [leadId], references: [id])
   leadId       String         @db.ObjectId
   items        ProposalItem[]
@@ -116,4 +131,22 @@ model Call {
   status    String   // BUSY, NO_ANSWER, COMPLETED
   notes     String?
   timestamp DateTime @default(now())
+}
+
+model BrandingSettings {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  companyName     String?
+  companyAddress  String?
+  companyPhone    String?
+  companyEmail    String?
+  companyWebsite  String?
+  logoUrl         String?  // Base64 or cloud storage URL
+  primaryColor    String?  // Hex color code
+  secondaryColor  String?  // Hex color code
+  accentColor     String?  // Hex color code
+  defaultHeader   String?  // Default proposal header template
+  defaultFooter   String?  // Default proposal footer template
+  defaultTerms    String?  // Default terms and conditions
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

@@ -75,12 +75,27 @@ export async function POST(req: Request) {
         }
 
         if (type === "CLOCK_IN") {
+            // Check if there's already an active shift to prevent duplicates
+            const activeShift = await prisma.attendance.findFirst({
+                where: {
+                    employeeId,
+                    checkOut: null,
+                }
+            });
+
+            if (activeShift) {
+                return NextResponse.json({ error: "An active shift is already in progress" }, { status: 400 });
+            }
+
             const record = await prisma.attendance.create({
                 data: {
                     employeeId,
                     checkIn: new Date(),
                     status: "PRESENT",
-                    notes,
+                    notes: notes || "Shift Started",
+                    checkOut: null,
+                    breakStart: null,
+                    breakEnd: null,
                 },
             });
             return NextResponse.json(record);
@@ -94,12 +109,59 @@ export async function POST(req: Request) {
             });
 
             if (!latestRecord) {
-                return NextResponse.json({ error: "No active clock-in found" }, { status: 400 });
+                return NextResponse.json({ error: "No active shift found" }, { status: 400 });
             }
 
             const record = await prisma.attendance.update({
                 where: { id: latestRecord.id },
-                data: { checkOut: new Date() },
+                data: {
+                    checkOut: new Date(),
+                    isOnBreak: false, // Ensure break is ended if shift ends
+                    breakEnd: latestRecord.isOnBreak ? new Date() : latestRecord.breakEnd
+                },
+            });
+            return NextResponse.json(record);
+        } else if (type === "BREAK_START") {
+            const latestRecord = await prisma.attendance.findFirst({
+                where: {
+                    employeeId,
+                    checkOut: null,
+                },
+                orderBy: { checkIn: "desc" },
+            });
+
+            if (!latestRecord) {
+                return NextResponse.json({ error: "No active shift found to start break" }, { status: 400 });
+            }
+
+            const record = await prisma.attendance.update({
+                where: { id: latestRecord.id },
+                data: {
+                    breakStart: new Date(),
+                    isOnBreak: true
+                },
+            });
+            return NextResponse.json(record);
+        } else if (type === "BREAK_END") {
+            const latestRecord = await prisma.attendance.findFirst({
+                where: {
+                    employeeId,
+                    checkOut: null,
+                    isOnBreak: true
+                },
+                orderBy: { checkIn: "desc" },
+            });
+
+            if (!latestRecord) {
+                return NextResponse.json({ error: "No active break found" }, { status: 400 });
+            }
+
+            const record = await prisma.attendance.update({
+                where: { id: latestRecord.id },
+                data: {
+                    breakEnd: new Date(),
+                    isOnBreak: false
+                },
             });
             return NextResponse.json(record);
         }
@@ -109,4 +171,3 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Failed to log attendance" }, { status: 500 });
     }
 }
-

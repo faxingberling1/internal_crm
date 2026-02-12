@@ -28,9 +28,19 @@ export default function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login?error=pending', request.url));
         }
 
-        // Admin-only route protection
-        if (pathname.startsWith('/admin') && userData.role !== 'ADMIN') {
-            return NextResponse.redirect(new URL('/', request.url));
+        // Admin-only route protection (only /admin routes are restricted)
+        const adminRoutes = ['/admin'];
+        const isProtectedBaseRoute = adminRoutes.some(path => pathname.startsWith(path));
+
+        // Block revoked users from all authenticated routes
+        if (!userData.isApproved && pathname !== '/login') {
+            const redirectUrl = new URL('/login', request.url);
+            redirectUrl.searchParams.set('error', 'account_revoked');
+            return NextResponse.redirect(redirectUrl);
+        }
+
+        if (isProtectedBaseRoute && userData.role !== 'ADMIN') {
+            return NextResponse.redirect(new URL('/employee/dashboard', request.url));
         }
 
         return NextResponse.next();

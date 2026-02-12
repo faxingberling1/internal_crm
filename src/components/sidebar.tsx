@@ -19,21 +19,27 @@ import { cn } from "@/lib/utils";
 import { useUser } from "@/components/user-context";
 import { LogOut } from "lucide-react";
 
-const navigation = [
-    { name: "My Dashboard", href: "/employee/dashboard", icon: LayoutDashboard },
-    { name: "Dashboard", href: "/", icon: BarChart3 },
-    { name: "Leads", href: "/leads", icon: Users },
-    { name: "Proposals", href: "/proposals", icon: FileText },
-    { name: "Packages", href: "/packages", icon: Package },
-    { name: "Clients", href: "/clients", icon: UserPlus },
-    { name: "Calls", href: "/calls", icon: PhoneCall },
-    { name: "Attendance", href: "/attendance", icon: Clock },
+const commonNavigation = [
+    { name: "Leaderboard", href: "/", icon: BarChart3, roles: ["ADMIN"] },
+    { name: "My Dashboard", href: "/employee/dashboard", icon: LayoutDashboard, roles: ["USER"] },
 ];
 
-const adminNavigation = [
+const operationalNavigation = [
+    { name: "Leads", href: "/leads", icon: Users },
+    { name: "Proposals", href: "/proposals", icon: FileText },
+    { name: "Clients", href: "/clients", icon: UserPlus },
+    { name: "Packages", href: "/packages", icon: Package },
+    { name: "Calls", href: "/calls", icon: PhoneCall },
+];
+
+const employeeTools = [
+    { name: "My Attendance", href: "/attendance", icon: Clock },
+];
+
+const adminTools = [
     { name: "Approvals", href: "/admin/approvals", icon: ShieldCheck },
     { name: "User Management", href: "/admin/employees", icon: Users },
-    { name: "Admin Attendance", href: "/admin/attendance", icon: BarChart3 },
+    { name: "Attendance Monitor", href: "/admin/attendance", icon: BarChart3 },
 ];
 
 export function Sidebar() {
@@ -44,64 +50,83 @@ export function Sidebar() {
 
     const isAdmin = user.role === "ADMIN";
 
-    // Filtering navigation based on role
-    const filteredNavigation = navigation.filter(item => {
-        if (item.name === "My Dashboard") return !isAdmin; // Only for employees
-        if (item.name === "Dashboard") return isAdmin; // Only for admin
-        return true;
-    });
-
-    const allNavigation = [...filteredNavigation, ...(isAdmin ? adminNavigation : [])];
+    const sections = [
+        {
+            title: "Core Mission",
+            items: commonNavigation.filter(item => !item.roles || item.roles.includes(user.role))
+        },
+        {
+            title: "Operations",
+            items: operationalNavigation
+        },
+        {
+            title: isAdmin ? "Administrative" : "Personal Tools",
+            items: isAdmin ? adminTools : employeeTools
+        }
+    ];
 
     return (
-        <div className="flex h-full w-64 flex-col bg-zinc-50 border-r border-zinc-200">
+        <div className="flex h-full w-64 flex-col bg-zinc-50 border-r border-zinc-200 relative isolate z-[100] pointer-events-auto">
             <div className="flex h-20 items-center px-6">
                 <h1 className="text-2xl font-black tracking-tighter text-zinc-900">
                     NBT <span className="text-purple-600">CRM</span>
                 </h1>
             </div>
-            <nav className="flex-1 space-y-1 px-3 py-4">
-                {allNavigation.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            className={cn(
-                                "group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                                isActive
-                                    ? "bg-purple-600/10 text-purple-600"
-                                    : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/50"
-                            )}
-                        >
-                            <item.icon
-                                className={cn(
-                                    "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
-                                    isActive ? "text-purple-600" : "text-zinc-400 group-hover:text-zinc-600"
-                                )}
-                                aria-hidden="true"
-                            />
-                            {item.name}
-                        </Link>
-                    );
-                })}
+
+            <nav className="flex-1 space-y-8 px-3 py-6 overflow-y-auto">
+                {sections.map((section) => (
+                    <div key={section.title} className="mb-8 last:mb-0">
+                        <h3 className="px-3 text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-4">
+                            {section.title}
+                        </h3>
+                        <div className="space-y-1">
+                            {section.items.map((item) => {
+                                const isActive = pathname === item.href;
+                                return (
+                                    <Link
+                                        key={item.name}
+                                        href={item.href}
+                                        className={cn(
+                                            "group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200",
+                                            isActive
+                                                ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
+                                                : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50"
+                                        )}
+                                    >
+                                        <item.icon
+                                            className={cn(
+                                                "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
+                                                isActive ? "text-white" : "text-zinc-400 group-hover:text-zinc-600"
+                                            )}
+                                            aria-hidden="true"
+                                        />
+                                        <span>{item.name}</span>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
             </nav>
-            <div className="border-t border-zinc-200 p-4 space-y-2">
-                <div className="px-3 py-2 mb-2">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Logged in as</p>
-                    <p className="text-xs font-bold text-zinc-900 truncate">{user.name || user.email}</p>
-                    <span className="text-[8px] font-black text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded uppercase">{user.role}</span>
+
+            <div className="border-t border-zinc-200 p-6 space-y-3 bg-white/50 backdrop-blur-sm">
+                <div className="px-3 py-3 mb-2 rounded-2xl bg-zinc-100/50 border border-zinc-200/50">
+                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">Identity Verified</p>
+                    <p className="text-xs font-black text-zinc-900 truncate">{user.name || user.email}</p>
+                    <div className="mt-2">
+                        <span className="text-[8px] font-black text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full uppercase tracking-tighter">{user.role}</span>
+                    </div>
                 </div>
                 <Link
                     href="/settings"
-                    className="group flex items-center px-3 py-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/50 rounded-lg transition-all"
+                    className="group flex items-center px-3 py-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50 rounded-xl transition-all"
                 >
                     <Settings className="mr-3 h-5 w-5 text-zinc-400 group-hover:text-zinc-600" />
                     Settings
                 </Link>
                 <button
                     onClick={logout}
-                    className="w-full group flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                    className="w-full group flex items-center px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-all"
                 >
                     <LogOut className="mr-3 h-5 w-5 text-red-400 group-hover:text-red-600" />
                     Sign Out
