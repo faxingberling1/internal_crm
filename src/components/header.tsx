@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
     Search,
-    Bell,
     Command,
     Wifi,
     Clock,
@@ -18,6 +17,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/components/user-context";
 import { cn } from "@/lib/utils";
+import { NotificationDropdown } from "./notification-dropdown";
 
 export function Header() {
     const pathname = usePathname();
@@ -106,10 +106,7 @@ export function Header() {
 
                     {/* Notifications Relay */}
                     <div className="flex items-center space-x-3">
-                        <button className="h-11 w-11 flex items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 hover:bg-white hover:border-purple-200 transition-all group relative overflow-hidden">
-                            <Bell className="h-5 w-5 text-zinc-400 group-hover:text-purple-600 transition-colors" />
-                            <span className="absolute top-3 right-3 h-2 w-2 bg-purple-600 rounded-full border-2 border-white shadow-[0_0_8px_rgba(147,51,234,0.4)]" />
-                        </button>
+                        <NotificationDropdown />
                     </div>
 
                     {/* User Authorization Matrix Profile */}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { notifyAdmins, notifyUsers } from "@/lib/notifications";
 
 export async function GET(req: Request) {
     try {
@@ -93,6 +94,24 @@ export async function POST(req: Request) {
                 }
             }
         });
+
+        // 1. Notify Admins about the new project
+        await notifyAdmins({
+            title: "New Project Launched",
+            message: `Project "${project.name}" has been created.`,
+            type: "PROJECT_CREATED",
+            link: `/projects/${project.id}`
+        });
+
+        // 2. Notify Assigned Users if any
+        if (assignedTo && assignedTo.length > 0) {
+            await notifyUsers(assignedTo, {
+                title: "Assigned to New Project",
+                message: `You have been assigned to the new project: ${project.name}`,
+                type: "PROJECT_ASSIGNMENT",
+                link: `/projects/${project.id}`
+            });
+        }
 
         return NextResponse.json(project, { status: 201 });
     } catch (error: any) {

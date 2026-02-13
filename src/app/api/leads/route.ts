@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { notifyAdmins } from "@/lib/notifications";
 
 export async function GET() {
     try {
@@ -25,6 +26,15 @@ export async function POST(request: Request) {
                 notes: json.notes,
             },
         });
+
+        // Notify admins about the new lead
+        await notifyAdmins({
+            title: "New Lead Created",
+            message: `A new lead has been added: ${lead.name} from ${lead.source || 'Direct'}`,
+            type: "LEAD_CREATED",
+            link: "/leads" // Assuming there's a leads page
+        });
+
         return NextResponse.json(lead);
     } catch (error) {
         return NextResponse.json({ error: "Failed to create lead" }, { status: 500 });

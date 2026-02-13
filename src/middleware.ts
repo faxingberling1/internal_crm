@@ -1,25 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-// Helper function to check if IP is in office range (192.168.18.1-100)
-function isInOfficeRange(ip: string): boolean {
-    // Allow both IPv4 and IPv6 localhost
-    if (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1') return true;
-
-    // Check if IP matches pattern 192.168.18.X where X is 1-100
-    const ipParts = ip.split('.');
-    if (ipParts.length !== 4) return false;
-
-    const [oct1, oct2, oct3, oct4] = ipParts.map(Number);
-
-    // Check if it's in the 192.168.18.x subnet
-    if (oct1 === 192 && oct2 === 168 && oct3 === 18) {
-        // Check if last octet is between 1 and 100
-        return oct4 >= 1 && oct4 <= 100;
-    }
-
-    return false;
-}
+import { isInOfficeRange } from '@/lib/security';
 
 export default async function middleware(request: NextRequest) {
     const session = request.cookies.get('crm-session');
@@ -71,21 +52,6 @@ export default async function middleware(request: NextRequest) {
             if (settings.officeIP && !isInOfficeRange(clientIP)) {
                 console.log(`[Security] Blocked access for IP: ${clientIP} (not in range 192.168.18.1-100)`);
                 return NextResponse.redirect(new URL('/unauthorized?reason=ip', request.url));
-            }
-
-            // B. TIME ENFORCEMENT (Karachi Time / UTC+5)
-            if (settings.officeHoursStart && settings.officeHoursEnd) {
-                const now = new Date();
-                // Karachi is UTC+5
-                const karachiTime = new Date(now.getTime() + (5 * 60 * 60 * 1000));
-                const currentHour = karachiTime.getUTCHours();
-                const currentMin = karachiTime.getUTCMinutes();
-                const currentTimeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-
-                if (currentTimeStr < settings.officeHoursStart || currentTimeStr > settings.officeHoursEnd) {
-                    console.log(`[Security] Blocked access outside hours: ${currentTimeStr}`);
-                    return NextResponse.redirect(new URL('/unauthorized?reason=time', request.url));
-                }
             }
         }
 

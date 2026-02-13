@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { notifyAdmins } from "@/lib/notifications";
 
 export async function GET() {
     try {
@@ -78,6 +79,14 @@ export async function POST(request: Request) {
                 },
                 template: true,
             },
+        });
+
+        // Notify admins about the new proposal
+        await notifyAdmins({
+            title: "New Proposal Created",
+            message: `A new proposal "${proposal.name}" has been created for ${proposal.lead?.name || 'a lead'}.`,
+            type: "PROPOSAL_CREATED",
+            link: `/proposals/${proposal.id}`
         });
 
         return NextResponse.json(proposal);

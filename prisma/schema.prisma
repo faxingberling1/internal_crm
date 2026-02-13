@@ -299,6 +299,7 @@ model BrandingSettings {
   officeIP          String?  // Authorized office IP address
   officeHoursStart  String?  // Format: "HH:mm" (e.g., "09:00")
   officeHoursEnd    String?  // Format: "HH:mm" (e.g., "18:00")
+  timezoneOffset    Int?     @default(5) // UTC offset (e.g., 5 for Karachi, -5 for EST)
   isSecurityEnabled Boolean  @default(false)
   
   createdAt       DateTime @default(now())
