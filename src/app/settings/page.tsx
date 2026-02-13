@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Settings as SettingsIcon,
     User,
@@ -9,7 +9,9 @@ import {
     Palette,
     Save,
     Trash2,
-    Lock
+    Lock,
+    Loader2,
+    CheckCircle2
 } from "lucide-react";
 import { useUser } from "@/components/user-context";
 import { cn } from "@/lib/utils";
@@ -17,8 +19,66 @@ import { cn } from "@/lib/utils";
 export default function SettingsPage() {
     const { user } = useUser();
     const [activeTab, setActiveTab] = useState("profile");
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [saved, setSaved] = useState(false);
 
-    if (!user) return null;
+    // Workplace Security State
+    const [securitySettings, setSecuritySettings] = useState({
+        officeIP: "",
+        officeHoursStart: "09:00",
+        officeHoursEnd: "18:00",
+        isSecurityEnabled: false
+    });
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch("/api/settings/branding");
+                if (res.ok) {
+                    const data = await res.json();
+                    setSecuritySettings({
+                        officeIP: data.officeIP || "",
+                        officeHoursStart: data.officeHoursStart || "09:00",
+                        officeHoursEnd: data.officeHoursEnd || "18:00",
+                        isSecurityEnabled: data.isSecurityEnabled || false
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to fetch settings:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSettings();
+    }, []);
+
+    const handleSaveSecurity = async () => {
+        setSaving(true);
+        setSaved(false);
+        try {
+            const res = await fetch("/api/settings/branding", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(securitySettings),
+            });
+
+            if (res.ok) {
+                setSaved(true);
+                setTimeout(() => setSaved(false), 3000);
+            }
+        } catch (error) {
+            console.error("Failed to save security settings:", error);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    if (!user || loading) return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+            <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
+        </div>
+    );
 
     const tabs = [
         { id: "profile", name: "Profile", icon: User },
@@ -117,6 +177,133 @@ export default function SettingsPage() {
                                     </div>
                                     <button className="px-4 py-2 bg-purple-100 text-purple-600 rounded-xl font-black text-[10px] uppercase tracking-widest border border-purple-200">Enable</button>
                                 </div>
+
+                                {/* Workplace Security Section */}
+                                {user.role === 'ADMIN' && (
+                                    <div className="border-t border-zinc-100 pt-8 mt-8 space-y-6">
+                                        <div className="flex items-center space-x-3 mb-2">
+                                            <Shield className="h-5 w-5 text-red-600" />
+                                            <h4 className="text-sm font-black text-zinc-900 uppercase tracking-widest">Workplace Security (Office-Only)</h4>
+                                        </div>
+
+                                        {/* Status Indicator */}
+                                        {securitySettings.isSecurityEnabled ? (
+                                            <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl p-6 text-white space-y-3 shadow-xl shadow-red-500/20 border-2 border-red-400">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center space-x-3">
+                                                        <div className="h-12 w-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                                            <Shield className="h-6 w-6 text-white" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-black uppercase tracking-widest">🔒 Lockdown Active</p>
+                                                            <p className="text-[10px] font-bold opacity-90">Office-Only Mode Enforced</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <div className="h-3 w-3 rounded-full bg-white animate-pulse"></div>
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">Live</span>
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4 pt-3 border-t border-white/20">
+                                                    <div>
+                                                        <p className="text-[9px] font-black uppercase tracking-widest opacity-70">Authorized Range</p>
+                                                        <p className="text-xs font-bold mt-1">192.168.18.1-100</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[9px] font-black uppercase tracking-widest opacity-70">Office Hours</p>
+                                                        <p className="text-xs font-bold mt-1">{securitySettings.officeHoursStart} - {securitySettings.officeHoursEnd}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-200">
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="h-10 w-10 rounded-xl bg-zinc-200 flex items-center justify-center">
+                                                        <Shield className="h-5 w-5 text-zinc-400" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-black text-zinc-600">Lockdown Disabled</p>
+                                                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">Configure and enable below</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest bg-zinc-50 p-3 rounded-xl border border-zinc-100">
+                                            Restrict dashboard access to specific IP addresses and office hours. This affects all non-admin employees.
+                                        </p>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Office IP Range</label>
+                                                <input
+                                                    type="text"
+                                                    value={securitySettings.officeIP}
+                                                    onChange={(e) => setSecuritySettings({ ...securitySettings, officeIP: e.target.value })}
+                                                    placeholder="192.168.18.1-100 (auto-configured)"
+                                                    disabled
+                                                    className="w-full bg-zinc-100 border border-zinc-200 rounded-2xl py-4 px-6 text-zinc-500 font-bold cursor-not-allowed"
+                                                />
+                                                <p className="text-[9px] text-zinc-400 font-bold ml-1">✓ Accepts any IP from 192.168.18.1 to 192.168.18.100</p>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Shift Protection</label>
+                                                <div className="flex items-center space-x-4">
+                                                    <input
+                                                        type="time"
+                                                        value={securitySettings.officeHoursStart}
+                                                        onChange={(e) => setSecuritySettings({ ...securitySettings, officeHoursStart: e.target.value })}
+                                                        className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-4 px-4 focus:ring-4 focus:ring-red-500/10 transition-all outline-none text-zinc-900 font-bold"
+                                                    />
+                                                    <span className="font-black text-zinc-300">to</span>
+                                                    <input
+                                                        type="time"
+                                                        value={securitySettings.officeHoursEnd}
+                                                        onChange={(e) => setSecuritySettings({ ...securitySettings, officeHoursEnd: e.target.value })}
+                                                        className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-4 px-4 focus:ring-4 focus:ring-red-500/10 transition-all outline-none text-zinc-900 font-bold"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 rounded-2xl bg-red-50 border border-red-100">
+                                            <div className="flex items-center space-x-3">
+                                                <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                                                    <Lock className="h-5 w-5 text-red-600" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-black text-red-900 tracking-tight">Enable Lockdown Mode</p>
+                                                    <p className="text-[10px] text-red-600 font-bold uppercase tracking-tight">Active enforcement of IP/Time rules</p>
+                                                </div>
+                                            </div>
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only peer"
+                                                    checked={securitySettings.isSecurityEnabled}
+                                                    onChange={(e) => setSecuritySettings({ ...securitySettings, isSecurityEnabled: e.target.checked })}
+                                                />
+                                                <div className="w-14 h-7 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                                            </label>
+                                        </div>
+
+                                        <div className="flex justify-end pt-4">
+                                            <button
+                                                onClick={handleSaveSecurity}
+                                                disabled={saving}
+                                                className={cn(
+                                                    "flex items-center space-x-2 px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-xl",
+                                                    saved
+                                                        ? "bg-green-600 text-white shadow-green-500/20"
+                                                        : "bg-red-600 text-white hover:bg-red-700 shadow-red-500/20"
+                                                )}
+                                            >
+                                                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : (saved ? <CheckCircle2 className="h-4 w-4" /> : <Save className="h-4 w-4" />)}
+                                                <span>{saving ? "Deploying..." : (saved ? "Security Deployed" : "Save Security Policy")}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 border border-zinc-100">
                                     <div>

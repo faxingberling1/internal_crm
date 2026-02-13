@@ -17,7 +17,8 @@ import {
 import { cn } from "@/lib/utils";
 
 import { useUser } from "@/components/user-context";
-import { LogOut } from "lucide-react";
+import { LogOut, Shield } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const commonNavigation = [
     { name: "Leaderboard", href: "/", icon: BarChart3, roles: ["ADMIN"] },
@@ -45,6 +46,16 @@ const adminTools = [
 export function Sidebar() {
     const pathname = usePathname();
     const { user, logout } = useUser();
+    const [securityEnabled, setSecurityEnabled] = useState(false);
+
+    useEffect(() => {
+        if (user?.role === 'ADMIN') {
+            fetch('/api/settings/branding')
+                .then(res => res.json())
+                .then(data => setSecurityEnabled(data.isSecurityEnabled || false))
+                .catch(() => setSecurityEnabled(false));
+        }
+    }, [user]);
 
     if (!user) return null;
 
@@ -117,6 +128,29 @@ export function Sidebar() {
                         <span className="text-[8px] font-black text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full uppercase tracking-tighter">{user.role}</span>
                     </div>
                 </div>
+
+                {/* Security Status Badge (Admin Only) */}
+                {user.role === 'ADMIN' && (
+                    <div className={`px-3 py-2.5 rounded-xl border transition-all ${securityEnabled
+                            ? 'bg-red-50 border-red-200'
+                            : 'bg-zinc-50 border-zinc-200'
+                        }`}>
+                        <div className="flex items-center space-x-2">
+                            <Shield className={`h-4 w-4 ${securityEnabled ? 'text-red-600' : 'text-zinc-400'
+                                }`} />
+                            <div className="flex-1">
+                                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Security</p>
+                                <p className={`text-[10px] font-black uppercase tracking-tight ${securityEnabled ? 'text-red-600' : 'text-zinc-500'
+                                    }`}>
+                                    {securityEnabled ? '🔒 Lockdown Active' : 'Disabled'}
+                                </p>
+                            </div>
+                            {securityEnabled && (
+                                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse"></div>
+                            )}
+                        </div>
+                    </div>
+                )}
                 <Link
                     href="/settings"
                     className="group flex items-center px-3 py-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50 rounded-xl transition-all"

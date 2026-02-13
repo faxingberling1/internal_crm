@@ -59,6 +59,10 @@ export async function POST(request: Request) {
             defaultHeader,
             defaultFooter,
             defaultTerms,
+            officeIP,
+            officeHoursStart,
+            officeHoursEnd,
+            isSecurityEnabled,
         } = body;
 
         // Get existing settings or create new
@@ -81,7 +85,11 @@ export async function POST(request: Request) {
                     ...(defaultHeader !== undefined && { defaultHeader }),
                     ...(defaultFooter !== undefined && { defaultFooter }),
                     ...(defaultTerms !== undefined && { defaultTerms }),
-                },
+                    ...(officeIP !== undefined && { officeIP }),
+                    ...(officeHoursStart !== undefined && { officeHoursStart }),
+                    ...(officeHoursEnd !== undefined && { officeHoursEnd }),
+                    ...(isSecurityEnabled !== undefined && { isSecurityEnabled }),
+                } as any,
             });
         } else {
             // Create new
@@ -99,7 +107,11 @@ export async function POST(request: Request) {
                     defaultHeader,
                     defaultFooter,
                     defaultTerms,
-                },
+                    officeIP,
+                    officeHoursStart,
+                    officeHoursEnd,
+                    isSecurityEnabled,
+                } as any,
             });
         }
 

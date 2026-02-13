@@ -189,6 +189,13 @@ model BrandingSettings {
   defaultHeader   String?  // Default proposal header template
   defaultFooter   String?  // Default proposal footer template
   defaultTerms    String?  // Default terms and conditions
+  
+  // Workplace Security
+  officeIP          String?  // Authorized office IP address
+  officeHoursStart  String?  // Format: "HH:mm" (e.g., "09:00")
+  officeHoursEnd    String?  // Format: "HH:mm" (e.g., "18:00")
+  isSecurityEnabled Boolean  @default(false)
+  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
