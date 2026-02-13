@@ -15,6 +15,7 @@ model User {
   role       String   @default("USER") // USER, ADMIN
   isApproved Boolean  @default(false)
   employee   Employee?
+  notifications Notification[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -59,6 +60,7 @@ model Lead {
   proposals Proposal[]
   documents Document[]
   calls     Call[]
+  projects  Project[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }
@@ -117,6 +119,109 @@ model Package {
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   proposals   ProposalItem[]
+}
+
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  status      String   @default("PLANNING") // PLANNING, IN_PROGRESS, REVIEW, COMPLETED, ON_HOLD
+  priority    String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  color       String?  // Hex color for visual identification
+  
+  // Relationships
+  leadId      String?  @db.ObjectId
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  
+  assignedTo  String[] @db.ObjectId // Array of user IDs
+  tasks       Task[]
+  
+  // Dates
+  startDate   DateTime?
+  dueDate     DateTime?
+  completedAt DateTime?
+  
+  // Metadata
+  tags        String[] // For filtering/categorization
+  progress    Int      @default(0) // 0-100 percentage
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  images      String[] // Array of image URLs/Base64
+  comments    Comment[]
+  credentials Credential[]
+}
+
+model Task {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  status      String   @default("TODO") // TODO, IN_PROGRESS, DONE
+  priority    String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  
+  // Relationships
+  projectId   String   @db.ObjectId
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  assignedTo  String?  @db.ObjectId // Single user ID
+  
+  // Dates
+  dueDate     DateTime?
+  completedAt DateTime?
+  
+  // Ordering
+  order       Int      @default(0) // For drag-and-drop ordering
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  
+  projectId String   @db.ObjectId
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  authorId  String   @db.ObjectId
+  authorName String  // Denormalized for performance
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Credential {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   // e.g., "API Key", "FTP Password"
+  type        String   // API_KEY, PASSWORD, TOKEN, SSH_KEY, OTHER
+  username    String?  // For password-type credentials
+  value       String   // Encrypted credential value
+  url         String?  // Associated URL/endpoint
+  notes       String?  // Additional context
+  
+  projectId   String   @db.ObjectId
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdBy   String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, PROJECT_ASSIGNMENT, COMMENT, ALERT
+  isRead    Boolean  @default(false)
+  
+  link      String?  // Optional link to navigate to
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProposalItem {
