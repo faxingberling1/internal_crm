@@ -25,9 +25,18 @@ export default async function middleware(request: NextRequest) {
 
     try {
         const userData = JSON.parse(session.value);
+        const role = userData.role || 'USER';
 
-        // 1. ADMIN BYPASS & PUBLIC ROUTES
-        if (userData.role === 'ADMIN') {
+        // 1. PROTECT ADMIN ROUTES
+        if (pathname.startsWith('/admin')) {
+            if (role !== 'ADMIN') {
+                console.log(`[Security] Blocked USER ${userData.email} from Admin Route: ${pathname}`);
+                return NextResponse.redirect(new URL('/unauthorized?reason=role', request.url));
+            }
+        }
+
+        // 2. ADMIN BYPASS FOR REMAINING CHECKS
+        if (role === 'ADMIN') {
             return NextResponse.next();
         }
 

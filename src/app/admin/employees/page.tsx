@@ -62,6 +62,7 @@ export default function AdminEmployeesPage() {
     const [newPassword, setNewPassword] = useState("");
     const [editShiftStart, setEditShiftStart] = useState("");
     const [editShiftEnd, setEditShiftEnd] = useState("");
+    const [editRole, setEditRole] = useState("USER");
     const [isResetting, setIsResetting] = useState(false);
     const [resetSuccess, setResetSuccess] = useState(false);
 
@@ -135,14 +136,20 @@ export default function AdminEmployeesPage() {
                     userId: resetUser.userId,
                     newPassword: newPassword || undefined,
                     shiftStart: editShiftStart || undefined,
-                    shiftEnd: editShiftEnd || undefined
+                    shiftEnd: editShiftEnd || undefined,
+                    role: editRole || undefined
                 })
             });
 
             if (res.ok) {
-                // Optimistic update for shifts
+                // Optimistic update for shifts and roles
                 setEmployees(prev => prev.map(emp =>
-                    emp.id === resetUser.id ? { ...emp, shiftStart: editShiftStart, shiftEnd: editShiftEnd } : emp
+                    emp.id === resetUser.id ? {
+                        ...emp,
+                        shiftStart: editShiftStart,
+                        shiftEnd: editShiftEnd,
+                        user: emp.user ? { ...emp.user, role: editRole } : emp.user
+                    } : emp
                 ));
 
                 setResetSuccess(true);
@@ -371,6 +378,7 @@ export default function AdminEmployeesPage() {
                                                         setResetUser(emp);
                                                         setEditShiftStart(emp.shiftStart || "");
                                                         setEditShiftEnd(emp.shiftEnd || "");
+                                                        setEditRole(emp.user?.role || "USER");
                                                     }}
                                                     disabled={emp.user?.role === "ADMIN" && emp.email !== "admin@nbt.com"} // Prevent editing other admins for safety, allow own
                                                     className="h-9 w-9 flex items-center justify-center bg-zinc-50 border border-zinc-100 rounded-xl text-zinc-400 hover:text-purple-600 hover:bg-purple-50 hover:border-purple-100 transition-all shadow-sm"
@@ -475,6 +483,22 @@ export default function AdminEmployeesPage() {
                                                         placeholder="Enter new signature..."
                                                         className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl py-4 pl-14 pr-4 text-sm font-bold outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-200 transition-all"
                                                     />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1">Authorization Tier (Role)</label>
+                                                <div className="relative group">
+                                                    <Shield className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-300 group-focus-within:text-purple-600 transition-colors" />
+                                                    <select
+                                                        value={editRole}
+                                                        onChange={(e) => setEditRole(e.target.value)}
+                                                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl py-4 pl-14 pr-4 text-sm font-bold outline-none focus:ring-4 focus:ring-purple-500/5 focus:border-purple-200 transition-all appearance-none"
+                                                    >
+                                                        <option value="USER">Standard Node (USER)</option>
+                                                        <option value="ADMIN">Director Node (ADMIN)</option>
+                                                        <option value="MANAGER">Manager (Coming Soon)</option>
+                                                    </select>
                                                 </div>
                                             </div>
 

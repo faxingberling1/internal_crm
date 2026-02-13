@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/components/user-context";
+import { ShiftWidget } from "@/components/shift-widget";
 
 export default function Dashboard() {
   const { user, loading: authLoading } = useUser();
@@ -168,7 +169,13 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
         {/* Dynamic Activity Feed */}
-        <motion.div variants={item} className="lg:col-span-2 space-y-6">
+        <motion.div variants={item} className="lg:col-span-2 space-y-10">
+          {user.email !== "admin@nbt.com" && (
+            <div className="px-2">
+              <ShiftWidget />
+            </div>
+          )}
+
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-zinc-900 rounded-xl">

@@ -22,7 +22,7 @@ import { useState, useEffect } from "react";
 
 const commonNavigation = [
     { name: "Leaderboard", href: "/", icon: BarChart3, roles: ["ADMIN"] },
-    { name: "My Dashboard", href: "/employee/dashboard", icon: LayoutDashboard, roles: ["USER"] },
+    { name: "My Dashboard", href: "/employee/dashboard", icon: LayoutDashboard, roles: ["USER", "ADMIN"] },
 ];
 
 const operationalNavigation = [

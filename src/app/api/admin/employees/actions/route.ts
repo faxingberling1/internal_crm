@@ -17,7 +17,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        const { userId, isApproved, employeeNumber, newPassword, shiftStart, shiftEnd } = await request.json();
+        const { userId, isApproved, role, employeeNumber, newPassword, shiftStart, shiftEnd } = await request.json();
 
         if (!userId) {
             return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -25,6 +25,7 @@ export async function POST(request: Request) {
 
         const updateData: any = {};
         if (isApproved !== undefined) updateData.isApproved = isApproved;
+        if (role !== undefined) updateData.role = role;
 
         // Handle Password Reset
         if (newPassword) {
