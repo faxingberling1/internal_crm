@@ -45,12 +45,13 @@ export default async function middleware(request: NextRequest) {
         }
 
         if (settings?.isSecurityEnabled) {
-            // A. IP ENFORCEMENT (Range: 192.168.18.1-100)
+            // A. IP ENFORCEMENT
+            // Use request.ip for Vercel, fallback to x-forwarded-for for local
             const forwardedFor = request.headers.get('x-forwarded-for');
-            const clientIP = forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1';
+            const clientIP = (request as any).ip || (forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1');
 
-            if (settings.officeIP && !isInOfficeRange(clientIP)) {
-                console.log(`[Security] Blocked access for IP: ${clientIP} (not in range 192.168.18.1-100)`);
+            if (settings.officeIP && !isInOfficeRange(clientIP, settings.officeIP)) {
+                console.log(`[Security] Blocked access for IP: ${clientIP} (Authorized: ${settings.officeIP} or 192.168.18.x)`);
                 return NextResponse.redirect(new URL('/unauthorized?reason=ip', request.url));
             }
         }

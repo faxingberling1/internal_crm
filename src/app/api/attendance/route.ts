@@ -3,7 +3,82 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { notifyAdmins } from "@/lib/notifications";
 
-// ... GET function remains same ...
+export async function GET(req: Request) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const day = searchParams.get("day");
+        const month = searchParams.get("month");
+        const year = searchParams.get("year");
+
+        const cookieStore = await cookies();
+        const session = cookieStore.get("crm-session");
+        if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        const userData = JSON.parse(session.value);
+
+        // Build query filter
+        let where: any = {};
+
+        // 1. Authorization: Non-admins can only see their own attendance
+        if (userData.role !== "ADMIN") {
+            const employee = await prisma.employee.findUnique({
+                where: { userId: userData.id }
+            });
+            if (!employee) return NextResponse.json([]);
+            where.employeeId = employee.id;
+        }
+
+        // 2. Date Filtering
+        if (year || month || day) {
+            const targetYear = parseInt(year || new Date().getFullYear().toString());
+            const targetMonth = month ? parseInt(month) - 1 : undefined;
+            const targetDay = day ? parseInt(day) : undefined;
+
+            let startDate: Date;
+            let endDate: Date;
+
+            if (targetDay !== undefined && targetMonth !== undefined) {
+                // Specific Day
+                startDate = new Date(targetYear, targetMonth, targetDay, 0, 0, 0);
+                endDate = new Date(targetYear, targetMonth, targetDay, 23, 59, 59);
+            } else if (targetMonth !== undefined) {
+                // Entire Month
+                startDate = new Date(targetYear, targetMonth, 1, 0, 0, 0);
+                endDate = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+            } else {
+                // Entire Year
+                startDate = new Date(targetYear, 0, 1, 0, 0, 0);
+                endDate = new Date(targetYear, 12, 0, 23, 59, 59);
+            }
+
+            where.checkIn = {
+                gte: startDate,
+                lte: endDate
+            };
+        }
+
+        const records = await prisma.attendance.findMany({
+            where,
+            include: {
+                employee: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                }
+            },
+            orderBy: {
+                checkIn: "desc"
+            }
+        });
+
+        return NextResponse.json(records);
+    } catch (error) {
+        console.error("GET Attendance Error:", error);
+        return NextResponse.json({ error: "Failed to fetch attendance" }, { status: 500 });
+    }
+}
 
 export async function POST(req: Request) {
     try {

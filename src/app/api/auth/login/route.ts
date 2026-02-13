@@ -46,7 +46,7 @@ export async function POST(req: Request) {
                 const forwardedFor = req.headers.get('x-forwarded-for');
                 const clientIP = forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1';
 
-                if (settings.officeIP && !isInOfficeRange(clientIP)) {
+                if (settings.officeIP && !isInOfficeRange(clientIP, settings.officeIP)) {
                     console.log(`[Security] Login blocked for IP: ${clientIP} (not in range 192.168.18.1-100)`);
                     return NextResponse.json({
                         error: "Access restricted to office network only",

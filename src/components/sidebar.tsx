@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
 import { useUser } from "@/components/user-context";
 import { LogOut, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
-import { NotificationBell } from "@/components/notification-bell";
 
 const commonNavigation = [
     { name: "Leaderboard", href: "/", icon: BarChart3, roles: ["ADMIN"] },
@@ -81,10 +80,12 @@ export function Sidebar() {
     return (
         <div className="flex h-full w-64 flex-col bg-zinc-50 border-r border-zinc-200 relative isolate z-[100] pointer-events-auto">
             <div className="flex h-20 items-center justify-between px-6">
-                <h1 className="text-2xl font-black tracking-tighter text-zinc-900">
-                    INTERNAL <span className="text-purple-600">PORTAL</span>
+                <h1 className="text-xl font-black tracking-tighter text-zinc-900 leading-tight">
+                    INTERNAL <span className="text-purple-600 block text-xs tracking-[0.3em] font-black -mt-1 ml-0.5">PORTAL</span>
                 </h1>
-                <NotificationBell />
+                <div className="flex items-center justify-center h-8 w-12 bg-white rounded-lg border border-zinc-200 shadow-sm">
+                    <span className="text-[10px] font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-blue-600">NBT</span>
+                </div>
             </div>
 
             <nav className="flex-1 space-y-8 px-3 py-6 overflow-y-auto">

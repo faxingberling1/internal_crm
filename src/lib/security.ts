@@ -16,23 +16,26 @@ export function normalizeIP(ip: string): string {
 }
 
 /**
- * Checks if a normalized IP address is within the authorized office range (192.168.18.1-100).
+ * Checks if a normalized IP address is within the authorized office range.
+ * @param ip The client IP to check.
+ * @param allowedIP Optional specific IP allowed (e.g., from DB settings).
  */
-export function isInOfficeRange(ip: string): boolean {
+export function isInOfficeRange(ip: string, allowedIP?: string | null): boolean {
     const normalizedIP = normalizeIP(ip);
 
-    // Allow loopback
+    // 1. Match specific allowed IP (Public IP)
+    if (allowedIP && normalizeIP(allowedIP) === normalizedIP) return true;
+
+    // 2. Allow loopback
     if (normalizedIP === '127.0.0.1') return true;
 
-    // Split and validate IPv4 format
+    // 3. Match internal office subnet (192.168.18.1-100)
     const ipParts = normalizedIP.split('.');
     if (ipParts.length !== 4) return false;
 
     const [oct1, oct2, oct3, oct4] = ipParts.map(Number);
 
-    // Check if it's in the 192.168.18.x subnet
     if (oct1 === 192 && oct2 === 168 && oct3 === 18) {
-        // Check if last octet is between 1 and 100
         return oct4 >= 1 && oct4 <= 100;
     }
 
