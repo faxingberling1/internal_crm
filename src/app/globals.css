@@ -47,6 +47,28 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     color-scheme: dark;
   }
+
+  /* Custom Scrollbar Styles */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #050505;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #FF7A00;
+    border: 2px solid #050505;
+    border-radius: 100px;
+    transition: all 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #FF9533;
+    border-color: #050505;
+  }
 }
 
 .glass-morphism {
