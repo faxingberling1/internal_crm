@@ -470,7 +470,7 @@ export async function generateDocumentPDF(docData: DocumentData): Promise<Blob> 
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(120, 120, 130);
         doc.text('DESCRIPTION', col1 + 5, yPosition + 6.5);
-        doc.text('AMOUNT (PKR)', pageWidth - margin - 5, yPosition + 6.5, { align: 'right' });
+        doc.text('AMOUNT ($)', pageWidth - margin - 5, yPosition + 6.5, { align: 'right' });
         yPosition += rowH;
 
         const items = [
@@ -502,7 +502,7 @@ export async function generateDocumentPDF(docData: DocumentData): Promise<Blob> 
         doc.text('NET DISBURSEMENT', margin + 10, yPosition + 12);
         doc.setFontSize(16);
         doc.setFont('helvetica', 'black');
-        doc.text(`PKR ${content.netSalary.toLocaleString()}`, pageWidth - margin - 10, yPosition + 13, { align: 'right' });
+        doc.text(`$ ${content.netSalary.toLocaleString()}`, pageWidth - margin - 10, yPosition + 13, { align: 'right' });
 
         yPosition += 40;
 

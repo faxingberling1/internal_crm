@@ -100,16 +100,16 @@ export function NotificationDropdown() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "h-11 w-11 flex items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 hover:bg-white hover:border-purple-200 transition-all group relative overflow-hidden",
-                    isOpen && "bg-white border-purple-200 ring-4 ring-purple-500/5"
+                    "h-11 w-11 flex items-center justify-center rounded-2xl bg-black/40 border border-white/5 hover:bg-orange-600/10 hover:border-orange-500/20 transition-all group relative overflow-hidden",
+                    isOpen && "bg-orange-600/10 border-orange-500/30 ring-4 ring-orange-500/5"
                 )}
             >
                 <Bell className={cn(
                     "h-5 w-5 transition-colors",
-                    isOpen ? "text-purple-600" : "text-zinc-400 group-hover:text-purple-600"
+                    isOpen ? "text-orange-500" : "text-zinc-600 group-hover:text-orange-500"
                 )} />
                 {unreadCount > 0 && (
-                    <span className="absolute top-3 right-3 h-2 w-2 bg-purple-600 rounded-full border-2 border-white shadow-[0_0_8px_rgba(147,51,234,0.4)]" />
+                    <span className="absolute top-3 right-3 h-2 w-2 bg-orange-600 rounded-full border-2 border-black shadow-[0_0_8px_rgba(255,122,0,0.4)]" />
                 )}
             </button>
 
@@ -119,12 +119,12 @@ export function NotificationDropdown() {
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute right-0 mt-3 w-80 bg-white border border-zinc-100 rounded-3xl shadow-2xl p-4 z-50 overflow-hidden"
+                        className="absolute right-0 mt-3 w-80 bg-zinc-950/95 backdrop-blur-3xl border border-white/5 rounded-3xl shadow-2xl p-4 z-50 overflow-hidden"
                     >
                         <div className="flex items-center justify-between mb-4 px-2">
-                            <h3 className="text-sm font-black text-zinc-900 uppercase tracking-widest">Relay Notifications</h3>
+                            <h3 className="text-sm font-black text-white uppercase tracking-widest">System Alerts</h3>
                             {unreadCount > 0 && (
-                                <span className="bg-purple-50 text-purple-600 text-[10px] font-black px-2 py-0.5 rounded-full">
+                                <span className="bg-orange-600/10 text-orange-500 text-[10px] font-black px-2 py-0.5 rounded-full border border-orange-500/20">
                                     {unreadCount} UNREAD
                                 </span>
                             )}
@@ -132,14 +132,14 @@ export function NotificationDropdown() {
 
                         <div className="max-h-[400px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                             {loading ? (
-                                <div className="py-8 text-center bg-zinc-50 rounded-2xl">
-                                    <div className="h-4 w-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Syncing Matrix...</span>
+                                <div className="py-8 text-center bg-zinc-900/40 rounded-2xl border border-white/5">
+                                    <div className="h-4 w-4 border-2 border-orange-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                                    <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Synchronizing...</span>
                                 </div>
                             ) : notifications.length === 0 ? (
-                                <div className="py-12 text-center bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-                                    <Bell className="h-8 w-8 text-zinc-200 mx-auto mb-3" />
-                                    <p className="text-xs font-bold text-zinc-400">Neutral zone. No alerts.</p>
+                                <div className="py-12 text-center bg-zinc-900/40 rounded-2xl border border-dashed border-white/10">
+                                    <Bell className="h-8 w-8 text-zinc-800 mx-auto mb-3" />
+                                    <p className="text-xs font-bold text-zinc-600 uppercase tracking-widest">System Neutral</p>
                                 </div>
                             ) : (
                                 notifications.map((notification) => (
@@ -148,20 +148,20 @@ export function NotificationDropdown() {
                                         className={cn(
                                             "group p-3 rounded-2xl border transition-all relative overflow-hidden",
                                             notification.isRead
-                                                ? "bg-white border-zinc-50 opacity-60"
-                                                : "bg-zinc-50 border-zinc-100 hover:border-purple-100 hover:bg-white"
+                                                ? "bg-black border-white/5 opacity-40 shadow-none"
+                                                : "bg-zinc-950/40 border-white/10 hover:border-orange-500/30 hover:bg-orange-600/[0.02]"
                                         )}
                                     >
                                         <div className="flex gap-3">
                                             <div className={cn(
-                                                "h-8 w-8 rounded-xl flex items-center justify-center shrink-0",
-                                                notification.isRead ? "bg-zinc-100" : "bg-white shadow-sm"
+                                                "h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border border-white/5",
+                                                notification.isRead ? "bg-zinc-900/40" : "bg-black shadow-sm"
                                             )}>
                                                 {getIcon(notification.type)}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center justify-between mb-0.5">
-                                                    <p className="text-[11px] font-black text-zinc-900 truncate pr-4">
+                                                    <p className="text-[11px] font-black text-white truncate pr-4">
                                                         {notification.title}
                                                     </p>
                                                     {!notification.isRead && (
@@ -181,7 +181,7 @@ export function NotificationDropdown() {
                                                     {notification.message}
                                                 </p>
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-[9px] font-black text-zinc-400 uppercase tracking-tighter">
+                                                    <span className="text-[9px] font-black text-zinc-600 uppercase tracking-tighter">
                                                         {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                                                     </span>
                                                     {notification.link && (
@@ -191,9 +191,9 @@ export function NotificationDropdown() {
                                                                 setIsOpen(false);
                                                                 if (!notification.isRead) markAsRead(notification.id);
                                                             }}
-                                                            className="text-[9px] font-black text-purple-600 uppercase tracking-widest hover:underline"
+                                                            className="text-[9px] font-black text-orange-500 uppercase tracking-widest hover:text-orange-400 transition-colors"
                                                         >
-                                                            Intercept →
+                                                            Access System →
                                                         </Link>
                                                     )}
                                                 </div>

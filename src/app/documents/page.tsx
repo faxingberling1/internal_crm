@@ -25,12 +25,12 @@ const documentTypeIcons = {
 };
 
 const statusConfig = {
-    DRAFT: { label: 'Draft', color: 'bg-zinc-100 text-zinc-700', icon: Edit },
-    SENT: { label: 'Sent', color: 'bg-blue-100 text-blue-700', icon: Send },
-    VIEWED: { label: 'Viewed', color: 'bg-purple-100 text-purple-700', icon: Eye },
-    SIGNED: { label: 'Signed', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-    REJECTED: { label: 'Rejected', color: 'bg-red-100 text-red-700', icon: XCircle },
-    EXPIRED: { label: 'Expired', color: 'bg-orange-100 text-orange-700', icon: Clock },
+    DRAFT: { label: 'Draft', color: 'bg-zinc-950/40 text-zinc-500 border-white/5', icon: Edit },
+    SENT: { label: 'Sent', color: 'bg-orange-500/10 text-orange-500 border-orange-500/20', icon: Send },
+    VIEWED: { label: 'Viewed', color: 'bg-orange-600/10 text-orange-600 border-orange-600/20', icon: Eye },
+    SIGNED: { label: 'Signed', color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', icon: CheckCircle },
+    REJECTED: { label: 'Rejected', color: 'bg-red-500/10 text-red-500 border-red-500/20', icon: XCircle },
+    EXPIRED: { label: 'Expired', color: 'bg-orange-950/20 text-orange-900 border-orange-900/30', icon: Clock },
 };
 
 export default function DocumentsPage() {
@@ -104,58 +104,58 @@ export default function DocumentsPage() {
     };
 
     return (
-        <div className="p-8">
-            {/* ... header ... */}
-            <div className="flex items-center justify-between mb-8">
+        <div className="p-10 bg-[#050505] min-h-screen">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-10">
                 <div>
-                    <h1 className="text-4xl font-black text-zinc-900">Documents</h1>
-                    <p className="text-zinc-500 mt-1">Manage proposals, plans, NDAs, and agreements</p>
+                    <h1 className="text-4xl font-black text-white uppercase tracking-[0.1em]">Document <span className="text-orange-600">Archive</span></h1>
+                    <p className="text-zinc-600 font-bold mt-2 uppercase text-xs tracking-[0.3em]">Manage proposals, plans, NDAs, and agreements</p>
                 </div>
                 <button
                     onClick={() => router.push('/documents/create')}
-                    className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
+                    className="flex items-center space-x-3 bg-orange-600 hover:bg-orange-500 text-black px-8 py-4 rounded-2xl transition-all shadow-[0_0_40px_-10px_rgba(255,122,0,0.6)] font-black uppercase text-xs tracking-widest"
                 >
                     <Plus className="h-5 w-5" />
-                    <span>New Document</span>
+                    <span>Initialize Document</span>
                 </button>
             </div>
 
             {/* ... filters ... */}
-            <div className="bg-white rounded-2xl border border-zinc-200 p-6 mb-6">
-                <div className="flex items-center space-x-2 mb-4">
+            <div className="glass-premium rounded-[2.5rem] border border-white/5 p-8 mb-8 shadow-2xl">
+                <div className="flex items-center space-x-3 mb-6">
                     {['ALL', 'PROPOSAL', 'CUSTOM_PLAN', 'NDA', 'AGREEMENT'].map((type) => (
                         <button
                             key={type}
                             onClick={() => setSelectedType(type)}
                             className={cn(
-                                'px-4 py-2 rounded-xl font-bold text-sm transition-all',
+                                'px-5 py-2.5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border',
                                 selectedType === type
-                                    ? 'bg-purple-600 text-white shadow-lg'
-                                    : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                                    ? 'bg-orange-600 text-black border-orange-500/50 shadow-[0_0_20px_rgba(255,122,0,0.4)]'
+                                    : 'bg-black/40 text-zinc-600 border-white/5 hover:bg-orange-600/5 hover:text-orange-500'
                             )}
                         >
-                            {type === 'ALL' ? 'All' : type.replace('_', ' ')}
+                            {type === 'ALL' ? 'All Matrix' : type.replace('_', ' ')}
                         </button>
                     ))}
                 </div>
 
                 <div className="flex items-center space-x-4">
-                    <div className="flex-1 relative">
-                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-zinc-400" />
+                    <div className="flex-1 relative group">
+                        <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-zinc-700 group-focus-within:text-orange-500 transition-colors" />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search documents, clients..."
-                            className="w-full pl-12 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:ring-4 focus:ring-purple-500/10 transition-all outline-none"
+                            placeholder="Scan archive for documents or identifiers..."
+                            className="w-full pl-14 pr-4 py-4.5 bg-[#080808] border border-white/5 rounded-[1.5rem] focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 placeholder:text-zinc-800"
                         />
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <Filter className="h-5 w-5 text-zinc-400" />
+                    <div className="flex items-center space-x-3 bg-black/40 border border-white/5 rounded-[1.5rem] px-6 py-4.5">
+                        <Filter className="h-5 w-5 text-zinc-700" />
                         <select
                             value={selectedStatus}
                             onChange={(e) => setSelectedStatus(e.target.value)}
-                            className="px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:ring-4 focus:ring-purple-500/10 transition-all outline-none font-medium"
+                            className="bg-transparent text-zinc-600 font-black uppercase text-[10px] tracking-widest outline-none appearance-none cursor-pointer hover:text-orange-500 transition-colors"
                         >
                             <option value="ALL">All Statuses</option>
                             <option value="DRAFT">Draft</option>
@@ -171,23 +171,25 @@ export default function DocumentsPage() {
 
             {/* Documents List */}
             {loading ? (
-                <div className="flex items-center justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent" />
+                <div className="flex items-center justify-center py-24">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-600 border-t-transparent shadow-[0_0_20px_rgba(255,122,0,0.3)]" />
                 </div>
             ) : filteredDocuments.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-zinc-200 p-12 text-center">
-                    <FileText className="h-16 w-16 text-zinc-300 mx-auto mb-4" />
-                    <h3 className="text-xl font-black text-zinc-900 mb-2">No documents found</h3>
-                    <p className="text-zinc-500 mb-6">
-                        {searchQuery ? 'Try adjusting your search or filters' : 'Create your first document to get started'}
+                <div className="glass-premium rounded-[3rem] border border-white/5 p-20 text-center shadow-2xl">
+                    <div className="mb-8 p-10 rounded-full bg-zinc-950 border border-white/5 shadow-2xl inline-block">
+                        <FileText className="h-16 w-16 text-orange-600/20" />
+                    </div>
+                    <h3 className="text-2xl font-black text-white uppercase tracking-widest mb-4">No archives identified</h3>
+                    <p className="text-zinc-600 mb-10 font-bold uppercase text-xs tracking-widest">
+                        No portfolio assets detected in this specialized category. Start your first project to begin your legacy.
                     </p>
                     {!searchQuery && (
                         <button
                             onClick={() => router.push('/documents/create')}
-                            className="inline-flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-all"
+                            className="inline-flex items-center space-x-3 bg-orange-600 hover:bg-orange-500 text-black px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all shadow-[0_0_30px_-5px_rgba(255,122,0,0.4)]"
                         >
                             <Plus className="h-5 w-5" />
-                            <span>Create Document</span>
+                            <span>Authorize Creation</span>
                         </button>
                     )}
                 </div>
@@ -198,50 +200,50 @@ export default function DocumentsPage() {
                         return (
                             <div
                                 key={doc.id}
-                                className="bg-white rounded-2xl border border-zinc-200 p-6 hover:border-purple-300 hover:shadow-lg transition-all cursor-pointer group"
+                                className="glass-obsidian-saturated rounded-[2rem] border border-white/5 p-8 hover:glow-orange transition-all cursor-pointer group shadow-2xl"
                                 onClick={() => router.push(`/documents/${doc.id}`)}
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-start space-x-4 flex-1">
-                                        <div className="text-4xl">{documentTypeIcons[doc.type]}</div>
+                                        <div className="text-5xl drop-shadow-[0_0_20px_rgba(255,122,0,0.2)]">{documentTypeIcons[doc.type]}</div>
                                         <div className="flex-1">
-                                            <div className="flex items-center space-x-3 mb-2">
-                                                <h3 className="text-lg font-black text-zinc-900 group-hover:text-purple-600 transition-colors">
+                                            <div className="flex items-center space-x-4 mb-3">
+                                                <h3 className="text-xl font-black text-white group-hover:text-orange-500 transition-colors uppercase tracking-widest">
                                                     {doc.name}
                                                 </h3>
                                                 <span className={cn(
-                                                    'flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold',
+                                                    'flex items-center space-x-2 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border',
                                                     statusConfig[doc.status].color
                                                 )}>
                                                     <StatusIcon className="h-3 w-3" />
                                                     <span>{statusConfig[doc.status].label}</span>
                                                 </span>
                                             </div>
-                                            <div className="flex items-center space-x-4 text-sm text-zinc-600">
-                                                <span className="font-medium">{getClientName(doc)}</span>
+                                            <div className="flex items-center space-x-5 text-[10px] text-zinc-600 font-black uppercase tracking-widest">
+                                                <span className="text-white/80">{getClientName(doc)}</span>
                                                 {getClientCompany(doc) && (
-                                                    <><span className="text-zinc-300">•</span><span>{getClientCompany(doc)}</span></>
+                                                    <><span className="text-zinc-800">•</span><span className="text-zinc-700">{getClientCompany(doc)}</span></>
                                                 )}
-                                                <span className="text-zinc-300">•</span>
-                                                <span className="text-xs text-zinc-400">
+                                                <span className="text-zinc-800">•</span>
+                                                <span className="text-zinc-800">
                                                     {new Date(doc.createdAt).toLocaleDateString()}
                                                 </span>
                                                 {doc.value && (
-                                                    <><span className="text-zinc-300">•</span><span className="font-bold text-purple-600">PKR {doc.value.toLocaleString()}</span></>
+                                                    <><span className="text-zinc-800">•</span><span className="font-black text-orange-600">$ {doc.value.toLocaleString()}</span></>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex items-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 router.push(`/documents/${doc.id}`);
                                             }}
-                                            className="p-2 hover:bg-purple-50 rounded-lg transition-all"
+                                            className="p-3 bg-zinc-950/40 border border-white/5 hover:bg-orange-600/10 rounded-xl transition-all"
                                         >
-                                            <Eye className="h-5 w-5 text-purple-600" />
+                                            <Eye className="h-5 w-5 text-orange-600" />
                                         </button>
                                         <button
                                             onClick={(e) => {
@@ -249,7 +251,7 @@ export default function DocumentsPage() {
                                                 handleDownloadPDF(doc.id, doc.name);
                                             }}
                                             disabled={downloadingId === doc.id}
-                                            className="p-2 hover:bg-blue-50 rounded-lg transition-all disabled:opacity-50"
+                                            className="p-3 bg-zinc-950/40 border border-white/5 hover:bg-blue-600/10 rounded-xl transition-all disabled:opacity-50"
                                         >
                                             {downloadingId === doc.id ? (
                                                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent" />

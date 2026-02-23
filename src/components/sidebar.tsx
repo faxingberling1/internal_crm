@@ -14,7 +14,8 @@ import {
     ShieldCheck,
     Package,
     CreditCard,
-    DollarSign
+    DollarSign,
+    Briefcase
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,7 @@ const operationalNavigation = [
     { name: "Projects", href: "/projects", icon: LayoutDashboard },
     { name: "Clients", href: "/clients", icon: UserPlus },
     { name: "Calls", href: "/calls", icon: PhoneCall },
+    { name: "Portfolio", href: "/portfolio", icon: Briefcase },
 ];
 
 const employeeTools = [
@@ -44,8 +46,8 @@ const employeeTools = [
 const adminTools = [
     { name: "Approvals", href: "/admin/approvals", icon: ShieldCheck },
     { name: "User Management", href: "/admin/employees", icon: Users },
-    { name: "Payroll Terminal", href: "/admin/payroll", icon: DollarSign },
-    { name: "Attendance Monitor", href: "/admin/attendance", icon: BarChart3 },
+    { name: "Payroll Dashboard", href: "/admin/payroll", icon: DollarSign },
+    { name: "Attendance Logs", href: "/admin/attendance", icon: BarChart3 },
 ];
 
 export function Sidebar() {
@@ -68,11 +70,11 @@ export function Sidebar() {
 
     const sections = [
         {
-            title: "Core Mission",
+            title: "Main Dashboard",
             items: commonNavigation.filter(item => !item.roles || item.roles.includes(user.role))
         },
         {
-            title: "Operations",
+            title: "Business Processes",
             items: operationalNavigation
         },
         {
@@ -82,20 +84,23 @@ export function Sidebar() {
     ];
 
     return (
-        <div className="flex h-full w-64 flex-col bg-zinc-50 border-r border-zinc-200 relative isolate z-[100] pointer-events-auto">
-            <div className="flex h-20 items-center px-6 gap-3">
+        <div className="flex h-full w-64 flex-col bg-[#050505] border-r border-white/5 relative isolate z-[100] pointer-events-auto overflow-hidden">
+            {/* Mesh Glow Refinement */}
+            <div className="absolute top-[-10%] left-[-20%] w-[140%] h-[40%] bg-gradient-to-b from-orange-500/10 to-transparent blur-[120px] -z-10 pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-20%] w-[140%] h-[40%] bg-gradient-to-t from-orange-600/5 to-transparent blur-[100px] -z-10 pointer-events-none" />
+            <div className="flex h-20 items-center px-6 gap-3 border-b border-white/5 bg-black/[0.2]">
                 <div className="flex-shrink-0">
                     <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 0L37.3205 10V30L20 40L2.67949 30V10L20 0Z" fill="#F97316" />
-                        <path d="M12 14L18 10V30L12 26V14Z" fill="white" />
-                        <path d="M18 10L28 16V24L18 30V10Z" fill="white" fillOpacity="0.8" />
+                        <path d="M20 0L37.3205 10V30L20 40L2.67949 30V10L20 0Z" fill="#FF7A00" />
+                        <path d="M12 14L18 10V30L12 26V14Z" fill="#050505" />
+                        <path d="M18 10L28 16V24L18 30V10Z" fill="#050505" fillOpacity="0.8" />
                     </svg>
                 </div>
                 <div>
-                    <h1 className="text-lg font-bold text-[#F97316] leading-none tracking-tight">
-                        Neon Byte
+                    <h1 className="text-lg font-black text-white leading-none tracking-tight">
+                        Neon <span className="text-orange-500">Byte</span>
                     </h1>
-                    <p className="text-[10px] font-medium text-zinc-400 tracking-wider">
+                    <p className="text-[10px] font-black text-zinc-600 tracking-widest uppercase mt-1">
                         Technologies
                     </p>
                 </div>
@@ -104,7 +109,7 @@ export function Sidebar() {
             <nav className="flex-1 space-y-8 px-3 py-6 overflow-y-auto">
                 {sections.map((section) => (
                     <div key={section.title} className="mb-8 last:mb-0">
-                        <h3 className="px-3 text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-4">
+                        <h3 className="px-3 text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em] mb-4">
                             {section.title}
                         </h3>
                         <div className="space-y-1">
@@ -115,16 +120,16 @@ export function Sidebar() {
                                         key={item.name}
                                         href={item.href}
                                         className={cn(
-                                            "group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200",
+                                            "group flex items-center px-3 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-500 border border-transparent",
                                             isActive
-                                                ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
-                                                : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50"
+                                                ? "bg-orange-600 text-black shadow-[0_0_30px_-5px_rgba(255,122,0,0.6)] border-orange-500/50"
+                                                : "text-zinc-600 hover:text-orange-500 hover:bg-orange-500/[0.03] hover:border-orange-500/10"
                                         )}
                                     >
                                         <item.icon
                                             className={cn(
                                                 "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
-                                                isActive ? "text-white" : "text-zinc-400 group-hover:text-zinc-600"
+                                                isActive ? "text-black" : "text-zinc-500 group-hover:text-orange-500"
                                             )}
                                             aria-hidden="true"
                                         />
@@ -137,20 +142,23 @@ export function Sidebar() {
                 ))}
             </nav>
 
-            <div className="border-t border-zinc-200 p-6 space-y-3 bg-white/50 backdrop-blur-sm">
-                <div className="px-3 py-3 mb-2 rounded-2xl bg-zinc-100/50 border border-zinc-200/50">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">Identity Verified</p>
-                    <p className="text-xs font-black text-zinc-900 truncate">{user.name || user.email}</p>
-                    <div className="mt-2">
-                        <span className="text-[8px] font-black text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full uppercase tracking-tighter">{user.role}</span>
+            <div className="mt-auto border-t border-white/5 p-6 space-y-4 bg-black/40 backdrop-blur-2xl">
+                <div className="px-4 py-4 rounded-2xl bg-black/[0.3] border border-white/5 group transition-all hover:bg-orange-500/[0.02]">
+                    <div className="flex items-center justify-between mb-2">
+                        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em]">Profile Overview</p>
+                        <div className="h-1.5 w-1.5 rounded-full bg-orange-500 animate-pulse" />
+                    </div>
+                    <p className="text-xs font-black text-white truncate tracking-tight">{user.name || user.email}</p>
+                    <div className="mt-2 text-left">
+                        <span className="text-[9px] font-black text-white bg-orange-600 px-2.5 py-1 rounded-full uppercase tracking-tighter shadow-lg shadow-orange-900/20">{user.role}</span>
                     </div>
                 </div>
 
                 {/* Security Status Badge (Admin Only) */}
                 {user.role === 'ADMIN' && (
                     <div className={`px-3 py-2.5 rounded-xl border transition-all ${securityEnabled
-                        ? 'bg-red-50 border-red-200'
-                        : 'bg-zinc-50 border-zinc-200'
+                        ? 'bg-red-950/20 border-red-900/30'
+                        : 'bg-zinc-950/40 border-zinc-800/20'
                         }`}>
                         <div className="flex items-center space-x-2">
                             <Shield className={`h-4 w-4 ${securityEnabled ? 'text-red-600' : 'text-zinc-400'
@@ -170,16 +178,16 @@ export function Sidebar() {
                 )}
                 <Link
                     href="/settings"
-                    className="group flex items-center px-3 py-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50 rounded-xl transition-all"
+                    className="group flex items-center px-3 py-2 text-sm font-bold text-zinc-600 hover:text-orange-500 hover:bg-orange-500/[0.03] rounded-xl transition-all"
                 >
-                    <Settings className="mr-3 h-5 w-5 text-zinc-400 group-hover:text-zinc-600" />
+                    <Settings className="mr-3 h-5 w-5 text-zinc-600 group-hover:text-white" />
                     Settings
                 </Link>
                 <button
                     onClick={logout}
-                    className="w-full group flex items-center px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    className="w-full group flex items-center px-3 py-2 text-sm font-bold text-red-500 hover:bg-red-500/5 rounded-xl transition-all"
                 >
-                    <LogOut className="mr-3 h-5 w-5 text-red-400 group-hover:text-red-600" />
+                    <LogOut className="mr-3 h-5 w-5 text-red-500 group-hover:text-red-600" />
                     Sign Out
                 </button>
             </div>

@@ -11,7 +11,9 @@ import {
     Loader2,
     AlertCircle,
     Trash2,
-    Send
+    Send,
+    TrendingUp,
+    Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -250,195 +252,222 @@ export function PayrollAdjustmentModal({
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="w-full max-w-2xl bg-zinc-900 rounded-[2.5rem] border border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                    className="w-full max-w-2xl glass-premium rounded-[4rem] border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col max-h-[95vh] isolate"
                 >
-                    {/* Background Glow */}
-                    <div className="absolute top-0 right-0 h-64 w-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none" />
+                    {/* Architectural Glows */}
+                    <div className="absolute top-0 right-0 h-96 w-96 bg-orange-600/10 rounded-full blur-[120px] -z-10 animate-pulse" />
+                    <div className="absolute bottom-0 left-0 h-64 w-64 bg-orange-500/5 rounded-full blur-[100px] -z-10" />
 
                     {/* Header */}
-                    <div className="relative z-10 p-8 pb-4 flex items-center justify-between border-b border-white/5">
-                        <div className="flex items-center space-x-4">
-                            <div className="h-14 w-14 rounded-[1.2rem] bg-emerald-500 flex items-center justify-center text-2xl font-black text-white">
+                    <div className="relative z-10 p-12 pb-6 flex items-center justify-between border-b border-white/5">
+                        <div className="flex items-center space-x-6">
+                            <div className="h-16 w-16 rounded-[1.8rem] bg-orange-600 flex items-center justify-center text-2xl font-black text-black shadow-2xl shadow-orange-600/20 transition-all duration-700 hover:scale-110">
                                 {employee.name[0]}
                             </div>
                             <div>
-                                <h4 className="text-xl font-black text-white tracking-tight">{employee.name}</h4>
-                                <p className="text-[10px] font-black uppercase text-emerald-500 tracking-[0.2em]">Payroll Adjustment</p>
+                                <h4 className="text-2xl font-black text-white tracking-widest uppercase italic mb-1 group-hover/modal:text-orange-500 transition-colors">{employee.name}</h4>
+                                <div className="flex items-center space-x-3 text-orange-500">
+                                    <div className="h-px w-6 bg-orange-500/50" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.4em]">Compensation Logic</span>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-3">
                             <button
                                 onClick={fetchStats}
                                 disabled={loadingStats}
-                                className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
-                                title="Refresh Data"
+                                className="p-4 bg-zinc-950 border border-white/5 rounded-2xl hover:bg-zinc-900 transition-all group/ref"
+                                title="Recalibrate Data"
                             >
-                                <RefreshCcw className={cn("h-5 w-5 text-zinc-400 group-hover:text-emerald-500", loadingStats && "animate-spin text-emerald-500")} />
+                                <RefreshCcw className={cn("h-5 w-5 text-zinc-600 group-hover/ref:text-orange-500 transition-all", loadingStats && "animate-spin text-orange-500")} />
                             </button>
                             <button
                                 onClick={onClose}
-                                className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-rose-500/10 hover:border-rose-500/50 transition-all group"
+                                className="p-4 bg-zinc-950 border border-white/5 rounded-2xl hover:bg-rose-950 hover:text-rose-500 transition-all group/close"
                             >
-                                <X className="h-5 w-5 text-zinc-400 group-hover:text-rose-500" />
+                                <X className="h-5 w-5 text-zinc-600 group-hover/close:text-rose-500" />
                             </button>
                         </div>
                     </div>
 
                     {/* Content */}
-                    <div className="relative z-10 p-8 overflow-y-auto custom-scrollbar">
+                    <div className="relative z-10 p-12 overflow-y-auto custom-scrollbar">
                         {loadingStats && !localStats ? (
-                            <div className="h-60 flex flex-col items-center justify-center space-y-4">
-                                <Loader2 className="h-10 w-10 text-emerald-500 animate-spin" />
-                                <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Loading Fiscal Data...</p>
+                            <div className="h-80 flex flex-col items-center justify-center space-y-8 animate-in fade-in zoom-in duration-700">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-orange-600/20 blur-2xl animate-pulse rounded-full" />
+                                    <Loader2 className="h-16 w-16 text-orange-500 animate-spin relative z-10" />
+                                </div>
+                                <div className="text-center space-y-2">
+                                    <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] animate-pulse">Syncing Fiscal Streams</p>
+                                    <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">Accessing Node Attendance Matrix...</p>
+                                </div>
                             </div>
                         ) : (
-                            <div className="space-y-8">
+                            <div className="space-y-12 animate-in fade-in slide-in-from-bottom-5 duration-1000">
                                 {/* Auto-Detected Stats */}
-                                <div className="space-y-4">
-                                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Attendance & Activity (Auto-Detected)</p>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
-                                            <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Work Hours</p>
-                                            <p className="text-xl font-black text-emerald-500">{stats?.totalHours?.toFixed(1) || "0.0"}h</p>
+                                <div className="space-y-6">
+                                    <div className="flex items-center space-x-3 text-zinc-500 border-b border-white/5 pb-4 mb-4">
+                                        <TrendingUp className="h-4 w-4" />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Temporal Metrics & Analytics</span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="p-6 bg-zinc-950 border border-white/5 rounded-[2rem] shadow-inner group/stat hover:border-orange-500/20 transition-all">
+                                            <p className="text-[9px] font-black text-zinc-700 uppercase tracking-widest mb-2 group-hover/stat:text-orange-500/60 transition-colors">Operational Hours</p>
+                                            <p className="text-2xl font-black text-white italic tabular-nums group-hover/stat:scale-110 transition-transform origin-left">
+                                                <span className="text-orange-500">{stats?.totalHours?.toFixed(1) || "0.0"}</span> H
+                                            </p>
                                         </div>
-                                        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
-                                            <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Break Hours</p>
-                                            <p className="text-xl font-black text-amber-500">{stats?.breakHours?.toFixed(1) || "0.0"}h</p>
+                                        <div className="p-6 bg-zinc-950 border border-white/5 rounded-[2rem] shadow-inner group/stat hover:border-orange-500/20 transition-all">
+                                            <p className="text-[9px] font-black text-zinc-700 uppercase tracking-widest mb-2 group-hover/stat:text-orange-500/60 transition-colors">Idle/Break State</p>
+                                            <p className="text-2xl font-black text-white italic tabular-nums group-hover/stat:scale-110 transition-transform origin-left">
+                                                <span className="text-zinc-500">{stats?.breakHours?.toFixed(1) || "0.0"}</span> H
+                                            </p>
                                         </div>
                                     </div>
 
                                     {/* Editable Stats */}
-                                    <div className="grid grid-cols-3 gap-3">
-                                        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl focus-within:ring-1 focus-within:ring-blue-500 transition-all">
-                                            <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Presence</p>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="p-6 bg-zinc-950 border border-white/5 rounded-[2rem] focus-within:ring-4 focus-within:ring-orange-500/5 focus-within:border-orange-500/20 transition-all group/bit">
+                                            <p className="text-[9px] font-black text-zinc-700 uppercase tracking-widest mb-2 group-hover/bit:text-orange-500/60 transition-colors text-center">Presence</p>
                                             <input
                                                 type="number"
                                                 value={localStats?.present ?? 0}
                                                 readOnly={isConfirmed}
                                                 onChange={(e) => setLocalStats(prev => prev ? { ...prev, present: parseInt(e.target.value) || 0 } : null)}
-                                                className={cn("w-full bg-transparent text-xl font-black text-blue-500 outline-none", isConfirmed && "opacity-50 cursor-not-allowed")}
+                                                className={cn("w-full bg-transparent text-3xl font-black text-white outline-none text-center tabular-nums italic", isConfirmed && "opacity-30 cursor-not-allowed")}
                                             />
                                         </div>
-                                        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl focus-within:ring-1 focus-within:ring-rose-500 transition-all">
-                                            <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Absences</p>
+                                        <div className="p-6 bg-zinc-950 border border-white/5 rounded-[2rem] focus-within:ring-4 focus-within:ring-orange-500/5 focus-within:border-orange-500/20 transition-all group/bit">
+                                            <p className="text-[9px] font-black text-zinc-700 uppercase tracking-widest mb-2 group-hover/bit:text-orange-500/60 transition-colors text-center">Absences</p>
                                             <input
                                                 type="number"
                                                 value={localStats?.absent ?? 0}
                                                 readOnly={isConfirmed}
                                                 onChange={(e) => setLocalStats(prev => prev ? { ...prev, absent: parseInt(e.target.value) || 0 } : null)}
-                                                className={cn("w-full bg-transparent text-xl font-black text-rose-500 outline-none", isConfirmed && "opacity-50 cursor-not-allowed")}
+                                                className={cn("w-full bg-transparent text-3xl font-black text-white outline-none text-center tabular-nums italic", isConfirmed && "opacity-30 cursor-not-allowed")}
                                             />
                                         </div>
-                                        <div className="p-4 bg-white/5 border border-white/10 rounded-2xl focus-within:ring-1 focus-within:ring-amber-500 transition-all">
-                                            <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Lates</p>
+                                        <div className="p-6 bg-zinc-950 border border-white/5 rounded-[2rem] focus-within:ring-4 focus-within:ring-orange-500/5 focus-within:border-orange-500/20 transition-all group/bit">
+                                            <p className="text-[9px] font-black text-zinc-700 uppercase tracking-widest mb-2 group-hover/bit:text-orange-500/60 transition-colors text-center">Lates</p>
                                             <input
                                                 type="number"
                                                 value={localStats?.late ?? 0}
                                                 readOnly={isConfirmed}
                                                 onChange={(e) => setLocalStats(prev => prev ? { ...prev, late: parseInt(e.target.value) || 0 } : null)}
-                                                className={cn("w-full bg-transparent text-xl font-black text-amber-500 outline-none", isConfirmed && "opacity-50 cursor-not-allowed")}
+                                                className={cn("w-full bg-transparent text-3xl font-black text-white outline-none text-center tabular-nums italic", isConfirmed && "opacity-30 cursor-not-allowed")}
                                             />
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Financial Adjustments */}
-                                <div className="space-y-4 pt-4 border-t border-white/10">
-                                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Financial Adjustments</p>
-                                    <div className="grid grid-cols-3 gap-3">
-                                        <div>
-                                            <label className="text-[8px] font-black text-zinc-500 uppercase block mb-2">Bonus</label>
+                                <div className="space-y-6 pt-10 border-t border-white/10 relative isolate">
+                                    <div className="absolute top-0 right-10 h-32 w-32 bg-orange-600/5 blur-3xl -z-10" />
+                                    <div className="flex items-center space-x-3 text-zinc-500 border-b border-white/5 pb-4 mb-4">
+                                        <RefreshCcw className="h-4 w-4" />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Adjustment Override Protocols</span>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-6">
+                                        <div className="space-y-3">
+                                            <label className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block px-2">Bonus Sum</label>
                                             <input
                                                 type="number"
                                                 readOnly={isConfirmed}
-                                                className={cn("w-full bg-white/5 border border-white/10 text-white rounded-xl p-3 text-sm font-black outline-none focus:ring-1 focus:ring-emerald-500 transition-all", isConfirmed && "opacity-50 cursor-not-allowed")}
+                                                className={cn("w-full bg-zinc-950 border border-white/5 text-white rounded-[1.5rem] p-5 text-sm font-black outline-none focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all tabular-nums", isConfirmed && "opacity-30 cursor-not-allowed")}
                                                 value={manualAdj.bonus}
                                                 onChange={(e) => setManualAdj(prev => ({ ...prev, bonus: e.target.value }))}
+                                                placeholder="0.00"
                                             />
                                         </div>
-                                        <div>
-                                            <label className="text-[8px] font-black text-zinc-500 uppercase block mb-2">Commission</label>
+                                        <div className="space-y-3">
+                                            <label className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block px-2">Commission Sum</label>
                                             <input
                                                 type="number"
                                                 readOnly={isConfirmed}
-                                                className={cn("w-full bg-white/5 border border-white/10 text-white rounded-xl p-3 text-sm font-black outline-none focus:ring-1 focus:ring-emerald-500 transition-all", isConfirmed && "opacity-50 cursor-not-allowed")}
+                                                className={cn("w-full bg-zinc-950 border border-white/5 text-white rounded-[1.5rem] p-5 text-sm font-black outline-none focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all tabular-nums", isConfirmed && "opacity-30 cursor-not-allowed")}
                                                 value={manualAdj.commission}
                                                 onChange={(e) => setManualAdj(prev => ({ ...prev, commission: e.target.value }))}
+                                                placeholder="0.00"
                                             />
                                         </div>
-                                        <div>
-                                            <label className="text-[8px] font-black text-zinc-500 uppercase block mb-2">Deductions</label>
+                                        <div className="space-y-3">
+                                            <label className="text-[9px] font-black text-zinc-600 uppercase tracking-widest block px-2">Manual Penals</label>
                                             <input
                                                 type="number"
                                                 readOnly={isConfirmed}
-                                                className={cn("w-full bg-white/5 border border-white/10 text-white rounded-xl p-3 text-sm font-black outline-none focus:ring-1 focus:ring-rose-500 transition-all", isConfirmed && "opacity-50 cursor-not-allowed")}
+                                                className={cn("w-full bg-zinc-950 border border-white/5 text-white rounded-[1.5rem] p-5 text-sm font-black outline-none focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all tabular-nums", isConfirmed && "opacity-30 cursor-not-allowed")}
                                                 value={manualAdj.deductions}
                                                 onChange={(e) => setManualAdj(prev => ({ ...prev, deductions: e.target.value }))}
+                                                placeholder="0.00"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Summary */}
-                                <div className="pt-8 space-y-4 bg-black/20 -mx-8 -mb-8 p-8 border-t border-white/10">
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Base Salary</p>
-                                            <p className="text-xs font-black text-white">PKR {employee.baseSalary?.toLocaleString()}</p>
+                                <div className="pt-12 space-y-8 bg-[#0c0c0c]/80 -mx-12 -mb-12 p-12 border-t border-white/10 relative overflow-hidden group/summary shadow-inner_premium">
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-600/50 to-transparent scale-x-0 group-hover/summary:scale-x-100 transition-transform duration-1000" />
+
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between group/line">
+                                            <p className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] group-hover/line:text-zinc-500 transition-colors">Core Compensation</p>
+                                            <p className="text-sm font-black text-white italic tracking-widest">RS. {employee.baseSalary?.toLocaleString()}</p>
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">Deductions (Formula)</p>
-                                            <p className="text-xs font-black text-rose-500">- PKR {totalFormulaDeductions.toLocaleString()}</p>
+                                        <div className="flex items-center justify-between group/line">
+                                            <p className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.3em] group-hover/line:text-rose-500/50 transition-colors">Temporal Penalties</p>
+                                            <p className="text-sm font-black text-orange-600 italic tracking-widest">- RS. {totalFormulaDeductions.toLocaleString()}</p>
                                         </div>
-                                        <div className="flex items-center justify-between text-emerald-500">
-                                            <p className="text-[10px] font-bold uppercase tracking-widest">Additions</p>
-                                            <p className="text-xs font-black">+ PKR {((parseFloat(manualAdj.bonus) || 0) + (parseFloat(manualAdj.commission) || 0)).toLocaleString()}</p>
+                                        <div className="flex items-center justify-between group/line">
+                                            <p className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.3em] group-hover/line:text-orange-500 transition-colors">Additional Incentives</p>
+                                            <p className="text-sm font-black text-orange-400 italic tracking-widest transition-colors">+ RS. {((parseFloat(manualAdj.bonus) || 0) + (parseFloat(manualAdj.commission) || 0)).toLocaleString()}</p>
                                         </div>
                                     </div>
 
-                                    <div className="pt-4 flex items-center justify-between border-t border-white/10">
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Net Payable</p>
-                                        <p className="text-3xl font-black text-emerald-400 tracking-tighter">
-                                            PKR {finalSalary.toLocaleString()}
+                                    <div className="pt-8 flex flex-col items-center justify-center space-y-4 border-t border-white/5 relative isolate">
+                                        <div className="absolute inset-0 bg-orange-600/5 -z-10 blur-3xl opacity-0 group-hover/summary:opacity-100 transition-opacity duration-1000" />
+                                        <p className="text-[10px] font-black text-orange-500 uppercase tracking-[0.5em] italic">Net Liquidity Transfer</p>
+                                        <p className="text-6xl font-black text-white italic tracking-tighter tabular-nums drop-shadow-2xl">
+                                            <span className="text-orange-600 mr-2">RS.</span>{finalSalary.toLocaleString()}
                                         </p>
                                     </div>
 
                                     {/* Action Buttons */}
-                                    <div className="pt-4 grid grid-cols-1 gap-4">
+                                    <div className="pt-10 grid grid-cols-1 gap-6">
                                         {!currentPayroll ? (
                                             <button
                                                 onClick={() => finalizePayroll(false)}
                                                 disabled={isSubmitting}
-                                                className="w-full py-4 rounded-xl bg-emerald-500 text-zinc-900 text-xs font-black uppercase tracking-widest hover:scale-[1.02] shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2"
+                                                className="w-full py-6 rounded-[2rem] bg-orange-600 text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-orange-500 shadow-2xl shadow-orange-600/20 transition-all flex items-center justify-center space-x-3 group/btn"
                                             >
-                                                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                                                <span>Generate Payroll</span>
+                                                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin text-black" /> : <Zap className="h-4 w-4 group-hover/btn:animate-pulse" />}
+                                                <span>INITIALIZE PAYROLL NEXUS</span>
                                             </button>
                                         ) : currentPayroll.isShared ? (
                                             <div className="grid grid-cols-1 gap-4">
                                                 <button
                                                     onClick={redactPayroll}
                                                     disabled={isSubmitting}
-                                                    className="w-full py-4 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-black uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center space-x-2"
+                                                    className="w-full py-6 rounded-[2rem] bg-zinc-950 text-orange-600 border border-orange-600/30 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-orange-600 hover:text-black transition-all flex items-center justify-center space-x-3 shadow-2xl"
                                                 >
                                                     {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <EyeOff className="h-4 w-4" />}
-                                                    <span>Redact Invoice (Unshare)</span>
+                                                    <span>REDACT NODE ACCESS</span>
                                                 </button>
                                             </div>
                                         ) : !isConfirmed ? (
-                                            <div className="flex items-center space-x-3">
+                                            <div className="flex items-center space-x-4">
                                                 <button
                                                     onClick={handleDelete}
                                                     disabled={isSubmitting}
-                                                    className="p-4 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all"
-                                                    title="Delete Draft"
+                                                    className="p-6 rounded-[1.8rem] bg-zinc-950 text-zinc-600 border border-white/5 hover:bg-rose-950 hover:text-rose-500 hover:border-rose-500/30 transition-all shadow-xl"
+                                                    title="Purge Record"
                                                 >
-                                                    <Trash2 className="h-4 w-4" />
+                                                    <Trash2 className="h-5 w-5" />
                                                 </button>
                                                 <button
                                                     onClick={() => {
@@ -446,10 +475,10 @@ export function PayrollAdjustmentModal({
                                                         finalizePayroll(false);
                                                     }}
                                                     disabled={isSubmitting}
-                                                    className="flex-1 py-4 rounded-xl bg-emerald-500 text-zinc-900 text-xs font-black uppercase tracking-widest hover:scale-[1.02] shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2"
+                                                    className="flex-1 py-6 rounded-[2rem] bg-orange-600 text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-orange-500 shadow-2xl shadow-orange-600/20 transition-all flex items-center justify-center space-x-3 group/btn"
                                                 >
-                                                    {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                                                    <span>Confirm & Save Draft</span>
+                                                    {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin text-black" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                    <span>CONFIRM FISCAL SEQUENCE</span>
                                                 </button>
                                             </div>
                                         ) : (
@@ -457,18 +486,18 @@ export function PayrollAdjustmentModal({
                                                 <button
                                                     onClick={() => setIsConfirmed(false)}
                                                     disabled={isSubmitting}
-                                                    className="py-4 rounded-xl bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center space-x-2 text-white"
+                                                    className="py-6 rounded-[2rem] bg-zinc-950 border border-white/5 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-zinc-900 transition-all flex items-center justify-center space-x-3 text-white"
                                                 >
-                                                    <Edit3 className="h-4 w-4" />
-                                                    <span>Edit</span>
+                                                    <Edit3 className="h-4 w-4 text-orange-500" />
+                                                    <span>DECONSTRUCT</span>
                                                 </button>
                                                 <button
                                                     onClick={() => finalizePayroll(true)}
                                                     disabled={isSubmitting}
-                                                    className="py-4 rounded-xl bg-blue-600 text-white text-xs font-black uppercase tracking-widest hover:scale-[1.02] shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center space-x-2"
+                                                    className="py-6 rounded-[2rem] bg-orange-600 text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-orange-500 shadow-2xl shadow-orange-600/20 transition-all flex items-center justify-center space-x-3 shadow-2xl"
                                                 >
-                                                    {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                                                    <span>Share with Employee</span>
+                                                    {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin text-black" /> : <Send className="h-4 w-4" />}
+                                                    <span>TRANSMIT TO NODE</span>
                                                 </button>
                                             </div>
                                         )}

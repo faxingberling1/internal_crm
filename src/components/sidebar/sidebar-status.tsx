@@ -32,7 +32,7 @@ export function SidebarStatus() {
                                 : "text-emerald-600"
                             : "text-zinc-400"
                     )}>
-                        {isClockedIn ? isOnBreak ? "On Break" : "In Mission" : "In Standby"}
+                        {isClockedIn ? isOnBreak ? "On Break" : "Present" : "In Standby"}
                     </span>
                     {isClockedIn && !isOnBreak && (
                         <span className="relative flex h-2 w-2">

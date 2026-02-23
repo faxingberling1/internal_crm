@@ -47,17 +47,23 @@ export default function RegisterPage() {
 
     if (status === "SUCCESS") {
         return (
-            <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
-                <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-12 text-center border border-zinc-100 animate-in zoom-in duration-300">
-                    <div className="h-20 w-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                        <CheckCircle2 className="h-10 w-10" />
+            <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 relative overflow-hidden isolate">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-600/10 blur-[120px] -z-10 animate-pulse" />
+                <div className="max-w-md w-full glass-premium rounded-[3rem] p-12 text-center border border-white/5 animate-in zoom-in duration-500 relative z-10 shadow-[0_0_50px_-10px_rgba(255,122,0,0.1)]">
+                    <div className="h-24 w-24 bg-orange-600/10 text-orange-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner border border-orange-500/20">
+                        <CheckCircle2 className="h-12 w-12" />
                     </div>
-                    <h2 className="text-2xl font-black text-zinc-900 mb-2">Registration Received!</h2>
-                    <p className="text-zinc-500 mb-8 leading-relaxed">
-                        {message}. You will be notified once an administrator confirms your access.
+                    <div className="flex items-center justify-center space-x-2 text-orange-500 mb-6">
+                        <div className="h-px w-6 bg-orange-500/50" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em]">Registration Success</span>
+                        <div className="h-px w-6 bg-orange-500/50" />
+                    </div>
+                    <h2 className="text-3xl font-black text-white mb-4 tracking-tighter">Node Registered!</h2>
+                    <p className="text-zinc-500 mb-10 leading-relaxed font-medium">
+                        {message}. You will be notified once an administrator confirms your access to the internal grid.
                     </p>
-                    <Link href="/" className="inline-flex items-center text-purple-600 font-bold hover:text-purple-700 transition-colors">
-                        Back to Home <ArrowRight className="ml-2 h-4 w-4" />
+                    <Link href="/login" className="group inline-flex items-center text-orange-600 font-black hover:text-orange-500 transition-all uppercase text-xs tracking-widest bg-orange-600/10 px-8 py-4 rounded-2xl border border-orange-500/20">
+                        Back to Terminal <ArrowRight className="ml-3 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
             </div>
@@ -65,64 +71,73 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4">
-            <div className="max-w-md w-full mb-8 text-center">
-                <div className="flex items-center justify-center space-x-2 mb-4">
-                    <div className="p-2 bg-zinc-900 rounded-lg">
-                        <Activity className="h-6 w-6 text-white" />
+        <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 relative overflow-hidden isolate">
+            {/* Architectural Glows */}
+            <div className="absolute top-0 right-0 w-[50%] h-[40%] bg-orange-600/5 blur-[120px] -z-10 animate-pulse" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[30%] bg-orange-500/5 blur-[100px] -z-10" />
+
+            <div className="max-w-md w-full mb-12 text-center relative z-10">
+                <div className="flex items-center justify-center space-x-4 mb-6">
+                    <div className="p-3 bg-orange-600 rounded-[1.25rem] shadow-[0_0_30px_-5px_rgba(255,122,0,0.5)]">
+                        <Activity className="h-8 w-8 text-black" />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter text-zinc-900">INTERNAL PORTAL</span>
+                    <span className="text-3xl font-black tracking-tighter text-white uppercase italic">INTERNAL <span className="text-orange-500">PORTAL</span></span>
                 </div>
-                <p className="text-zinc-500 mt-2 font-medium">Create your agent account to get started.</p>
+                <div className="flex items-center justify-center space-x-3 text-orange-500/60 mb-2">
+                    <div className="h-px w-4 bg-orange-500/20" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.6em]">Nexus Deployment</span>
+                    <div className="h-px w-4 bg-orange-500/20" />
+                </div>
+                <p className="text-zinc-500 mt-4 font-bold tracking-tight">Establish a new agent node to access the internal grit.</p>
             </div>
 
-            <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl border border-zinc-100 overflow-hidden animate-in fade-in slide-in-from-bottom duration-500">
-                <div className="p-8">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-black text-zinc-700 uppercase tracking-widest ml-1">Full Name</label>
-                            <div className="relative">
-                                <User className="absolute left-4 top-3.5 h-5 w-5 text-zinc-400" />
+            <div className="max-w-md w-full glass-premium rounded-[3.5rem] border border-white/5 overflow-hidden animate-in fade-in slide-in-from-bottom duration-700 relative z-10 hover:glow-orange transition-all duration-700">
+                <div className="p-10">
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Identity Label</label>
+                            <div className="relative group/input">
+                                <User className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-600 group-focus-within/input:text-orange-500 transition-colors" />
                                 <input
                                     required
                                     type="text"
                                     placeholder="Alex Murphy"
-                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3.5 pl-12 pr-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-5 pl-14 pr-6 focus:bg-black/60 focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500/20 transition-all outline-none text-white font-bold text-sm placeholder:text-zinc-800"
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-black text-zinc-700 uppercase tracking-widest ml-1">Work Email</label>
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-3.5 h-5 w-5 text-zinc-400" />
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Communication Grid</label>
+                            <div className="relative group/input">
+                                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-600 group-focus-within/input:text-orange-500 transition-colors" />
                                 <input
                                     required
                                     type="email"
-                                    placeholder="alex@example.com"
-                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3.5 pl-12 pr-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                                    placeholder="alex@internal.net"
+                                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-5 pl-14 pr-6 focus:bg-black/60 focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500/20 transition-all outline-none text-white font-bold text-sm placeholder:text-zinc-800"
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-black text-zinc-700 uppercase tracking-widest ml-1">Secure Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-zinc-400" />
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Security Credentials</label>
+                            <div className="relative group/input">
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-600 group-focus-within/input:text-orange-500 transition-colors" />
                                 <input
                                     required
                                     type="password"
                                     placeholder="••••••••"
-                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3.5 pl-12 pr-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                                    className="w-full bg-black/40 border border-white/10 rounded-2xl py-5 pl-14 pr-6 focus:bg-black/60 focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500/20 transition-all outline-none text-white font-bold text-sm placeholder:text-zinc-800"
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />
                             </div>
                         </div>
 
                         {status === "ERROR" && (
-                            <div className="flex items-center p-4 bg-red-50 text-red-700 rounded-xl text-sm font-medium border border-red-100 animate-in shake duration-300">
+                            <div className="flex items-center p-4 bg-red-500/10 text-red-500 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-500/20 animate-in shake duration-300">
                                 <ShieldAlert className="h-5 w-5 mr-3 flex-shrink-0" />
                                 {message}
                             </div>
@@ -131,23 +146,24 @@ export default function RegisterPage() {
                         <button
                             type="submit"
                             disabled={status === "LOADING"}
-                            className="w-full bg-zinc-900 hover:bg-black text-white font-black py-4 px-6 rounded-2xl shadow-xl hover:shadow-zinc-900/20 transition-all flex items-center justify-center space-x-2"
+                            className="w-full bg-orange-600 hover:bg-orange-500 text-black font-black py-5 px-6 rounded-[1.5rem] shadow-[0_0_30px_-5px_rgba(255,122,0,0.4)] transition-all flex items-center justify-center space-x-3 uppercase text-xs tracking-[0.2em] group relative overflow-hidden"
                         >
+                            <div className="absolute inset-0 bg-gradient-to-r from-black/0 via-black/10 to-black/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                             <UserPlus className="h-5 w-5" />
-                            <span>{status === "LOADING" ? "Creating Account..." : "Request Access"}</span>
+                            <span>{status === "LOADING" ? "Syncing..." : "Authorize Deployment"}</span>
                         </button>
                     </form>
                 </div>
 
-                <div className="bg-zinc-50 p-6 border-t border-zinc-100 text-center">
-                    <p className="text-xs text-zinc-500">
-                        By requesting access, you agree to the <span className="underline cursor-pointer">Security Protocols</span> and <span className="underline cursor-pointer">Service Agreement</span>.
+                <div className="bg-black/40 p-8 border-t border-white/5 text-center">
+                    <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.1em] leading-relaxed">
+                        By registering, you acknowledge adherence to <span className="text-orange-500/80 cursor-pointer hover:text-orange-500 transition-colors">Security Policies</span> and the <span className="text-orange-500/80 cursor-pointer hover:text-orange-500 transition-colors">Terms of Service</span>.
                     </p>
                 </div>
             </div>
 
-            <Link href="/" className="mt-8 text-zinc-400 hover:text-zinc-600 font-bold transition-colors text-sm">
-                Already have an account? Sign In
+            <Link href="/login" className="mt-12 text-zinc-500 hover:text-orange-500 font-extrabold transition-all text-xs uppercase tracking-widest flex items-center group">
+                Already registered? <span className="text-orange-600 ml-2 group-hover:underline">Login to Access</span>
             </Link>
         </div>
     );

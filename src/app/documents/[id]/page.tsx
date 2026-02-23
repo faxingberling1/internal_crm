@@ -329,7 +329,7 @@ export default function DocumentDetailPage() {
                                     {document.value && (
                                         <div className="text-right">
                                             <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest leading-none mb-1">Value</p>
-                                            <p className="text-3xl font-black text-zinc-900">PKR {document.value.toLocaleString()}</p>
+                                            <p className="text-3xl font-black text-zinc-900">$ {document.value.toLocaleString()}</p>
                                         </div>
                                     )}
                                 </div>
@@ -526,7 +526,7 @@ export default function DocumentDetailPage() {
                                                             <p className="text-zinc-400 text-sm mt-1">{pkg.description}</p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <p className="text-2xl font-black">PKR {pkg.price.toLocaleString()}</p>
+                                                            <p className="text-2xl font-black">$ {pkg.price.toLocaleString()}</p>
                                                             <p className="text-[10px] font-black uppercase tracking-widest text-purple-400">Qty: {pkg.quantity || 1}</p>
                                                         </div>
                                                     </div>

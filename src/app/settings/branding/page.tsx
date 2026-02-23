@@ -78,105 +78,118 @@ export default function BrandingSettingsPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-96">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent" />
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="flex flex-col items-center space-y-4">
+                    <div className="animate-spin h-10 w-10 border-4 border-orange-600 border-t-transparent rounded-full shadow-[0_0_20px_rgba(255,122,0,0.3)]" />
+                    <p className="text-zinc-600 font-black uppercase tracking-widest text-[10px] animate-pulse">Syncing Brand Matrix...</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8 pb-24">
+        <div className="max-w-6xl mx-auto space-y-12 pb-32 animate-in fade-in duration-700 relative isolate">
+            {/* Architectural Underglows */}
+            <div className="absolute top-[10%] left-[-10%] w-[60%] h-[40%] bg-orange-600/5 blur-[120px] -z-10 animate-pulse" />
+
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-black text-zinc-900 tracking-tight">Branding Settings</h1>
-                    <p className="text-zinc-500 mt-1">Configure your company branding for proposals and documents</p>
+            <div className="flex items-center justify-between border-b border-white/5 pb-10">
+                <div className="space-y-4">
+                    <div className="flex items-center space-x-3 text-orange-500">
+                        <Palette className="h-5 w-5 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.5em]">System Aesthetics</span>
+                    </div>
+                    <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic leading-none">
+                        Branding <span className="text-orange-500">Management</span>
+                    </h1>
+                    <p className="text-zinc-500 font-bold text-lg">Configure organizational identity across all generated documents.</p>
                 </div>
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl transition-all font-bold shadow-lg disabled:opacity-50"
+                    className="flex items-center space-x-4 bg-orange-600 hover:bg-orange-500 text-black px-10 py-5 rounded-2xl transition-all font-black text-xs uppercase tracking-[0.3em] shadow-[0_0_40px_-10px_rgba(255,122,0,0.4)] disabled:opacity-50 group overflow-hidden relative"
                 >
-                    <Save className="h-5 w-5" />
-                    <span>{saving ? "Saving..." : "Save Settings"}</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                    <Save className="h-5 w-5 relative z-10" />
+                    <span className="relative z-10">{saving ? "SAVING..." : "SAVE CHANGES"}</span>
                 </button>
             </div>
 
             {/* Company Information */}
-            <div className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40 space-y-6">
-                <div className="flex items-center space-x-3">
-                    <div className="p-3 bg-blue-100 rounded-2xl">
-                        <Building2 className="h-6 w-6 text-blue-600" />
+            <div className="glass-premium rounded-[3.5rem] border border-white/5 p-12 shadow-2xl space-y-10 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 h-64 w-64 bg-orange-600/5 rounded-full blur-[100px] -z-10 group-hover:bg-orange-600/10 transition-colors" />
+
+                <div className="flex items-center space-x-6">
+                    <div className="p-4 bg-zinc-950 border border-white/5 rounded-2xl shadow-2xl">
+                        <Building2 className="h-6 w-6 text-orange-600" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-zinc-900">Company Information</h2>
-                        <p className="text-sm text-zinc-500">Basic company details</p>
+                        <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Organizational Identity</h2>
+                        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mt-1">Primary corporate metadata</p>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Company Name
-                        </label>
-                        <input
-                            type="text"
-                            value={formData.companyName}
-                            onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                            placeholder="Your Company Name"
-                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none"
-                        />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] ml-2">Corporate Label</label>
+                        <div className="relative group/input">
+                            <input
+                                type="text"
+                                value={formData.companyName}
+                                onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                                placeholder="ENTITY NAME"
+                                className="w-full bg-black border border-white/5 rounded-2xl py-6 px-8 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase tracking-widest text-xs"
+                            />
+                        </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Company Email
-                        </label>
-                        <input
-                            type="email"
-                            value={formData.companyEmail}
-                            onChange={(e) => setFormData({ ...formData, companyEmail: e.target.value })}
-                            placeholder="hello@example.com"
-                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none"
-                        />
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] ml-2">Digital Uplink (Email)</label>
+                        <div className="relative group/input">
+                            <input
+                                type="email"
+                                value={formData.companyEmail}
+                                onChange={(e) => setFormData({ ...formData, companyEmail: e.target.value })}
+                                placeholder="SUPPORT@NEONBYTE.COM"
+                                className="w-full bg-black border border-white/5 rounded-2xl py-6 px-8 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase tracking-widest text-xs"
+                            />
+                        </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Phone
-                        </label>
-                        <input
-                            type="tel"
-                            value={formData.companyPhone}
-                            onChange={(e) => setFormData({ ...formData, companyPhone: e.target.value })}
-                            placeholder="+1 (555) 123-4567"
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
-                        />
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] ml-2">Signal Line (Phone)</label>
+                        <div className="relative group/input">
+                            <input
+                                type="tel"
+                                value={formData.companyPhone}
+                                onChange={(e) => setFormData({ ...formData, companyPhone: e.target.value })}
+                                placeholder="+XX XXX XXXXXXX"
+                                className="w-full bg-black border border-white/5 rounded-2xl py-6 px-8 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase tracking-widest text-xs"
+                            />
+                        </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Website
-                        </label>
-                        <input
-                            type="url"
-                            value={formData.companyWebsite}
-                            onChange={(e) => setFormData({ ...formData, companyWebsite: e.target.value })}
-                            placeholder="https://nbt.com"
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
-                        />
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] ml-2">Network Domain (Website)</label>
+                        <div className="relative group/input">
+                            <input
+                                type="url"
+                                value={formData.companyWebsite}
+                                onChange={(e) => setFormData({ ...formData, companyWebsite: e.target.value })}
+                                placeholder="HTTPS://DOMAIN.INT"
+                                className="w-full bg-black border border-white/5 rounded-2xl py-6 px-8 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase tracking-widest text-xs"
+                            />
+                        </div>
                     </div>
 
-                    <div className="md:col-span-2 space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Address
-                        </label>
+                    <div className="md:col-span-2 space-y-4">
+                        <label className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] ml-2">Physical Hub (Address)</label>
                         <textarea
                             rows={2}
                             value={formData.companyAddress}
                             onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })}
-                            placeholder="123 Business St, City, State 12345"
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium resize-none"
+                            placeholder="GEOGRAPHIC COORDINATES"
+                            className="w-full bg-black border border-white/5 rounded-2xl py-6 px-8 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase tracking-widest text-xs resize-none"
                         />
                     </div>
                 </div>
@@ -236,7 +249,7 @@ export default function BrandingSettingsPage() {
                                         {showColorPicker === colorKey && (
                                             <div className="absolute z-10 mt-2">
                                                 <div className="fixed inset-0" onClick={() => setShowColorPicker(null)} />
-                                                <div className="relative bg-white p-4 rounded-2xl shadow-2xl border border-zinc-200">
+                                                <div className="relative bg-zinc-950 p-4 rounded-2xl shadow-2xl border border-white/10 glass-premium">
                                                     <HexColorPicker
                                                         color={formData[colorKey]}
                                                         onChange={(color) => setFormData({ ...formData, [colorKey]: color })}
@@ -253,49 +266,48 @@ export default function BrandingSettingsPage() {
             </div>
 
             {/* Default Templates */}
-            <div className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40 space-y-6">
-                <div>
-                    <h2 className="text-xl font-black text-zinc-900">Default Templates</h2>
-                    <p className="text-sm text-zinc-500 mt-1">Pre-fill proposal content with these defaults</p>
+            <div className="glass-premium rounded-[3.5rem] border border-white/5 p-12 shadow-2xl space-y-10 relative overflow-hidden">
+                <div className="flex items-center space-x-6">
+                    <div className="p-4 bg-zinc-950 border border-white/5 rounded-2xl shadow-2xl">
+                        <ImageIcon className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Document Templates</h2>
+                        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mt-1">Global document defaults</p>
+                    </div>
                 </div>
 
-                <div className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Default Header
-                        </label>
+                <div className="space-y-10">
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] ml-2">Header Text</label>
                         <textarea
                             rows={3}
                             value={formData.defaultHeader}
                             onChange={(e) => setFormData({ ...formData, defaultHeader: e.target.value })}
-                            placeholder="Default header text for proposals..."
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium resize-none"
+                            placeholder="Standardized header text..."
+                            className="w-full bg-black border border-white/5 rounded-2xl py-6 px-8 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase tracking-widest text-xs resize-none"
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Default Footer
-                        </label>
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] ml-2">Footer Text</label>
                         <textarea
                             rows={3}
                             value={formData.defaultFooter}
                             onChange={(e) => setFormData({ ...formData, defaultFooter: e.target.value })}
-                            placeholder="Default footer text for proposals..."
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium resize-none"
+                            placeholder="Finalizing footer text..."
+                            className="w-full bg-black border border-white/5 rounded-2xl py-6 px-8 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase tracking-widest text-xs resize-none"
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Default Terms & Conditions
-                        </label>
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] ml-2">Terms & Conditions Manifest</label>
                         <textarea
                             rows={8}
                             value={formData.defaultTerms}
                             onChange={(e) => setFormData({ ...formData, defaultTerms: e.target.value })}
-                            placeholder="Default terms and conditions..."
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium resize-none"
+                            placeholder="Legal systemic constraints..."
+                            className="w-full bg-black border border-white/5 rounded-2xl py-6 px-8 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase tracking-widest text-xs resize-none min-h-[200px]"
                         />
                     </div>
                 </div>

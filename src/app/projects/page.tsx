@@ -114,24 +114,24 @@ export default function ProjectsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+            <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+                <div className="animate-spin h-10 w-10 border-4 border-orange-600 border-t-transparent rounded-full shadow-[0_0_20px_rgba(255,122,0,0.3)]" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 p-8">
+        <div className="min-h-screen bg-[#050505] p-10">
             {/* Header */}
-            <div className="max-w-[1800px] mx-auto mb-8">
-                <div className="flex items-center justify-between mb-6">
+            <div className="max-w-[1800px] mx-auto mb-10">
+                <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-4xl font-black text-zinc-900 tracking-tight">Projects</h1>
-                        <p className="text-zinc-500 font-medium mt-1">Manage your projects with Kanban</p>
+                        <h1 className="text-4xl font-black text-white uppercase tracking-[0.1em]">Project <span className="text-orange-600">Dashboard</span></h1>
+                        <p className="text-zinc-600 font-bold mt-2 uppercase text-xs tracking-[0.3em]">Manage your work with visual Kanban boards</p>
                     </div>
                     <button
                         onClick={() => router.push('/projects/create')}
-                        className="flex items-center space-x-2 px-6 py-3 bg-zinc-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all shadow-xl"
+                        className="flex items-center space-x-3 px-8 py-4 bg-orange-600 text-black rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:bg-orange-500 transition-all shadow-[0_0_40px_-10px_rgba(255,122,0,0.6)]"
                     >
                         <Plus className="h-4 w-4" />
                         <span>New Project</span>
@@ -140,17 +140,17 @@ export default function ProjectsPage() {
 
                 {/* Search & Filters */}
                 <div className="flex items-center space-x-4">
-                    <div className="flex-1 relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
+                    <div className="flex-1 relative group">
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-700 group-focus-within:text-orange-500 transition-colors" />
                         <input
                             type="text"
                             placeholder="Search projects..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 pl-12 pr-4 focus:ring-4 focus:ring-zinc-900/10 transition-all outline-none text-zinc-900 font-medium"
+                            className="w-full bg-[#080808] border border-white/5 rounded-[1.5rem] py-4 pl-14 pr-4 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 placeholder:text-zinc-800"
                         />
                     </div>
-                    <button className="flex items-center space-x-2 px-6 py-3 bg-white border border-zinc-200 rounded-2xl font-bold text-sm text-zinc-600 hover:bg-zinc-50 transition-all">
+                    <button className="flex items-center space-x-3 px-8 py-4 bg-black/40 border border-white/5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] text-zinc-700 hover:text-orange-500 transition-all hover:bg-orange-500/5">
                         <Filter className="h-4 w-4" />
                         <span>Filters</span>
                     </button>

@@ -432,7 +432,7 @@ export default function CreateAgreementPage() {
                                     rows={3}
                                     value={formData.compensation}
                                     onChange={(e) => setFormData({ ...formData, compensation: e.target.value })}
-                                    placeholder="e.g., PKR 5,000 per month retainer"
+                                    placeholder="e.g., $ 5,000 per month retainer"
                                     className="w-full mt-2 bg-white border border-zinc-200 rounded-xl py-3 px-4 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none resize-none"
                                 />
                             </div>

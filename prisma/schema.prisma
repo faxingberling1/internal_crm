@@ -428,3 +428,18 @@ model DocumentTemplate {
   
   documents         Document[]
 }
+
+model PortfolioItem {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  category    String    // WEB_DESIGN, SEO, MARKETING, BRANDING, COPYWRITING, OTHER
+  clientName  String?
+  liveUrl     String?
+  imageUrl    String?   // Cover image URL or Base64
+  tags        String[]  // Technology / keyword tags
+  isPublished Boolean   @default(true)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

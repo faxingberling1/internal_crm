@@ -24,17 +24,17 @@ interface ProjectCardProps {
 }
 
 const PRIORITY_COLORS = {
-    URGENT: "from-red-500 to-red-600",
-    HIGH: "from-orange-500 to-orange-600",
-    MEDIUM: "from-yellow-500 to-yellow-600",
-    LOW: "from-green-500 to-green-600"
+    URGENT: "from-red-600 to-red-400",
+    HIGH: "from-orange-600 to-orange-400",
+    MEDIUM: "from-orange-500/40 to-orange-300/40",
+    LOW: "from-emerald-600 to-emerald-400"
 };
 
 const PRIORITY_BADGES = {
-    URGENT: "bg-red-100 text-red-700 border-red-200",
-    HIGH: "bg-orange-100 text-orange-700 border-orange-200",
-    MEDIUM: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    LOW: "bg-green-100 text-green-700 border-green-200"
+    URGENT: "bg-red-500/10 text-red-500 border-red-500/20",
+    HIGH: "bg-orange-600/10 text-orange-600 border-orange-500/20",
+    MEDIUM: "bg-orange-500/5 text-orange-500/40 border-orange-500/10",
+    LOW: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
 };
 
 export function ProjectCard({ project }: ProjectCardProps) {
@@ -58,7 +58,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {...listeners}
             {...attributes}
             onClick={() => router.push(`/projects/${project.id}`)}
-            className={`bg-white rounded-2xl border border-zinc-200 p-5 cursor-pointer hover:shadow-xl transition-all space-y-4 ${isDragging ? 'opacity-50 shadow-2xl' : ''
+            className={`glass-premium rounded-[2rem] border border-white/5 p-6 cursor-pointer hover:glow-orange transition-all duration-500 space-y-5 ${isDragging ? 'opacity-50 shadow-2xl scale-95' : ''
                 }`}
         >
             {/* Priority Badge */}
@@ -74,26 +74,26 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
             {/* Project Name */}
             <div>
-                <h4 className="text-base font-black text-zinc-900 line-clamp-2 leading-tight">
+                <h4 className="text-[13px] font-black text-white line-clamp-2 leading-tight uppercase tracking-widest">
                     {project.name}
                 </h4>
                 {project.description && (
-                    <p className="text-xs text-zinc-500 font-medium mt-1 line-clamp-2">
+                    <p className="text-[10px] text-zinc-600 font-bold mt-2 line-clamp-2 uppercase tracking-tight">
                         {project.description}
                     </p>
                 )}
             </div>
 
             {/* Progress Bar */}
-            <div className="space-y-2">
-                <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+            <div className="space-y-3">
+                <div className="flex items-center justify-between text-[9px] font-black text-zinc-700 uppercase tracking-[0.2em]">
                     <span>Progress</span>
-                    <span>{project.progress}%</span>
+                    <span className="text-orange-500">{project.progress}%</span>
                 </div>
-                <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-black rounded-full overflow-hidden border border-white/5">
                     <div
                         className={`h-full bg-gradient-to-r ${PRIORITY_COLORS[project.priority as keyof typeof PRIORITY_COLORS]
-                            } transition-all`}
+                            } transition-all shadow-[0_0_10px_rgba(255,122,0,0.3)]`}
                         style={{ width: `${project.progress}%` }}
                     ></div>
                 </div>
@@ -101,19 +101,19 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
             {/* Tasks Count */}
             {totalTasks > 0 && (
-                <div className="flex items-center space-x-2 text-xs font-bold text-zinc-600">
-                    <CheckCircle2 className="h-3 w-3" />
-                    <span>{completedTasks}/{totalTasks} tasks</span>
+                <div className="flex items-center space-x-2 text-[10px] font-black text-zinc-600 uppercase tracking-tighter">
+                    <CheckCircle2 className="h-3 w-3 text-orange-600" />
+                    <span>{completedTasks}/{totalTasks} Tasks Completed</span>
                 </div>
             )}
 
             {/* Tags */}
             {project.tags && project.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-2">
                     {project.tags.slice(0, 3).map((tag, idx) => (
                         <span
                             key={idx}
-                            className="text-[9px] font-black uppercase tracking-tight px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-lg"
+                            className="text-[9px] font-black uppercase tracking-tighter px-2.5 py-1 bg-orange-600/5 text-zinc-700 border border-orange-500/10 rounded-lg group-hover:text-orange-500/80 transition-colors"
                         >
                             {tag}
                         </span>
@@ -122,12 +122,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
             )}
 
             {/* Footer */}
-            <div className="flex items-center justify-between pt-3 border-t border-zinc-100">
+            <div className="flex items-center justify-between pt-4 border-t border-white/5">
                 {/* Due Date */}
                 {project.dueDate && (
-                    <div className={`flex items-center space-x-1 text-[10px] font-bold ${isOverdue ? 'text-red-600' : 'text-zinc-500'
+                    <div className={`flex items-center space-x-2 text-[9px] font-black uppercase tracking-widest ${isOverdue ? 'text-red-600' : 'text-zinc-700'
                         }`}>
-                        <Calendar className="h-3 w-3" />
+                        <Clock className="h-3 w-3" />
                         <span>{new Date(project.dueDate).toLocaleDateString()}</span>
                     </div>
                 )}

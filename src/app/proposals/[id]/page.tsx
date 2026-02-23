@@ -225,8 +225,14 @@ export default function ProposalDetailPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-96">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent" />
+            <div className="flex flex-col items-center justify-center h-[60vh] space-y-8">
+                <div className="relative">
+                    <div className="h-24 w-24 rounded-full border-t-2 border-orange-600 animate-spin" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <Sparkles className="h-8 w-8 text-orange-600 animate-pulse" />
+                    </div>
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-orange-500 animate-pulse">Decrypting Mandate...</p>
             </div>
         );
     }
@@ -239,89 +245,102 @@ export default function ProposalDetailPage() {
     const primaryColor = proposal.brandColors?.primary || "#9333ea";
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8 pb-24">
-            {/* Header */}
-            <div className="flex items-center justify-between">
+        <div className="max-w-7xl mx-auto space-y-12 pb-32 animate-in fade-in duration-1000 relative">
+            {/* Architectural Glows */}
+            <div className="absolute top-[10%] right-[-10%] w-[40%] h-[30%] bg-orange-600/5 blur-[120px] -z-10 animate-pulse" />
+            <div className="absolute bottom-[20%] left-[-5%] w-[30%] h-[40%] bg-orange-600/5 blur-[100px] -z-10" />
+
+            {/* Header / Actions Flow */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-white/5 pb-10">
                 <button
                     onClick={() => router.push("/proposals")}
-                    className="flex items-center space-x-2 text-zinc-600 hover:text-zinc-900 transition-colors"
+                    className="group flex items-center space-x-4 bg-zinc-950/40 border border-white/5 px-6 py-4 rounded-2xl text-zinc-600 hover:text-orange-500 hover:border-orange-500/20 transition-all font-black text-[10px] uppercase tracking-[0.3em]"
                 >
-                    <ArrowLeft className="h-5 w-5" />
-                    <span className="font-bold">Back to Proposals</span>
+                    <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                    <span>Return to Interface</span>
                 </button>
 
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-wrap items-center gap-4">
                     <button
                         onClick={handleDownloadPDF}
                         disabled={downloading}
-                        className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl transition-all font-bold disabled:opacity-50"
+                        className="flex items-center space-x-3 bg-zinc-950 text-orange-500 border border-orange-500/20 px-8 py-4 rounded-2xl hover:bg-orange-600 hover:text-black transition-all font-black text-[10px] uppercase tracking-[0.3em] shadow-2xl disabled:opacity-30 group"
                     >
-                        <Download className="h-4 w-4" />
-                        <span>{downloading ? "Generating..." : "Download PDF"}</span>
+                        <Download className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                        <span>{downloading ? "Generating..." : "Export Manifest"}</span>
                     </button>
 
                     <button
                         onClick={handleDuplicate}
-                        className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all font-bold"
+                        className="flex items-center space-x-3 bg-zinc-950 text-zinc-400 border border-white/5 px-8 py-4 rounded-2xl hover:text-white hover:bg-zinc-900 transition-all font-black text-[10px] uppercase tracking-[0.3em]"
                     >
                         <Copy className="h-4 w-4" />
-                        <span>Duplicate</span>
+                        <span>Clone</span>
                     </button>
 
                     <button
                         onClick={() => setShowDeleteModal(true)}
-                        className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition-all font-bold"
+                        className="flex items-center space-x-3 bg-black/40 text-zinc-800 border border-red-900/10 px-8 py-4 rounded-2xl hover:bg-red-950/20 hover:text-red-500 transition-all font-black text-[10px] uppercase tracking-[0.3em]"
                     >
                         <Trash2 className="h-4 w-4" />
-                        <span>Delete</span>
+                        <span>Purge</span>
                     </button>
                 </div>
             </div>
 
             {/* Proposal Header Card */}
-            <div className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40">
-                <div className="flex items-start justify-between mb-6">
-                    <div className="flex-1">
+            <div className="glass-premium rounded-[3.5rem] border border-white/5 p-12 shadow-2xl relative overflow-hidden group hover:glow-orange transition-all duration-1000">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/[0.03] blur-[80px] -z-10" />
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+                    <div className="flex-1 space-y-8">
                         {proposal.brandLogo && (
-                            <img src={proposal.brandLogo} alt="Logo" className="h-16 object-contain mb-4" />
+                            <div className="p-8 bg-zinc-950 rounded-[2.5rem] border border-white/5 shadow-inner inline-block relative group/logo">
+                                <div className="absolute inset-0 bg-orange-600/5 blur-2xl opacity-0 group-hover/logo:opacity-100 transition-opacity" />
+                                <img src={proposal.brandLogo} alt="Logo" className="h-20 object-contain relative" />
+                            </div>
                         )}
-                        <h1 className="text-3xl font-black text-zinc-900 mb-2">{proposal.name}</h1>
-                        <p className="text-zinc-500">ID: {proposal.id.slice(-8).toUpperCase()}</p>
+                        <div className="space-y-4">
+                            <div className="flex items-center space-x-3 text-orange-500">
+                                <div className="h-px w-8 bg-orange-500/50" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.5em]">Status: {proposal.type.split('_').join(' ')}</span>
+                            </div>
+                            <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic leading-none">{proposal.name}</h1>
+                            <p className="text-zinc-600 font-black text-[10px] uppercase tracking-[0.4em]">Project ID: <span className="text-orange-600">{proposal.id.slice(-12).toUpperCase()}</span></p>
+                        </div>
                     </div>
 
-                    <div className="flex flex-col items-end space-y-3">
+                    <div className="flex flex-col items-end gap-10">
                         <div className={cn(
-                            "flex items-center space-x-2 px-4 py-2 rounded-xl border font-bold text-sm",
-                            statusConfig.bg,
-                            statusConfig.color,
-                            statusConfig.border
+                            "flex items-center space-x-4 px-8 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-[0.4em] shadow-2xl",
+                            proposal.status === "ACCEPTED" ? "bg-orange-600 text-black border-orange-500" : "bg-black/40 text-orange-500 border-orange-500/20"
                         )}>
                             <statusConfig.icon className="h-4 w-4" />
                             <span>{proposal.status}</span>
                         </div>
 
-                        <div className="text-right">
-                            <p className="text-sm text-zinc-500">Total Value</p>
-                            <p className="text-3xl font-black" style={{ color: primaryColor }}>
-                                PKR {proposal.value.toLocaleString()}
+                        <div className="text-right space-y-2">
+                            <p className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.5em]">Total Amount</p>
+                            <p className="text-6xl font-black text-white tracking-tighter italic">
+                                <span className="text-[14px] text-orange-600 mr-4 tracking-normal font-sans not-italic">$</span>
+                                {proposal.value.toLocaleString()}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* Status Actions */}
-                <div className="flex items-center space-x-2 pt-4 border-t border-zinc-100">
-                    <span className="text-sm font-bold text-zinc-500">Update Status:</span>
+                {/* Status Transitions */}
+                <div className="flex flex-wrap items-center gap-3 pt-12 border-t border-white/5 mt-12">
+                    <span className="text-[10px] font-black text-zinc-800 uppercase tracking-[0.4em] mr-4">Status:</span>
                     {["DRAFT", "SENT", "ACCEPTED", "REJECTED"].map((status) => (
                         <button
                             key={status}
                             onClick={() => handleStatusChange(status)}
                             disabled={updatingStatus || proposal.status === status}
                             className={cn(
-                                "px-3 py-1.5 rounded-lg text-xs font-bold transition-all",
+                                "px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all border",
                                 proposal.status === status
-                                    ? "bg-purple-600 text-white"
-                                    : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                                    ? "bg-orange-600 text-black border-orange-500 shadow-[0_0_20px_rgba(255,122,0,0.3)]"
+                                    : "bg-zinc-950 text-zinc-700 border-white/5 hover:border-orange-500/20 hover:text-zinc-400"
                             )}
                         >
                             {status}
@@ -330,109 +349,111 @@ export default function ProposalDetailPage() {
                 </div>
             </div>
 
-            {/* Client Information */}
-            <div className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40">
-                <h2 className="text-xl font-black text-zinc-900 mb-6">Client Information</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex items-start space-x-3">
-                        <div className="p-3 bg-purple-100 rounded-2xl">
-                            <User className="h-5 w-5 text-purple-600" />
-                        </div>
-                        <div>
-                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Client Name</p>
-                            <p className="text-lg font-bold text-zinc-900">{proposal.lead.name}</p>
-                        </div>
+            {/* Client Intelligence */}
+            <div className="glass-premium rounded-[3.5rem] border border-white/5 p-12 shadow-2xl space-y-10">
+                <div className="flex items-center space-x-6">
+                    <div className="p-4 bg-zinc-950 border border-white/5 rounded-2xl shadow-2xl">
+                        <User className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Target Parameters</h2>
+                        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mt-1">Entity Intelligence Grid</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <div className="space-y-3 p-8 bg-zinc-950/40 rounded-[2rem] border border-white/5 shadow-inner">
+                        <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.4em]">Designation</p>
+                        <p className="text-lg font-black text-white italic uppercase">{proposal.lead.name}</p>
                     </div>
 
                     {proposal.lead.email && (
-                        <div className="flex items-start space-x-3">
-                            <div className="p-3 bg-blue-100 rounded-2xl">
-                                <Mail className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Email</p>
-                                <p className="text-lg font-bold text-zinc-900">{proposal.lead.email}</p>
-                            </div>
+                        <div className="space-y-3 p-8 bg-zinc-950/40 rounded-[2rem] border border-white/5 shadow-inner">
+                            <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.4em]">Signal (Email)</p>
+                            <p className="text-sm font-black text-orange-500 uppercase tracking-widest">{proposal.lead.email}</p>
                         </div>
                     )}
 
                     {proposal.lead.phone && (
-                        <div className="flex items-start space-x-3">
-                            <div className="p-3 bg-green-100 rounded-2xl">
-                                <Phone className="h-5 w-5 text-green-600" />
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Phone</p>
-                                <p className="text-lg font-bold text-zinc-900">{proposal.lead.phone}</p>
-                            </div>
+                        <div className="space-y-3 p-8 bg-zinc-950/40 rounded-[2rem] border border-white/5 shadow-inner">
+                            <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.4em]">Frequency (Phone)</p>
+                            <p className="text-sm font-black text-white">{proposal.lead.phone}</p>
                         </div>
                     )}
 
                     {proposal.lead.company && (
-                        <div className="flex items-start space-x-3">
-                            <div className="p-3 bg-orange-100 rounded-2xl">
-                                <Building2 className="h-5 w-5 text-orange-600" />
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Company</p>
-                                <p className="text-lg font-bold text-zinc-900">{proposal.lead.company}</p>
-                            </div>
+                        <div className="space-y-3 p-8 bg-zinc-950/40 rounded-[2rem] border border-white/5 shadow-inner">
+                            <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.4em]">Corporate Entity</p>
+                            <p className="text-lg font-black text-white uppercase italic tracking-tight">{proposal.lead.company}</p>
                         </div>
                     )}
 
-                    <div className="flex items-start space-x-3">
-                        <div className="p-3 bg-indigo-100 rounded-2xl">
-                            <Calendar className="h-5 w-5 text-indigo-600" />
-                        </div>
-                        <div>
-                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Proposal Date</p>
-                            <p className="text-lg font-bold text-zinc-900">{proposal.proposalDate}</p>
-                        </div>
+                    <div className="space-y-3 p-8 bg-zinc-950/40 rounded-[2rem] border border-white/5 shadow-inner">
+                        <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.4em]">Manifest Date</p>
+                        <p className="text-lg font-black text-orange-500 uppercase italic">{proposal.proposalDate}</p>
                     </div>
                 </div>
             </div>
 
-            {/* Proposal Content */}
+            {/* Mandate Narrative */}
             {proposal.content && (
-                <div className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40">
-                    <h2 className="text-xl font-black text-zinc-900 mb-6">Proposal Content</h2>
+                <div className="glass-premium rounded-[3.5rem] border border-white/5 p-12 shadow-2xl relative overflow-hidden">
+                    <div className="flex items-center space-x-6 mb-12">
+                        <div className="p-4 bg-zinc-950 border border-white/5 rounded-2xl shadow-2xl">
+                            <FileText className="h-6 w-6 text-orange-600" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Mandate Narrative</h2>
+                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mt-1">Operational Strategy & Scale</p>
+                        </div>
+                    </div>
                     <div
-                        className="prose prose-sm max-w-none"
+                        className="prose prose-invert prose-orange max-w-none prose-p:text-zinc-500 prose-p:font-bold prose-p:text-lg prose-p:leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: proposal.content }}
                     />
                 </div>
             )}
 
-            {/* Package Items */}
+            {/* Service Payload Grid */}
             {proposal.items && proposal.items.length > 0 && (
-                <div className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40">
-                    <h2 className="text-xl font-black text-zinc-900 mb-6">Package Details</h2>
-                    <div className="space-y-4">
+                <div className="glass-premium rounded-[3.5rem] border border-white/5 p-12 shadow-2xl space-y-12">
+                    <div className="flex items-center space-x-6 mb-4">
+                        <div className="p-4 bg-zinc-950 border border-white/5 rounded-2xl shadow-2xl">
+                            <PackageIcon className="h-6 w-6 text-orange-600" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Service Payload</h2>
+                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mt-1">Modular Operational Units</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-6">
                         {proposal.items.map((item) => {
                             const features = item.package.features ? JSON.parse(item.package.features) : [];
                             return (
-                                <div key={item.id} className="p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="flex-1">
-                                            <h3 className="text-lg font-black text-zinc-900">{item.package.name}</h3>
+                                <div key={item.id} className="p-10 bg-zinc-950/60 rounded-[2.5rem] border border-white/5 shadow-inner hover:border-orange-500/20 transition-all group/item">
+                                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-8">
+                                        <div className="flex-1 space-y-2">
+                                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tight">{item.package.name}</h3>
                                             {item.package.description && (
-                                                <p className="text-sm text-zinc-600 mt-1">{item.package.description}</p>
+                                                <p className="text-sm font-bold text-zinc-500 max-w-2xl">{item.package.description}</p>
                                             )}
                                         </div>
-                                        <div className="text-right ml-6">
-                                            <p className="text-sm text-zinc-500">Quantity: {item.quantity}</p>
-                                            <p className="text-2xl font-black text-zinc-900">
-                                                PKR {(item.price * item.quantity).toLocaleString()}
+                                        <div className="text-left lg:text-right space-y-1">
+                                            <p className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.4em]">Unit Quantifier: <span className="text-orange-500">{item.quantity}</span></p>
+                                            <p className="text-3xl font-black text-white italic tracking-tighter">
+                                                <span className="text-[12px] text-orange-600 mr-3 italic">$</span>
+                                                {(item.price * item.quantity).toLocaleString()}
                                             </p>
                                         </div>
                                     </div>
 
                                     {features.length > 0 && (
-                                        <div className="space-y-2 mt-4 pt-4 border-t border-zinc-200">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8 border-t border-white/5">
                                             {features.map((feature: string, idx: number) => (
-                                                <div key={idx} className="flex items-start space-x-2">
-                                                    <Sparkles className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                                                    <span className="text-sm text-zinc-600">{feature}</span>
+                                                <div key={idx} className="flex items-center space-x-4 bg-black/20 p-4 rounded-2xl border border-white/[0.02]">
+                                                    <Sparkles className="h-4 w-4 text-orange-600 flex-shrink-0" />
+                                                    <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">{feature}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -441,39 +462,57 @@ export default function ProposalDetailPage() {
                             );
                         })}
 
-                        <div className="flex items-center justify-between p-6 bg-zinc-900 rounded-2xl">
-                            <span className="text-white font-black text-lg uppercase tracking-wider">Total Investment</span>
-                            <span className="text-white font-black text-3xl">PKR {proposal.value.toLocaleString()}</span>
+                        <div className="flex flex-col md:flex-row items-center justify-between p-12 bg-orange-600 text-black rounded-[3rem] shadow-[0_0_60px_-10px_rgba(255,122,0,0.6)] relative overflow-hidden group/total">
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 translate-x-[-100%] group-hover/total:translate-x-[100%] transition-transform duration-1000" />
+                            <div className="space-y-1">
+                                <span className="text-xs font-black uppercase tracking-[0.4em] italic opacity-80">Total Value</span>
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Signed Contract</h4>
+                            </div>
+                            <span className="text-6xl font-black tracking-tighter italic">$ {proposal.value.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Terms & Conditions */}
+            {/* Systemic Terms */}
             {proposal.terms && (
-                <div className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40">
-                    <h2 className="text-xl font-black text-zinc-900 mb-6">Terms & Conditions</h2>
-                    <p className="text-sm text-zinc-600 whitespace-pre-wrap leading-relaxed">{proposal.terms}</p>
+                <div className="glass-premium rounded-[3.5rem] border border-white/5 p-12 shadow-2xl">
+                    <div className="flex items-center space-x-6 mb-10">
+                        <div className="p-4 bg-zinc-950 border border-white/5 rounded-2xl shadow-2xl">
+                            <CheckCircle2 className="h-6 w-6 text-orange-600" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Systemic Terms</h2>
+                            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mt-1">Legal & Operational Constraints</p>
+                        </div>
+                    </div>
+                    <p className="text-sm text-zinc-600 font-bold whitespace-pre-wrap leading-relaxed border-l-2 border-orange-600/20 pl-8 ml-4 italic">{proposal.terms}</p>
                 </div>
             )}
 
-            {/* Signature */}
+            {/* Strategic Signature */}
             {proposal.signature && (
-                <div className="bg-white rounded-3xl border border-zinc-100 p-8 shadow-xl shadow-zinc-200/40">
-                    <h2 className="text-xl font-black text-zinc-900 mb-6">Authorized Signature</h2>
-                    <div className="space-y-2">
-                        <p className="text-3xl font-black text-purple-600 font-serif italic">{proposal.signature}</p>
-                        <div className="h-px bg-zinc-200 w-64" />
-                        <p className="text-sm text-zinc-500">{proposal.proposalDate}</p>
+                <div className="flex flex-col items-end pt-12">
+                    <div className="space-y-2 text-right">
+                        <p className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.5em] mb-4">Strategic Authorization</p>
+                        <p className="text-7xl font-black text-white tracking-tighter uppercase italic px-12 py-8 bg-zinc-950 rounded-[2.5rem] border border-white/5 shadow-2xl relative">
+                            <div className="absolute inset-0 bg-orange-600/[0.02] blur-3xl -z-10" />
+                            {proposal.signature}
+                        </p>
+                        <div className="h-px bg-white/10 w-full mt-8" />
+                        <p className="text-[10px] font-black text-orange-600 uppercase tracking-[0.4em] mt-4">{proposal.proposalDate}</p>
                     </div>
                 </div>
             )}
 
-            {/* Internal Notes (if any) */}
+            {/* Internal Intelligence (Encrypted Notes) */}
             {proposal.notes && (
-                <div className="bg-amber-50 rounded-3xl border border-amber-200 p-8">
-                    <h2 className="text-xl font-black text-amber-900 mb-4">Internal Notes</h2>
-                    <p className="text-sm text-amber-800 whitespace-pre-wrap">{proposal.notes}</p>
+                <div className="bg-orange-600/[0.05] rounded-[2.5rem] border border-orange-600/10 p-10 mt-12 group hover:border-orange-500/30 transition-all">
+                    <h2 className="text-[10px] font-black text-orange-600 uppercase tracking-[0.4em] mb-4 flex items-center gap-3">
+                        <Clock className="h-4 w-4" />
+                        Internal Intelligence Cipher
+                    </h2>
+                    <p className="text-sm text-zinc-500 font-bold italic leading-relaxed">{proposal.notes}</p>
                 </div>
             )}
 

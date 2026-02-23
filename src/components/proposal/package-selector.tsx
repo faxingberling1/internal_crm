@@ -143,10 +143,10 @@ export function PackageSelector({ selectedPackages, onChange }: PackageSelectorP
                             <div
                                 key={pkg.id}
                                 className={cn(
-                                    'p-4 rounded-2xl border transition-all cursor-pointer',
+                                    "relative p-8 rounded-[2rem] border transition-all cursor-pointer group flex flex-col h-full",
                                     isSelected
-                                        ? 'bg-purple-50 border-purple-200'
-                                        : 'bg-white border-zinc-200 hover:border-purple-200'
+                                        ? "bg-orange-600/10 border-orange-500 shadow-[0_0_30px_rgba(255,122,0,0.1)]"
+                                        : "bg-zinc-950/40 border-orange-500/20 hover:border-orange-500/40 hover:bg-zinc-900/40"
                                 )}
                                 onClick={() => !isSelected && addPackage(pkg)}
                             >

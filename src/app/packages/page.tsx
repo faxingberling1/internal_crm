@@ -20,25 +20,22 @@ import { useUser } from "@/components/user-context";
 import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal";
 
 const BASE_CATEGORIES = [
-    { id: "ALL", name: "All Packages", color: "text-zinc-600", bg: "bg-zinc-100", custom: false },
-    { id: "WEB_DESIGN", name: "Web Design", color: "text-blue-600", bg: "bg-blue-100", custom: false },
-    { id: "SEO", name: "SEO Services", color: "text-green-600", bg: "bg-green-100", custom: false },
-    { id: "MARKETING", name: "Digital Marketing", color: "text-purple-600", bg: "bg-purple-100", custom: false },
-    { id: "COPYWRITING", name: "Copywriting", color: "text-orange-600", bg: "bg-orange-100", custom: false },
-    { id: "PORTAL_DESIGN", name: "Portal Design", color: "text-cyan-600", bg: "bg-cyan-100", custom: false },
-    { id: "BRANDING", name: "Branding", color: "text-pink-600", bg: "bg-pink-100", custom: false },
-    { id: "OTHER", name: "Other Services", color: "text-zinc-600", bg: "bg-zinc-100", custom: false },
+    { id: "ALL", name: "All Packages", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
+    { id: "WEB_DESIGN", name: "Web Systems", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
+    { id: "SEO", name: "Search Intel", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
+    { id: "MARKETING", name: "Market Ops", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
+    { id: "COPYWRITING", name: "Content Node", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
+    { id: "PORTAL_DESIGN", name: "Portal Architecture", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
+    { id: "BRANDING", name: "Identity Design", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
+    { id: "OTHER", name: "Auxiliary Nodes", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
 ];
 
 const CUSTOM_CAT_STORAGE_KEY = "crm_custom_package_categories";
 
 const CUSTOM_COLORS = [
-    { color: "text-teal-600", bg: "bg-teal-100" },
-    { color: "text-rose-600", bg: "bg-rose-100" },
-    { color: "text-amber-600", bg: "bg-amber-100" },
-    { color: "text-indigo-600", bg: "bg-indigo-100" },
-    { color: "text-lime-600", bg: "bg-lime-100" },
-    { color: "text-sky-600", bg: "bg-sky-100" },
+    { color: "text-orange-500", bg: "bg-orange-500/10" },
+    { color: "text-orange-600", bg: "bg-orange-600/10" },
+    { color: "text-orange-400", bg: "bg-orange-400/10" },
 ];
 
 interface Package {
@@ -145,9 +142,9 @@ export default function PackagesPage() {
     });
 
     const stats = [
-        { label: "Total Packages", value: packages.length, icon: PackageIcon, color: "text-purple-600", bg: "bg-purple-100" },
-        { label: "Active Services", value: packages.filter(p => p.isActive).length, icon: CheckCircle2, color: "text-green-600", bg: "bg-green-100" },
-        { label: "Categories", value: new Set(packages.map(p => p.category)).size, icon: Tag, color: "text-blue-600", bg: "bg-blue-100" },
+        { label: "Matrix Nodes", value: packages.length, icon: PackageIcon, color: "text-orange-600", bg: "bg-orange-600/10" },
+        { label: "Active Services", value: packages.filter(p => p.isActive).length, icon: CheckCircle2, color: "text-orange-500", bg: "bg-orange-500/10" },
+        { label: "System Categories", value: new Set(packages.map(p => p.category)).size, icon: Tag, color: "text-orange-400", bg: "bg-orange-400/10" },
     ];
 
     return (
@@ -155,36 +152,36 @@ export default function PackagesPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-extrabold tracking-tight text-zinc-900">
-                        Service Packages
+                    <h2 className="text-3xl font-black tracking-tight text-white uppercase tracking-[0.1em]">
+                        Service <span className="text-orange-600">Packages</span>
                     </h2>
-                    <p className="text-zinc-500 mt-1">
+                    <p className="text-zinc-600 font-bold mt-2 uppercase text-xs tracking-[0.3em]">
                         Manage your service offerings and pricing packages
                     </p>
                 </div>
                 {isAdmin && (
                     <button
                         onClick={() => setShowCreateModal(true)}
-                        className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl transition-all shadow-xl hover:shadow-purple-500/20 font-bold"
+                        className="flex items-center space-x-3 bg-orange-600 hover:bg-orange-500 text-black px-8 py-4 rounded-2xl transition-all shadow-[0_0_40px_-10px_rgba(255,122,0,0.6)] font-black uppercase text-xs tracking-widest"
                     >
                         <Plus className="h-5 w-5" />
-                        <span>Create Package</span>
+                        <span>Initialize Node</span>
                     </button>
                 )}
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {stats.map((stat, i) => (
-                    <div key={i} className="premium-card bg-white border border-zinc-100 p-6 flex items-center space-x-4">
-                        <div className={cn("p-3 rounded-2xl", stat.bg, stat.color)}>
+                    <div key={i} className="glass-premium p-8 flex items-center space-x-5 border border-white/5 rounded-[2.5rem] shadow-2xl">
+                        <div className={cn("p-4 rounded-2xl bg-black border border-white/5", stat.color)}>
                             <stat.icon className="h-6 w-6" />
                         </div>
                         <div>
-                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                            <p className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.2em] mb-1">
                                 {stat.label}
                             </p>
-                            <p className="text-2xl font-black text-zinc-900">{stat.value}</p>
+                            <p className="text-3xl font-black text-white tracking-widest">{stat.value}</p>
                         </div>
                     </div>
                 ))}
@@ -197,11 +194,11 @@ export default function PackagesPage() {
                         <button
                             onClick={() => setSelectedCategory(category.id)}
                             className={cn(
-                                "px-4 py-2 rounded-xl font-bold text-sm whitespace-nowrap transition-all border",
-                                category.custom ? "pr-7" : "",
+                                "px-5 py-2.5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border",
+                                category.custom ? "pr-8" : "",
                                 selectedCategory === category.id
-                                    ? `${category.bg} ${category.color} border-current shadow-sm`
-                                    : "bg-white text-zinc-500 border-zinc-200 hover:bg-zinc-50"
+                                    ? `bg-orange-600 text-black border-orange-500/50 shadow-[0_0_20px_rgba(255,122,0,0.4)]`
+                                    : "bg-black/40 text-zinc-600 border-white/5 hover:bg-orange-600/5 hover:text-orange-500"
                             )}
                         >
                             {category.name}
@@ -261,14 +258,14 @@ export default function PackagesPage() {
             </div>
 
             {/* Search */}
-            <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
+            <div className="relative group">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-700 group-focus-within:text-orange-500 transition-colors" />
                 <input
                     type="text"
-                    placeholder="Search packages by name or description..."
+                    placeholder="Search system items by identifier or service description..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-white border border-zinc-200 rounded-2xl py-3 pl-12 pr-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-sm text-zinc-900 shadow-sm"
+                    className="w-full bg-[#080808] border border-white/5 rounded-[2rem] py-4.5 pl-14 pr-4 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 placeholder:text-zinc-800 shadow-2xl"
                 />
             </div>
 
@@ -276,19 +273,19 @@ export default function PackagesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
                     [1, 2, 3].map((i) => (
-                        <div key={i} className="h-80 rounded-3xl bg-zinc-50 animate-pulse border border-zinc-100" />
+                        <div key={i} className="h-80 rounded-[2.5rem] bg-zinc-950/40 animate-pulse border border-white/5" />
                     ))
                 ) : filteredPackages.length === 0 ? (
                     <div className="col-span-full py-24 text-center">
                         <div className="max-w-xs mx-auto flex flex-col items-center">
-                            <i className="mb-6 p-6 rounded-full bg-zinc-50 border border-zinc-100">
-                                <PackageIcon className="h-12 w-12 text-zinc-300" />
-                            </i>
-                            <h3 className="text-xl font-bold text-zinc-900">No packages found</h3>
-                            <p className="text-zinc-500 mt-2">
+                            <div className="mb-8 p-10 rounded-full bg-zinc-950 border border-white/5 shadow-2xl">
+                                <PackageIcon className="h-12 w-12 text-orange-600/30" />
+                            </div>
+                            <h3 className="text-xl font-black text-white uppercase tracking-widest">No services identified</h3>
+                            <p className="text-zinc-600 mt-3 font-bold uppercase text-[10px] tracking-widest">
                                 {isAdmin
-                                    ? "Create your first service package to get started"
-                                    : "No packages available at the moment"}
+                                    ? "Create your first service to begin"
+                                    : "No operational items available at this cycle"}
                             </p>
                         </div>
                     </div>
@@ -304,15 +301,13 @@ export default function PackagesPage() {
                         return (
                             <div
                                 key={pkg.id}
-                                className="premium-card card-purple flex flex-col hover:scale-[1.01] transition-all group"
+                                className="glass-obsidian-saturated flex flex-col hover:glow-orange transition-all group p-10 rounded-[2.5rem] border border-orange-500/30 h-full"
                             >
-                                <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center justify-between mb-8">
                                     <span
                                         className={cn(
-                                            "text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border shadow-sm",
-                                            category?.bg,
-                                            category?.color,
-                                            "border-current"
+                                            "text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-lg border",
+                                            "text-orange-600 bg-orange-600/10 border-orange-500/20 shadow-lg"
                                         )}
                                     >
                                         {category?.name || pkg.category}
@@ -324,7 +319,7 @@ export default function PackagesPage() {
                                                     setEditingPackage(pkg);
                                                     setShowCreateModal(true);
                                                 }}
-                                                className="p-2 rounded-xl hover:bg-blue-50 text-blue-600 transition-all"
+                                                className="p-2.5 rounded-xl bg-zinc-950/40 border border-white/5 hover:bg-orange-600/10 text-zinc-700 hover:text-orange-500 transition-all"
                                             >
                                                 <Edit2 className="h-4 w-4" />
                                             </button>
@@ -333,7 +328,7 @@ export default function PackagesPage() {
                                                     setSelectedPackage(pkg);
                                                     setShowDeleteModal(true);
                                                 }}
-                                                className="p-2 rounded-xl hover:bg-red-50 text-red-600 transition-all"
+                                                className="p-2.5 rounded-xl bg-zinc-950/40 border border-white/5 hover:bg-red-500/20 text-zinc-700 hover:text-red-500 transition-all"
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </button>
@@ -341,20 +336,20 @@ export default function PackagesPage() {
                                     )}
                                 </div>
 
-                                <h4 className="text-xl font-black text-zinc-900 group-hover:text-purple-600 transition-colors leading-tight mb-2 tracking-tight">
+                                <h4 className="text-xl font-black text-white group-hover:text-orange-500 transition-colors leading-tight mb-3 tracking-widest uppercase">
                                     {pkg.name}
                                 </h4>
 
-                                <p className="text-sm text-zinc-500 mb-4 leading-relaxed">
+                                <p className="text-[10px] text-zinc-600 mb-6 leading-relaxed font-bold uppercase tracking-widest">
                                     {pkg.description}
                                 </p>
 
                                 {features.length > 0 && (
-                                    <div className="space-y-2 mb-4">
+                                    <div className="space-y-3 mb-8">
                                         {visibleFeatures.map((feature: string, idx: number) => (
-                                            <div key={idx} className="flex items-start space-x-2">
-                                                <Sparkles className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                                                <span className="text-xs text-zinc-600 font-medium">
+                                            <div key={idx} className="flex items-start space-x-3">
+                                                <Sparkles className="h-3.5 w-3.5 text-orange-600 mt-1 flex-shrink-0" />
+                                                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-tight">
                                                     {feature}
                                                 </span>
                                             </div>
@@ -362,23 +357,23 @@ export default function PackagesPage() {
                                         {hasMore && (
                                             <button
                                                 onClick={() => toggleExpand(pkg.id)}
-                                                className="ml-6 text-xs font-black text-purple-600 hover:text-purple-800 transition-colors underline underline-offset-2"
+                                                className="ml-6 text-[9px] font-black text-orange-500 hover:text-orange-400 transition-colors uppercase tracking-[0.2em] border-b border-orange-500/20"
                                             >
                                                 {isExpanded
-                                                    ? "Show less"
-                                                    : `Show all ${features.length} features`}
+                                                    ? "Collapse Details"
+                                                    : `View ${features.length} Features`}
                                             </button>
                                         )}
                                     </div>
                                 )}
 
-                                <div className="mt-auto pt-4 border-t border-zinc-50">
-                                    <div className="flex items-center text-3xl font-black text-zinc-900">
-                                        <DollarSign className="h-6 w-6 mr-0.5 text-green-600" />
+                                <div className="mt-auto pt-6 border-t border-white/5">
+                                    <div className="flex items-center text-3xl font-black text-white tracking-widest">
+                                        <span className="text-lg mr-1 text-orange-600">$</span>
                                         {pkg.price.toLocaleString()}
                                     </div>
-                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mt-1">
-                                        Starting Price
+                                    <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em] mt-2">
+                                        Baseline Credit Requirement
                                     </p>
                                 </div>
                             </div>
@@ -388,18 +383,20 @@ export default function PackagesPage() {
             </div>
 
             {/* Create/Edit Modal */}
-            {showCreateModal && (
-                <PackageModal
-                    isOpen={showCreateModal}
-                    onClose={() => {
-                        setShowCreateModal(false);
-                        setEditingPackage(null);
-                    }}
-                    onSave={fetchPackages}
-                    package_={editingPackage}
-                    allCategories={allCategories.filter(c => c.id !== "ALL")}
-                />
-            )}
+            {
+                showCreateModal && (
+                    <PackageModal
+                        isOpen={showCreateModal}
+                        onClose={() => {
+                            setShowCreateModal(false);
+                            setEditingPackage(null);
+                        }}
+                        onSave={fetchPackages}
+                        package_={editingPackage}
+                        allCategories={allCategories.filter(c => c.id !== "ALL")}
+                    />
+                )
+            }
 
             {/* Delete Confirmation Modal */}
             <DeleteConfirmationModal
@@ -412,7 +409,7 @@ export default function PackagesPage() {
                 itemName={selectedPackage?.name || ""}
                 itemType="Package"
             />
-        </div>
+        </div >
     );
 }
 
@@ -470,40 +467,40 @@ function PackageModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
-                <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                    <h3 className="text-2xl font-black text-zinc-900">
-                        {package_ ? "Edit Package" : "Create New Package"}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xl animate-in fade-in duration-300">
+            <div className="glass-obsidian-saturated rounded-[3rem] shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-300 border border-white/10">
+                <form onSubmit={handleSubmit} className="p-10 space-y-8">
+                    <h3 className="text-2xl font-black text-white uppercase tracking-[0.2em]">
+                        {package_ ? "Reconfigure Node" : "Initialize Service Node"}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                                Package Name
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
+                                Node Identifier
                             </label>
                             <input
                                 type="text"
                                 required
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="e.g., Premium SEO Package"
-                                className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                                placeholder="e.g., SEO_PROTOCOL_ALPHA"
+                                className="w-full bg-black border border-white/5 rounded-2xl py-4 px-6 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase text-xs tracking-widest placeholder:text-zinc-900"
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                                Category
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
+                                System Category
                             </label>
                             <select
                                 required
                                 value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                                className="w-full bg-black border border-white/5 rounded-2xl py-4 px-6 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-orange-500 font-black uppercase text-xs tracking-widest appearance-none"
                             >
                                 {allCategories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
+                                    <option key={cat.id} value={cat.id} className="bg-black text-white">
                                         {cat.name}
                                     </option>
                                 ))}
@@ -511,9 +508,9 @@ function PackageModal({
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Price (PKR)
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
+                            Credit Requirement ($)
                         </label>
                         <input
                             type="number"
@@ -522,50 +519,50 @@ function PackageModal({
                             value={formData.price}
                             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                             placeholder="0.00"
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-bold text-2xl"
+                            className="w-full bg-black border border-white/5 rounded-2xl py-5 px-6 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black text-3xl tracking-widest placeholder:text-zinc-900"
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Description
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
+                            Operational Description
                         </label>
                         <textarea
                             required
                             rows={3}
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            placeholder="Brief description of the package..."
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium resize-none"
+                            placeholder="Brief service specification..."
+                            className="w-full bg-black border border-white/5 rounded-2xl py-4 px-6 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-zinc-500 font-bold uppercase text-[10px] tracking-widest resize-none placeholder:text-zinc-900"
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Features (one per line)
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
+                            Service Features (one per line)
                         </label>
                         <textarea
                             rows={6}
                             value={formData.features}
                             onChange={(e) => setFormData({ ...formData, features: e.target.value })}
-                            placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
-                            className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium resize-none"
+                            placeholder="FEATURE_01&#10;FEATURE_02&#10;FEATURE_03"
+                            className="w-full bg-black border border-white/5 rounded-2xl py-4 px-6 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-orange-500/80 font-black uppercase text-[10px] tracking-[0.2em] resize-none placeholder:text-zinc-900"
                         />
                     </div>
 
-                    <div className="flex items-center space-x-3 pt-4">
+                    <div className="flex items-center space-x-4 pt-6">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-bold py-3 px-6 rounded-xl transition-all"
+                            className="flex-1 bg-black/40 border border-white/5 text-zinc-700 hover:text-orange-500 font-black uppercase text-xs tracking-widest py-4 px-6 rounded-2xl transition-all"
                         >
-                            Cancel
+                            Abort
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg"
+                            className="flex-1 bg-orange-600 hover:bg-orange-500 text-black font-black uppercase text-xs tracking-widest py-4 px-6 rounded-2xl transition-all shadow-[0_0_40px_-10px_rgba(255,122,0,0.6)]"
                         >
-                            {package_ ? "Update Package" : "Create Package"}
+                            {package_ ? "Execute Manual Update" : "Authorize Node Initialization"}
                         </button>
                     </div>
                 </form>

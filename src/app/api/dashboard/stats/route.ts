@@ -65,10 +65,10 @@ export async function GET() {
 
         return NextResponse.json({
             stats: [
-                { name: "Total Leads", value: totalLeads.toString(), change: "+2.5%", icon: "Users", color: "text-blue-600", bg: "bg-blue-100", glow: "card-blue" },
-                { name: "Pending Proposals", value: pendingProposals.toString(), change: "+1.2%", icon: "FileText", color: "text-purple-600", bg: "bg-purple-100", glow: "card-purple" },
-                { name: "Calls Today", value: callsToday.toString(), change: "+0.5%", icon: "PhoneCall", color: "text-green-600", bg: "bg-green-100", glow: "card-green" },
-                { name: "Revenue (Actual)", value: `$${(totalRevenue._sum.value || 0).toLocaleString()}`, change: "+15.3%", icon: "TrendingUp", color: "text-orange-600", bg: "bg-orange-100", glow: "card-blue" },
+                { name: "Total Leads", value: totalLeads.toString(), change: "+2.5%", icon: "Users", color: "text-orange-600", bg: "bg-orange-600/10", glow: "glow-orange" },
+                { name: "Pending Proposals", value: pendingProposals.toString(), change: "+1.2%", icon: "FileText", color: "text-orange-500", bg: "bg-orange-500/10", glow: "glow-orange-dim" },
+                { name: "Calls Today", value: callsToday.toString(), change: "+0.5%", icon: "PhoneCall", color: "text-orange-600", bg: "bg-orange-600/10", glow: "glow-orange" },
+                { name: "Revenue (Actual)", value: `$${(totalRevenue._sum.value || 0).toLocaleString()}`, change: "+15.3%", icon: "TrendingUp", color: "text-orange-400", bg: "bg-orange-400/10", glow: "glow-orange-bright" },
             ],
             recentLeads,
             upcomingCalls,
