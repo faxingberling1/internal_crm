@@ -110,10 +110,24 @@ export async function POST(req: Request) {
         if (type === "CLOCK_IN") {
             // Check if there's already an active shift
             const activeShift = await prisma.attendance.findFirst({
-                where: { employeeId, checkOut: null }
+                where: {
+                    employeeId,
+                    OR: [
+                        { checkOut: null },
+                        { checkOut: { isSet: false } }
+                    ]
+                }
             });
 
-            if (activeShift) return NextResponse.json({ error: "An active shift is already in progress" }, { status: 400 });
+
+            if (activeShift) {
+                console.warn(`[Attendance] Blocked CLOCK_IN for ${employee.name}: Active shift already exists (ID: ${activeShift.id})`);
+                return NextResponse.json({
+                    error: "An active shift is already in progress",
+                    code: "ALREADY_CLOCKED_IN",
+                    activeShiftId: activeShift.id
+                }, { status: 400 });
+            }
 
             const record = await prisma.attendance.create({
                 data: {
@@ -128,17 +142,30 @@ export async function POST(req: Request) {
                 title: "Shift Started",
                 message: `${employee.name} clocked in at ${timeStr}`,
                 type: "ATTENDANCE",
-                link: `/admin/attendance` // Assuming admin attendance page exists
+                link: `/admin/attendance`
             });
 
             return NextResponse.json(record);
         } else if (type === "CLOCK_OUT") {
             const latestRecord = await prisma.attendance.findFirst({
-                where: { employeeId, checkOut: null },
+                where: {
+                    employeeId,
+                    OR: [
+                        { checkOut: null },
+                        { checkOut: { isSet: false } }
+                    ]
+                },
                 orderBy: { checkIn: "desc" },
             });
 
-            if (!latestRecord) return NextResponse.json({ error: "No active shift found" }, { status: 400 });
+
+            if (!latestRecord) {
+                console.warn(`[Attendance] Blocked CLOCK_OUT for ${employee.name}: No active shift found`);
+                return NextResponse.json({
+                    error: "No active shift found to clock out from",
+                    code: "NO_ACTIVE_SHIFT"
+                }, { status: 400 });
+            }
 
             const record = await prisma.attendance.update({
                 where: { id: latestRecord.id },
@@ -159,11 +186,24 @@ export async function POST(req: Request) {
             return NextResponse.json(record);
         } else if (type === "BREAK_START") {
             const latestRecord = await prisma.attendance.findFirst({
-                where: { employeeId, checkOut: null },
+                where: {
+                    employeeId,
+                    OR: [
+                        { checkOut: null },
+                        { checkOut: { isSet: false } }
+                    ]
+                },
                 orderBy: { checkIn: "desc" },
             });
 
-            if (!latestRecord) return NextResponse.json({ error: "No active shift found" }, { status: 400 });
+
+            if (!latestRecord) {
+                console.warn(`[Attendance] Blocked BREAK_START for ${employee.name}: No active shift found`);
+                return NextResponse.json({
+                    error: "You must be clocked in to start a break",
+                    code: "NO_ACTIVE_SHIFT"
+                }, { status: 400 });
+            }
 
             const record = await prisma.attendance.update({
                 where: { id: latestRecord.id },
@@ -183,11 +223,25 @@ export async function POST(req: Request) {
             return NextResponse.json(record);
         } else if (type === "BREAK_END") {
             const latestRecord = await prisma.attendance.findFirst({
-                where: { employeeId, checkOut: null, isOnBreak: true },
+                where: {
+                    employeeId,
+                    isOnBreak: true,
+                    OR: [
+                        { checkOut: null },
+                        { checkOut: { isSet: false } }
+                    ]
+                },
                 orderBy: { checkIn: "desc" },
             });
 
-            if (!latestRecord) return NextResponse.json({ error: "No active break found" }, { status: 400 });
+
+            if (!latestRecord) {
+                console.warn(`[Attendance] Blocked BREAK_END for ${employee.name}: No active break found`);
+                return NextResponse.json({
+                    error: "No active break found to end",
+                    code: "NO_ACTIVE_BREAK"
+                }, { status: 400 });
+            }
 
             const record = await prisma.attendance.update({
                 where: { id: latestRecord.id },
@@ -207,9 +261,20 @@ export async function POST(req: Request) {
             return NextResponse.json(record);
         }
 
-        return NextResponse.json({ error: "Invalid type" }, { status: 400 });
-    } catch (error) {
-        console.error("Attendance Error:", error);
-        return NextResponse.json({ error: "Failed to log attendance" }, { status: 500 });
+        console.error(`[Attendance] Invalid action type received: ${type}`);
+        return NextResponse.json({ error: `Invalid action type: ${type}`, code: "INVALID_TYPE" }, { status: 400 });
+    } catch (error: any) {
+        console.error("CRITICAL Attendance Error:", {
+            message: error.message,
+            stack: error.stack,
+            code: error.code,
+            meta: error.meta
+        });
+        return NextResponse.json({
+            error: "Failed to log attendance due to internal error",
+            details: error.message,
+            code: error.code
+        }, { status: 500 });
     }
 }
+

@@ -1,0 +1,60 @@
+{
+  "id": "698e29f6ecd58312adba079a",
+  "email": "yari@nbt.com",
+  "name": "Yari",
+  "password": "$2b$10$7tu6VPUICG/5te9XIU3weeeqHNLDWGxq0jof1k2QOT1AWYg9V.bJO",
+  "role": "USER",
+  "isApproved": true,
+  "createdAt": "2026-02-12T19:28:53.147Z",
+  "updatedAt": "2026-02-12T19:34:30.935Z",
+  "employee": {
+    "id": "698e29f7ecd58312adba079b",
+    "employeeNumber": "EMP-000001",
+    "name": "Yari",
+    "email": "yari@nbt.com",
+    "position": null,
+    "department": null,
+    "shiftStart": "20:00",
+    "shiftEnd": "05:00",
+    "baseSalary": 35000,
+    "salaryType": "MONTHLY",
+    "userId": "698e29f6ecd58312adba079a",
+    "createdAt": "2026-02-12T19:28:55.195Z",
+    "updatedAt": "2026-02-13T19:04:29.654Z",
+    "attendance": [
+      {
+        "id": "699c7885ec56123798358bbd",
+        "employeeId": "698e29f7ecd58312adba079b",
+        "checkIn": "2026-02-23T15:55:49.688Z",
+        "checkOut": null,
+        "breakStart": null,
+        "breakEnd": null,
+        "isOnBreak": false,
+        "status": "PRESENT",
+        "notes": "Clocked in from premium motivation portal"
+      },
+      {
+        "id": "698f3fa1c5eeafdae8fca1b0",
+        "employeeId": "698e29f7ecd58312adba079b",
+        "checkIn": "2026-02-13T15:13:37.357Z",
+        "checkOut": "2026-02-14T00:00:18.863Z",
+        "breakStart": null,
+        "breakEnd": null,
+        "isOnBreak": false,
+        "status": "PRESENT",
+        "notes": "Clocked in from premium motivation portal"
+      },
+      {
+        "id": "698e2d2f038d2fbf5c90d3ce",
+        "employeeId": "698e29f7ecd58312adba079b",
+        "checkIn": "2026-02-12T19:42:39.618Z",
+        "checkOut": "2026-02-12T23:20:22.551Z",
+        "breakStart": "2026-02-12T19:53:32.006Z",
+        "breakEnd": "2026-02-12T20:17:27.109Z",
+        "isOnBreak": false,
+        "status": "PRESENT",
+        "notes": "Clocked in from premium motivation portal"
+      }
+    ]
+  }
+}

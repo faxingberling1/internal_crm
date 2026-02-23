@@ -78,11 +78,15 @@ export default function AttendancePage() {
                 // Refresh data to sync UI
                 fetchEmployeeData();
             } else {
-                alert(data.error || "Action could not be processed");
+                setError(data.error || "Action could not be processed");
+                // Auto-clear error after 5 seconds
+                setTimeout(() => setError(""), 5000);
             }
         } catch (err) {
-            alert("Network error. Please try again.");
+            setError("Network error. Please try again.");
+            setTimeout(() => setError(""), 5000);
         } finally {
+
             setActionLoading(false);
         }
     };

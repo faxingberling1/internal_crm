@@ -1,0 +1,61 @@
+{
+  "users": [
+    {
+      "email": "yari@nbt.com",
+      "id": "698e29f6ecd58312adba079a",
+      "hasEmployee": true,
+      "employeeName": "Yari",
+      "employeeId": "698e29f7ecd58312adba079b",
+      "userIdMatch": true
+    },
+    {
+      "email": "admin@nbt.com",
+      "id": "698e2ad974e6363e1babe642",
+      "hasEmployee": true,
+      "employeeName": "Admin",
+      "employeeId": "698e2ad974e6363e1babe643",
+      "userIdMatch": true
+    },
+    {
+      "email": "aun@nbt.com",
+      "id": "698e49e0202f6eab4d330c85",
+      "hasEmployee": true,
+      "employeeName": "Aun Raza",
+      "employeeId": "698e49e0202f6eab4d330c86",
+      "userIdMatch": true
+    },
+    {
+      "email": "moiz@nbt.com",
+      "id": "698e604d7de45e02114db996",
+      "hasEmployee": true,
+      "employeeName": "Moiz",
+      "employeeId": "698e604d7de45e02114db997",
+      "userIdMatch": true
+    },
+    {
+      "email": "sahir@nbt.com",
+      "id": "698e608c7de45e02114db998",
+      "hasEmployee": true,
+      "employeeName": "Sahir ",
+      "employeeId": "698e608c7de45e02114db999",
+      "userIdMatch": true
+    },
+    {
+      "email": "Suleman@nbt.com",
+      "id": "698e608e7de45e02114db99a",
+      "hasEmployee": true,
+      "employeeName": "Suleman Salvator",
+      "employeeId": "698e608e7de45e02114db99b",
+      "userIdMatch": true
+    },
+    {
+      "email": "muzammil@nbt.com",
+      "id": "698e6124b4948ebd0e4f3b50",
+      "hasEmployee": true,
+      "employeeName": "Syed Muzammil Ali",
+      "employeeId": "698e6124b4948ebd0e4f3b51",
+      "userIdMatch": true
+    }
+  ],
+  "orphanedEmployees": []
+}
