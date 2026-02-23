@@ -48,6 +48,14 @@ export default function PackagesPage() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
     const [editingPackage, setEditingPackage] = useState<Package | null>(null);
+    const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+
+    const toggleExpand = (id: string) =>
+        setExpandedCards(prev => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
 
     const isAdmin = user?.role === "ADMIN";
 
@@ -188,10 +196,14 @@ export default function PackagesPage() {
                         const category = CATEGORIES.find((c) => c.id === pkg.category);
                         const features = pkg.features ? JSON.parse(pkg.features) : [];
 
+                        const isExpanded = expandedCards.has(pkg.id);
+                        const visibleFeatures = isExpanded ? features : features.slice(0, 4);
+                        const hasMore = features.length > 4;
+
                         return (
                             <div
                                 key={pkg.id}
-                                className="premium-card card-purple flex flex-col h-full hover:scale-[1.02] transition-all group"
+                                className="premium-card card-purple flex flex-col hover:scale-[1.01] transition-all group"
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <span
@@ -232,13 +244,13 @@ export default function PackagesPage() {
                                     {pkg.name}
                                 </h4>
 
-                                <p className="text-sm text-zinc-500 mb-4 leading-relaxed flex-grow">
+                                <p className="text-sm text-zinc-500 mb-4 leading-relaxed">
                                     {pkg.description}
                                 </p>
 
                                 {features.length > 0 && (
-                                    <div className="space-y-2 mb-6">
-                                        {features.slice(0, 4).map((feature: string, idx: number) => (
+                                    <div className="space-y-2 mb-4">
+                                        {visibleFeatures.map((feature: string, idx: number) => (
                                             <div key={idx} className="flex items-start space-x-2">
                                                 <Sparkles className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
                                                 <span className="text-xs text-zinc-600 font-medium">
@@ -246,10 +258,15 @@ export default function PackagesPage() {
                                                 </span>
                                             </div>
                                         ))}
-                                        {features.length > 4 && (
-                                            <p className="text-xs text-zinc-400 font-bold ml-6">
-                                                +{features.length - 4} more features
-                                            </p>
+                                        {hasMore && (
+                                            <button
+                                                onClick={() => toggleExpand(pkg.id)}
+                                                className="ml-6 text-xs font-black text-purple-600 hover:text-purple-800 transition-colors underline underline-offset-2"
+                                            >
+                                                {isExpanded
+                                                    ? "Show less"
+                                                    : `Show all ${features.length} features`}
+                                            </button>
                                         )}
                                     </div>
                                 )}
