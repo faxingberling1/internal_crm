@@ -227,7 +227,7 @@ export default function DocumentsPage() {
                                                     {new Date(doc.createdAt).toLocaleDateString()}
                                                 </span>
                                                 {doc.value && (
-                                                    <><span className="text-zinc-300">•</span><span className="font-bold text-purple-600">${doc.value.toLocaleString()}</span></>
+                                                    <><span className="text-zinc-300">•</span><span className="font-bold text-purple-600">PKR {doc.value.toLocaleString()}</span></>
                                                 )}
                                             </div>
                                         </div>

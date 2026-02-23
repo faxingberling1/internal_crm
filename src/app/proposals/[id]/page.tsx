@@ -303,7 +303,7 @@ export default function ProposalDetailPage() {
                         <div className="text-right">
                             <p className="text-sm text-zinc-500">Total Value</p>
                             <p className="text-3xl font-black" style={{ color: primaryColor }}>
-                                ${proposal.value.toLocaleString()}
+                                PKR {proposal.value.toLocaleString()}
                             </p>
                         </div>
                     </div>
@@ -422,7 +422,7 @@ export default function ProposalDetailPage() {
                                         <div className="text-right ml-6">
                                             <p className="text-sm text-zinc-500">Quantity: {item.quantity}</p>
                                             <p className="text-2xl font-black text-zinc-900">
-                                                ${(item.price * item.quantity).toLocaleString()}
+                                                PKR {(item.price * item.quantity).toLocaleString()}
                                             </p>
                                         </div>
                                     </div>
@@ -443,7 +443,7 @@ export default function ProposalDetailPage() {
 
                         <div className="flex items-center justify-between p-6 bg-zinc-900 rounded-2xl">
                             <span className="text-white font-black text-lg uppercase tracking-wider">Total Investment</span>
-                            <span className="text-white font-black text-3xl">${proposal.value.toLocaleString()}</span>
+                            <span className="text-white font-black text-3xl">PKR {proposal.value.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>

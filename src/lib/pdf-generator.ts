@@ -3,7 +3,7 @@ import { jsPDF } from 'jspdf';
 export interface DocumentData {
     id: string;
     name: string;
-    type: 'PROPOSAL' | 'CUSTOM_PLAN' | 'NDA' | 'AGREEMENT';
+    type: 'PROPOSAL' | 'CUSTOM_PLAN' | 'NDA' | 'AGREEMENT' | 'PAYROLL';
     status: string;
     value?: number;
     content: any; // Flexible JSON for different document types
@@ -99,6 +99,18 @@ export async function generateDocumentPDF(docData: DocumentData): Promise<Blob> 
         return y + (lines.length * fontSize * 0.35 * lineHeight);
     };
 
+    const safeAddImage = (imageData: string, x: number, y: number, w: number, h: number) => {
+        if (!imageData) return;
+        try {
+            // jsPDF addImage(imageData, format, x, y, width, height, alias, compression, rotation)
+            // We omit format to allow auto-detection, as hardcoding 'PNG' caused signature errors
+            doc.addImage(imageData, x, y, w, h, undefined, 'FAST');
+        } catch (e) {
+            console.warn('Could not add image to PDF:', e);
+            // Skip image if invalid or wrong signature
+        }
+    };
+
     const checkNewPage = (requiredSpace: number) => {
         if (yPosition + requiredSpace > pageHeight - 35) {
             doc.addPage();
@@ -123,191 +135,404 @@ export async function generateDocumentPDF(docData: DocumentData): Promise<Blob> 
 
     const drawSectionHeader = (title: string, yPos: number, isLegal: boolean = false) => {
         if (isLegal) {
-            doc.setFontSize(11);
+            doc.setFontSize(10);
             doc.setFont('times', 'bold');
             doc.setTextColor(br, bg, bb);
-            doc.text(title.toUpperCase(), margin, yPos);
-            doc.setDrawColor(br, bg, bb);
-            doc.setLineWidth(0.5);
-            doc.line(margin, yPos + 2, margin + contentWidth / 4, yPos + 2);
+            doc.text(title.toUpperCase(), margin, yPos, { charSpace: 1 });
+
+            doc.setDrawColor(240, 240, 245);
             doc.setLineWidth(0.2);
+            doc.line(margin, yPos + 3, margin + contentWidth, yPos + 3);
             return yPos + 12;
         }
 
+        // Professional Modern Header
         doc.setFillColor(br, bg, bb);
-        doc.rect(margin, yPos - 5, 2, 8, 'F');
-        doc.setFontSize(16);
+        doc.rect(margin, yPos - 6, 3, 10, 'F');
+
+        doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
+        doc.setTextColor(accentColor);
+        doc.text('SECTION', margin + 7, yPos - 3, { charSpace: 1 });
+
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'black');
         doc.setTextColor(30, 30, 30);
-        doc.text(title, margin + 6, yPos);
-        return yPos + 12;
+        doc.text(title.toUpperCase(), margin + 7, yPos + 5);
+
+        return yPos + 18;
+    };
+
+    const drawShadowedRect = (x: number, y: number, w: number, h: number, r: number = 4) => {
+        doc.setFillColor(245, 245, 247); // Subtle shadow color
+        doc.roundedRect(x + 0.5, y + 0.5, w, h, r, r, 'F');
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(x, y, w, h, r, r, 'F');
+        doc.setDrawColor(240, 240, 245);
+        doc.roundedRect(x, y, w, h, r, r, 'D');
+    };
+
+    const drawPillBadge = (text: string, x: number, y: number, color: [number, number, number]) => {
+        const paddingH = 4;
+        const paddingV = 2;
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        const textWidth = doc.getTextWidth(text);
+        const w = textWidth + (paddingH * 2);
+        const h = 6;
+
+        doc.setFillColor(...color);
+        doc.roundedRect(x, y - 4, w, h, 3, 3, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.text(text, x + paddingH, y + 0.5);
+        return x + w + 4;
+    };
+
+    const drawDecorativeDots = (x: number, y: number, w: number, h: number, spacing: number = 5) => {
+        doc.setFillColor(200, 200, 200); // Use a light grey instead of alpha
+        for (let ix = 0; ix < w; ix += spacing) {
+            for (let iy = 0; iy < h; iy += spacing) {
+                doc.circle(x + ix, y + iy, 0.3, 'F');
+            }
+        }
+    };
+
+    const drawGridLines = (x: number, y: number, w: number, h: number) => {
+        doc.setDrawColor(220, 220, 220); // Use a light grey instead of alpha
+        doc.setLineWidth(0.1);
+        for (let ix = 0; ix <= w; ix += 20) {
+            doc.line(x + ix, y, x + ix, y + h);
+        }
+        for (let iy = 0; iy <= h; iy += 20) {
+            doc.line(x, y + iy, x + w, y + iy);
+        }
     };
 
     // ==================== COVER PAGE ====================
-    if (docData.type === 'PROPOSAL' || docData.type === 'CUSTOM_PLAN') {
+    if (docData.type === 'PAYROLL') {
+        // High-end Payroll Slip Layout
+        // No cover page, starts immediately with a premium header
+        yPosition = 0;
+    } else if (docData.type === 'PROPOSAL' || docData.type === 'CUSTOM_PLAN') {
         const brandName = docData.brandName || 'PROVIDER';
 
-        // Gradient background for cover
-        drawGradientRect(0, 0, pageWidth, pageHeight, [r, g, b], [r2, g2, b2]);
+        // NEXT LEVEL COVER DESIGN
+        // Dark Navy/Brand background with aesthetic elements
+        drawGradientRect(0, 0, pageWidth, pageHeight, [r, g, b], [30, 30, 45]);
 
-        // Brand Name / Logo
-        yPosition = 50;
+        // Decorative Elements
+        drawGridLines(0, 0, pageWidth, pageHeight);
+        drawDecorativeDots(10, 10, 60, 60, 8);
+
+        // Circular Accent 
+        doc.setFillColor(255, 255, 255);
+        doc.circle(pageWidth, 0, 100, 'F');
+
+        // Top Branding
+        yPosition = 30;
         if (docData.brandLogo) {
-            const logoSize = 50;
-            const logoX = (pageWidth - logoSize) / 2;
-            doc.addImage(docData.brandLogo, 'PNG', logoX, yPosition, logoSize, logoSize);
-            yPosition += logoSize + 10;
+            safeAddImage(docData.brandLogo, margin, yPosition, 35, 12);
         } else {
-            doc.setFontSize(40);
-            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
-            doc.text(brandName, pageWidth / 2, yPosition, { align: 'center' });
-            yPosition += 20;
+            doc.setTextColor(255, 255, 255);
+            doc.text(brandName, margin, yPosition + 8);
         }
 
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(255, 255, 255);
-        doc.text(docData.type === 'CUSTOM_PLAN' ? 'PROJECT STRATEGY & ROADMAP' : 'PROFESSIONAL SERVICES PROPOSAL', pageWidth / 2, yPosition, { align: 'center' });
+        // Main Title Block
+        yPosition = 100;
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(accentColor);
+        doc.text(docData.type === 'CUSTOM_PLAN' ? 'PROJECT STRATEGY & ROADMAP' : 'PROFESSIONAL SERVICES PROPOSAL', margin, yPosition, { charSpace: 2 });
 
+        yPosition += 15;
+        doc.setFontSize(48);
+        doc.setFont('helvetica', 'black');
+        doc.setTextColor(255, 255, 255);
+        const titleLines = doc.splitTextToSize(docData.name.toUpperCase(), contentWidth - 40);
+        doc.text(titleLines, margin, yPosition);
+
+        yPosition += (titleLines.length * 15);
+
+        // Accent Line
+        doc.setFillColor(accentColor);
+        doc.rect(margin, yPosition + 10, 40, 2, 'F');
+
+        // Dual Branding Footer Area
         yPosition = pageHeight - 80;
         doc.setFillColor(255, 255, 255);
-        doc.roundedRect(margin, yPosition, contentWidth, 50, 8, 8, 'F');
-        doc.setFillColor(br, bg, bb);
-        doc.roundedRect(margin, yPosition, 6, 50, 3, 3, 'F');
+        doc.roundedRect(margin, yPosition, contentWidth, 55, 12, 12, 'F');
 
-        yPosition += 20;
-        doc.setFontSize(22);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(30, 30, 30);
-        doc.text(docData.name, margin + 15, yPosition);
-
-        yPosition = pageHeight - 150; // Adjust position for client info
-        doc.setFillColor(lr, lg, lb);
-        doc.roundedRect(margin, yPosition, contentWidth, 50, 8, 8, 'F');
-        yPosition += 15;
+        // Preparer Side (Self)
+        let footerY = yPosition + 15;
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(br, bg, bb);
-        doc.text('PREPARED FOR', margin + 10, yPosition);
-        yPosition += 10;
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(150, 150, 160);
+        doc.text('PREPARED BY', margin + 15, footerY);
+
+        footerY += 10;
+        doc.setFontSize(14);
         doc.setTextColor(30, 30, 30);
-        doc.text(docData.client?.name || docData.lead?.name || 'Valued Client', margin + 10, yPosition);
+        doc.text(brandName, margin + 15, footerY);
+
+        // Visual Divider
+        doc.setDrawColor(240, 240, 245);
+        doc.line(pageWidth / 2, yPosition + 12, pageWidth / 2, yPosition + 42);
+
+        // Client Side
+        footerY = yPosition + 15;
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(r, g, b); // Use brand primary for client label
+        doc.text('INTENDED FOR', pageWidth / 2 + 15, footerY);
+
+        footerY += 10;
+        doc.setFontSize(14);
+        doc.setTextColor(30, 30, 30);
+        const clientName = docData.client?.name || docData.lead?.name || 'Valued Client';
+        doc.text(clientName, pageWidth / 2 + 15, footerY);
+
+        if (docData.clientLogo) {
+            // Add client logo if present
+            safeAddImage(docData.clientLogo, pageWidth - margin - 45, yPosition + 12, 30, 30);
+        }
 
     } else if (docData.type === 'NDA' || docData.type === 'AGREEMENT') {
-        // Legal Cover - High-end Treatment
-        drawGradientRect(0, 0, pageWidth, 40, [r, g, b], [r2, g2, b2]);
+        const brandName = docData.brandName || 'PROVIDER';
+
+        // Legal Cover - High-end Architectural Treatment
+        drawGradientRect(0, 0, pageWidth, 60, [r, g, b], [30, 30, 45]);
+        drawGridLines(0, 0, pageWidth, 60);
+
+        // Header Logos on Legal
+        if (docData.brandLogo) {
+            safeAddImage(docData.brandLogo, margin, 20, 30, 10);
+        }
+
+        if (docData.clientLogo) {
+            safeAddImage(docData.clientLogo, pageWidth - margin - 30, 20, 30, 10);
+        }
 
         // Confidential Designation
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(8);
+        doc.setFontSize(7);
         doc.setTextColor(255, 255, 255);
-        doc.text('PRIVATE & CONFIDENTIAL', pageWidth / 2, 25, { align: 'center', charSpace: 2 });
+        doc.text('LEGALLY BINDING DOCUMENT • PRIVATE & CONFIDENTIAL', pageWidth / 2, 45, { align: 'center', charSpace: 2 });
 
-        yPosition = 90;
+        yPosition = 100;
         doc.setFont('times', 'bold');
-        doc.setFontSize(32);
+        doc.setDrawColor(br, bg, bb);
+        doc.setLineWidth(1);
+        doc.line(margin, yPosition - 10, margin + 20, yPosition - 10);
+
+        doc.setFontSize(36);
         doc.setTextColor(30, 30, 30);
-        doc.text(docData.type === 'NDA' ? 'NON-DISCLOSURE\nAGREEMENT' : 'SERVICE\nAGREEMENT', margin, yPosition);
+        const legalTitle = docData.type === 'NDA' ? 'NON-DISCLOSURE\nAGREEMENT' : 'PROFESSIONAL SERVICE\nAGREEMENT';
+        doc.text(legalTitle, margin, yPosition);
 
         yPosition += 45;
-        doc.setFontSize(14);
+        doc.setFontSize(12);
         doc.setFont('times', 'italic');
-        doc.setTextColor(100, 100, 100);
-        doc.text(docData.name, margin, yPosition);
+        doc.setTextColor(120, 120, 130);
+        doc.text(`Reference: ${docData.name}`, margin, yPosition);
 
+        // Party Breakdown Block
         yPosition += 40;
-        doc.setFontSize(9);
-        doc.setFont('times', 'bold');
-        doc.setTextColor(br, bg, bb);
-        doc.text('BETWEEN', margin, yPosition);
+        doc.setFillColor(250, 250, 252);
+        doc.roundedRect(margin, yPosition, contentWidth, 60, 8, 8, 'F');
 
-        yPosition += 15;
-        const parties = docData.content.parties || [];
-        if (parties.length >= 2) {
-            const brandName = docData.brandName || 'PROVIDER';
-            doc.setFontSize(14);
-            doc.setTextColor(30, 30, 30);
-            doc.text(brandName, margin, yPosition);
-
-            yPosition += 10;
-            doc.setFont('times', 'italic');
-            doc.setFontSize(10);
-            doc.setTextColor(150, 150, 150);
-            doc.text('AND', margin, yPosition);
-
-            yPosition += 10;
-            doc.setFont('times', 'bold');
-            doc.setFontSize(14);
-            doc.setTextColor(30, 30, 30);
-            doc.text(parties[1].name || (docData.client?.name || docData.lead?.name || 'Client'), margin, yPosition);
-        }
-
-        yPosition = 240;
-        doc.setFont('times', 'normal');
-        doc.setFontSize(10);
-        doc.text(`EFFECTIVE DATE: ${docData.content.effectiveDate || new Date(docData.createdAt).toLocaleDateString()}`, margin, yPosition);
-        doc.text(`DOCUMENT ID: ${docData.id.slice(-8).toUpperCase()}`, margin, yPosition + 6);
-    } else {
-        // Proposal/Plan Style Cover
-        if (hasClientBranding) {
-            drawGradientRect(0, 0, pageWidth / 2, 100, [r, g, b], [br, bg, bb]);
-            drawGradientRect(pageWidth / 2, 0, pageWidth / 2, 100, [br, bg, bb], [cr, cg, cb]);
-        } else {
-            drawGradientRect(0, 0, pageWidth, 100, [r, g, b], [r2, g2, b2]);
-        }
-
-        yPosition = 40;
-        if (docData.brandLogo || docData.clientLogo) {
-            const logoSize = 35;
-            if (docData.brandLogo) doc.addImage(docData.brandLogo, 'PNG', margin + 5, yPosition - 15, logoSize, logoSize);
-            if (docData.clientLogo) doc.addImage(docData.clientLogo, 'PNG', pageWidth - margin - 40, yPosition - 15, logoSize, logoSize);
-            yPosition += 45;
-        } else {
-            doc.setFontSize(42);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(255, 255, 255);
-            doc.text(docData.brandName || 'PROVIDER', pageWidth / 2, yPosition, { align: 'center' });
-            yPosition += 15;
-        }
-
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(255, 255, 255);
-        doc.text(docData.type === 'CUSTOM_PLAN' ? 'PROJECT STRATEGY & ROADMAP' : 'PROFESSIONAL SERVICES PROPOSAL', pageWidth / 2, yPosition, { align: 'center' });
-
-        yPosition = 120;
-        doc.setFillColor(255, 255, 255);
-        doc.roundedRect(margin, yPosition, contentWidth, 50, 8, 8, 'F');
-        doc.setFillColor(br, bg, bb);
-        doc.roundedRect(margin, yPosition, 6, 50, 3, 3, 'F');
-
-        yPosition += 20;
-        doc.setFontSize(22);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(30, 30, 30);
-        doc.text(docData.name, margin + 15, yPosition);
-
-        yPosition = 190;
-        doc.setFillColor(lr, lg, lb);
-        doc.roundedRect(margin, yPosition, contentWidth, 50, 8, 8, 'F');
-        yPosition += 15;
+        let innerY = yPosition + 15;
         doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(br, bg, bb);
-        doc.text('PREPARED FOR', margin + 10, yPosition);
-        yPosition += 10;
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
+        doc.setFont('times', 'bold');
+        doc.setTextColor(150, 150, 160);
+        doc.text('BETWEEN THE PARTIES', margin + 10, innerY, { charSpace: 1 });
+
+        innerY += 12;
+        doc.setFontSize(12);
         doc.setTextColor(30, 30, 30);
-        doc.text(docData.client?.name || docData.lead?.name || 'Valued Client', margin + 10, yPosition);
+        doc.text(brandName.toUpperCase(), margin + 10, innerY);
+        doc.setFontSize(9);
+        doc.setFont('times', 'italic');
+        doc.text('(THE DISCLOSING PARTY / PROVIDER)', margin + 10, innerY + 5);
+
+        innerY += 18;
+        doc.setFontSize(12);
+        doc.setFont('times', 'bold');
+        doc.setTextColor(30, 30, 30);
+        const clientName = (docData.content.parties?.[1]?.name) || (docData.client?.name || docData.lead?.name || 'Recpient');
+        doc.text(clientName.toUpperCase(), margin + 10, innerY);
+        doc.setFontSize(9);
+        doc.setFont('times', 'italic');
+        doc.text('(THE RECEIVING PARTY / CLIENT)', margin + 10, innerY + 5);
+
+        yPosition = 245;
+        doc.setFont('times', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 160);
+        doc.text(`EFFECTIVE DATE: ${docData.content.effectiveDate || new Date(docData.createdAt).toLocaleDateString()}`, margin, yPosition);
+        doc.text(`DOCUMENT ID: ${docData.id.toUpperCase()}`, margin, yPosition + 5);
+        doc.text(`SECURITY VERIFIED: ${docData.id.slice(0, 8).toUpperCase()}`, margin, yPosition + 10);
     }
 
     // ==================== CONTENT PAGES ====================
-    doc.addPage();
-    yPosition = margin + 15;
+    if (docData.type === 'PAYROLL') {
+        const content = docData.content;
+        const brandName = docData.brandName || 'OFFICIAL PAYSLIP';
+
+        // Header Gradient Bar
+        drawGradientRect(0, 0, pageWidth, 40, [r, g, b], [r2, g2, b2]);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor(255, 255, 255);
+        doc.text('CONFIDENTIAL SALARY STATEMENT', margin, 25);
+        doc.setFontSize(8);
+        doc.text(new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase(), pageWidth - margin, 25, { align: 'right' });
+
+        yPosition = 60;
+
+        // Employee Info Card
+        drawShadowedRect(margin, yPosition, contentWidth, 45, 6);
+        let innerY = yPosition + 12;
+
+        // initials avatar
+        const initials = ((content.employeeName || 'E').split(' ').map((n: any) => n[0]).join('')).toUpperCase().slice(0, 2);
+        doc.setFillColor(lr, lg, lb);
+        doc.circle(margin + 15, innerY + 5, 10, 'F');
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(r, g, b);
+        doc.text(initials, margin + 15, innerY + 9, { align: 'center' });
+
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'black');
+        doc.setTextColor(30, 30, 30);
+        doc.text(content.employeeName || 'Employee', margin + 30, innerY + 5);
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(120, 120, 130);
+        doc.text(content.designation || 'Team Member', margin + 30, innerY + 12);
+
+        // Status Badge
+        drawPillBadge('VERIFIED', margin + 30 + doc.getTextWidth(content.designation || 'Team Member') + 10, innerY + 11.5, [14, 165, 233]);
+
+        // Right side info
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(150, 150, 160);
+        doc.text('PAYMENT PERIOD', pageWidth - margin - 15, innerY + 2, { align: 'right' });
+        doc.setFontSize(11);
+        doc.setTextColor(30, 30, 30);
+        doc.text(`${content.month} ${content.year}`, pageWidth - margin - 15, innerY + 10, { align: 'right' });
+
+        yPosition += 60;
+
+        // Stats Row (Attendance & Hours)
+        const statWidth = (contentWidth - 20) / 3;
+        const stats = [
+            { label: 'WORKED', value: `${content.attendance?.presents || 0} Days`, icon: '📅' },
+            { label: 'ABSENCES', value: `${content.attendance?.absents || 0} Days`, icon: '🚫' },
+            { label: 'TOTAL HOURS', value: `${content.attendance?.totalHours || 0} hrs`, icon: '⏱️' }
+        ];
+
+        stats.forEach((stat, i) => {
+            const x = margin + (i * (statWidth + 10));
+            drawShadowedRect(x, yPosition, statWidth, 25, 4);
+            doc.setFontSize(7);
+            doc.setFont('helvetica', 'black');
+            doc.setTextColor(160, 160, 170);
+            doc.text(stat.label, x + 5, yPosition + 8);
+            doc.setFontSize(12);
+            doc.setTextColor(30, 30, 30);
+            doc.text(stat.value, x + 5, yPosition + 18);
+        });
+
+        yPosition += 40;
+
+        // Earnings & Deductions Table
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'black');
+        doc.setTextColor(30, 30, 30);
+        doc.text('BREAKDOWN', margin, yPosition);
+        yPosition += 10;
+
+        // Custom stylized table
+        const col1 = margin;
+        const col2 = margin + (contentWidth * 0.7);
+        const rowH = 10;
+
+        // Table Header
+        doc.setFillColor(250, 250, 252);
+        doc.rect(margin, yPosition, contentWidth, rowH, 'F');
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(120, 120, 130);
+        doc.text('DESCRIPTION', col1 + 5, yPosition + 6.5);
+        doc.text('AMOUNT (PKR)', pageWidth - margin - 5, yPosition + 6.5, { align: 'right' });
+        yPosition += rowH;
+
+        const items = [
+            { label: 'Base Salary', value: content.baseSalary, type: 'EARNING' },
+            { label: 'Performance Bonus', value: content.bonus, type: 'EARNING' },
+            { label: 'Commission', value: content.commission, type: 'EARNING' },
+            { label: 'Adjustments / Deductions', value: -content.deductions, type: 'DEDUCTION' }
+        ].filter(item => item.value !== 0);
+
+        items.forEach((item, i) => {
+            doc.setDrawColor(245, 245, 247);
+            doc.line(margin, yPosition, margin + contentWidth, yPosition);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', i === 0 ? 'bold' : 'normal');
+            doc.setTextColor(30, 30, 30);
+            doc.text(item.label, col1 + 5, yPosition + 6.5);
+
+            if (item.type === 'DEDUCTION') doc.setTextColor(220, 38, 38);
+            doc.text(`${item.value > 0 ? '+' : ''}${item.value.toLocaleString()}`, pageWidth - margin - 5, yPosition + 6.5, { align: 'right' });
+            yPosition += rowH;
+        });
+
+        // Net Salary Box
+        yPosition += 5;
+        drawGradientRect(margin, yPosition, contentWidth, 20, [r, g, b], [r2, g2, b2]);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text('NET DISBURSEMENT', margin + 10, yPosition + 12);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'black');
+        doc.text(`PKR ${content.netSalary.toLocaleString()}`, pageWidth - margin - 10, yPosition + 13, { align: 'right' });
+
+        yPosition += 40;
+
+        // Signature area
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'black');
+        doc.setTextColor(30, 30, 30);
+        doc.text('AUTHORSATION', margin, yPosition);
+        doc.line(margin, yPosition + 2, margin + 30, yPosition + 2);
+
+        yPosition += 20;
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(24);
+        doc.setTextColor(br, bg, bb);
+        doc.text(brandName, margin, yPosition);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(150, 150, 160);
+        doc.text('DIGITALLY VERIFIED BY FINANCE DEPT', margin, yPosition + 8);
+
+        // Watermark / Aesthetic background element
+        doc.setTextColor(245, 245, 247);
+        doc.setFontSize(80);
+        doc.setFont('helvetica', 'black');
+        doc.text('PAID', pageWidth / 2, pageHeight / 2 + 50, { align: 'center', angle: 45 });
+
+    } else {
+        doc.addPage();
+        yPosition = margin + 15;
+    }
 
     if (docData.type === 'NDA' || docData.type === 'AGREEMENT') {
         // LEGAL LAYOUT (Serif, clauses)

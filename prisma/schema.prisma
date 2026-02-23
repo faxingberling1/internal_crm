@@ -29,11 +29,47 @@ model Employee {
   department  String?
   shiftStart  String?      // Format: "HH:mm" (Karachi Time)
   shiftEnd    String?      // Format: "HH:mm" (Karachi Time)
+  
+  // Salary Configuration
+  baseSalary  Float?       @default(0)
+  salaryType  String       @default("MONTHLY") // MONTHLY, HOURLY
+  
   userId      String?      @unique @db.ObjectId
   user        User?        @relation(fields: [userId], references: [id])
   attendance  Attendance[]
+  payrolls    Payroll[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+}
+
+model Payroll {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  employeeId   String   @db.ObjectId
+  employee     Employee @relation(fields: [employeeId], references: [id])
+  
+  periodMonth  Int
+  periodYear   Int
+  
+  baseSalary   Float    // Snapshot at time of generation
+  totalHours   Float    @default(0)
+  presents     Int      @default(0)
+  absents      Int      @default(0)
+  lates        Int      @default(0)
+  
+  bonus        Float    @default(0) // Add-ons
+  commission   Float    @default(0)
+  deductions   Float    @default(0)
+  netSalary    Float
+  
+  status       String   @default("GENERATED") // GENERATED, FINALIZED, PAID, VOID
+  isShared     Boolean  @default(false)
+  paidAt       DateTime?
+  
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([employeeId, periodMonth, periodYear])
 }
 
 model Attendance {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Send, FileText, Users, DollarSign, Scale, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Save, Send, FileText, Users, DollarSign, Scale, AlertTriangle, Palette, ImageIcon } from 'lucide-react';
 import { TemplateSelector } from '@/components/proposal/template-selector';
 import { DynamicList } from '@/components/proposal/dynamic-list';
 
@@ -46,6 +46,46 @@ export default function CreateAgreementPage() {
         additionalClauses: [] as string[],
     });
 
+    const [branding, setBranding] = useState({
+        brandName: '',
+        brandLogo: '',
+        brandColors: {
+            primary: '#9333ea',
+            secondary: '#6366f1',
+            accent: '#8b5cf6',
+        },
+        clientLogo: '',
+        clientBrandColors: {
+            primary: '#64748b',
+            secondary: '#94a3b8',
+            accent: '#cbd5e1',
+        }
+    });
+
+    useState(() => {
+        const fetchBranding = async () => {
+            try {
+                const res = await fetch('/api/settings/branding');
+                const data = await res.json();
+                if (data) {
+                    setBranding(prev => ({
+                        ...prev,
+                        brandName: data.companyName || '',
+                        brandLogo: data.logoUrl || '',
+                        brandColors: {
+                            primary: data.primaryColor || '#9333ea',
+                            secondary: data.secondaryColor || '#6366f1',
+                            accent: data.accentColor || '#8b5cf6',
+                        }
+                    }));
+                }
+            } catch (error) {
+                console.error("Failed to fetch branding:", error);
+            }
+        };
+        fetchBranding();
+    });
+
     const handleTemplateSelect = (template: Template | null) => {
         setSelectedTemplate(template);
         if (template) {
@@ -84,6 +124,11 @@ export default function CreateAgreementPage() {
                     name: formData.name,
                     status,
                     content: formData,
+                    brandName: branding.brandName,
+                    brandLogo: branding.brandLogo,
+                    brandColors: branding.brandColors,
+                    clientLogo: branding.clientLogo,
+                    clientBrandColors: branding.clientBrandColors,
                     templateId: selectedTemplate?.id,
                     validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year
                 }),
@@ -210,6 +255,102 @@ export default function CreateAgreementPage() {
                         </div>
                     </div>
 
+                    {/* Branding & Visuals */}
+                    <div className="bg-white rounded-2xl border border-zinc-200 p-6">
+                        <div className="flex items-center space-x-2 mb-6">
+                            <Palette className="h-5 w-5 text-purple-600" />
+                            <h2 className="text-xl font-black text-zinc-900">Branding & Visuals</h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Provider Branding */}
+                            <div className="space-y-4">
+                                <p className="text-[10px] font-black text-purple-600 uppercase tracking-widest bg-purple-50 px-2 py-1 rounded inline-block">Provider Identity</p>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
+                                        Company Logo URL
+                                    </label>
+                                    <div className="flex gap-3">
+                                        <input
+                                            type="text"
+                                            value={branding.brandLogo}
+                                            onChange={(e) => setBranding({ ...branding, brandLogo: e.target.value })}
+                                            placeholder="https://example.com/logo.png"
+                                            className="flex-1 bg-white border border-zinc-200 rounded-xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none"
+                                        />
+                                        {branding.brandLogo && (
+                                            <div className="h-12 w-12 rounded-lg border border-zinc-200 bg-zinc-50 flex items-center justify-center overflow-hidden shrink-0">
+                                                <img src={branding.brandLogo} alt="Logo" className="h-full w-full object-contain" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {(['primary', 'secondary', 'accent'] as const).map((colorKey) => (
+                                        <div key={colorKey} className="space-y-1">
+                                            <div className="h-8 w-full rounded-lg border border-zinc-200 shadow-sm relative overflow-hidden">
+                                                <div className="absolute inset-0" style={{ backgroundColor: branding.brandColors[colorKey] }} />
+                                                <input
+                                                    type="color"
+                                                    value={branding.brandColors[colorKey]}
+                                                    onChange={(e) => setBranding({
+                                                        ...branding,
+                                                        brandColors: { ...branding.brandColors, [colorKey]: e.target.value }
+                                                    })}
+                                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                                />
+                                            </div>
+                                            <p className="text-[8px] font-bold text-zinc-400 text-center uppercase">{colorKey}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Client Branding */}
+                            <div className="space-y-4">
+                                <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest bg-zinc-100 px-2 py-1 rounded inline-block">Client Identity (Optional)</p>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
+                                        Client Logo URL
+                                    </label>
+                                    <div className="flex gap-3">
+                                        <input
+                                            type="text"
+                                            value={branding.clientLogo || ''}
+                                            onChange={(e) => setBranding({ ...branding, clientLogo: e.target.value })}
+                                            placeholder="https://client.com/logo.png"
+                                            className="flex-1 bg-white border border-zinc-200 rounded-xl py-3 px-4 focus:ring-4 focus:ring-zinc-500/10 transition-all outline-none"
+                                        />
+                                        {branding.clientLogo && (
+                                            <div className="h-12 w-12 rounded-lg border border-zinc-200 bg-zinc-50 flex items-center justify-center overflow-hidden shrink-0">
+                                                <img src={branding.clientLogo} alt="Client Logo" className="h-full w-full object-contain" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {(['primary', 'secondary', 'accent'] as const).map((colorKey) => (
+                                        <div key={colorKey} className="space-y-1">
+                                            <div className="h-8 w-full rounded-lg border border-zinc-200 shadow-sm relative overflow-hidden">
+                                                <div className="absolute inset-0" style={{ backgroundColor: branding.clientBrandColors[colorKey] }} />
+                                                <input
+                                                    type="color"
+                                                    value={branding.clientBrandColors[colorKey]}
+                                                    onChange={(e) => setBranding({
+                                                        ...branding,
+                                                        clientBrandColors: { ...branding.clientBrandColors, [colorKey]: e.target.value }
+                                                    })}
+                                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                                />
+                                            </div>
+                                            <p className="text-[8px] font-bold text-zinc-400 text-center uppercase">{colorKey}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Parties */}
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6">
                         <div className="flex items-center space-x-2 mb-4">
@@ -291,7 +432,7 @@ export default function CreateAgreementPage() {
                                     rows={3}
                                     value={formData.compensation}
                                     onChange={(e) => setFormData({ ...formData, compensation: e.target.value })}
-                                    placeholder="e.g., $5,000 per month retainer"
+                                    placeholder="e.g., PKR 5,000 per month retainer"
                                     className="w-full mt-2 bg-white border border-zinc-200 rounded-xl py-3 px-4 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none resize-none"
                                 />
                             </div>

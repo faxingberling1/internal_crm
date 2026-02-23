@@ -36,8 +36,8 @@ export default function ProposalsPage() {
 
     const stats = [
         { label: "Active Proposals", value: proposals.length, icon: FileText, color: "text-purple-600", bg: "bg-purple-100" },
-        { label: "Total Pipeline", value: `$${totalValue.toLocaleString()}`, icon: TrendingUp, color: "text-blue-600", bg: "bg-blue-100" },
-        { label: "Pending Revenue", value: `$${pendingValue.toLocaleString()}`, icon: DollarSign, color: "text-green-600", bg: "bg-green-100" },
+        { label: "Total Pipeline", value: `PKR ${totalValue.toLocaleString()}`, icon: TrendingUp, color: "text-blue-600", bg: "bg-blue-100" },
+        { label: "Pending Revenue", value: `PKR ${pendingValue.toLocaleString()}`, icon: DollarSign, color: "text-green-600", bg: "bg-green-100" },
     ];
 
     return (

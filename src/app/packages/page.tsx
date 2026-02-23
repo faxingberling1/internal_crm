@@ -392,7 +392,7 @@ function PackageModal({
 
                     <div className="space-y-2">
                         <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                            Price ($)
+                            Price (PKR)
                         </label>
                         <input
                             type="number"

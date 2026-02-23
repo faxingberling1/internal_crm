@@ -43,6 +43,8 @@ export default function DocumentDetailPage() {
     const [restoring, setRestoring] = useState(false);
     const [viewMode, setViewMode] = useState<'DETAILS' | 'PREVIEW'>('DETAILS');
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const lastGeneratedRef = useState<string>("");
+    const isGeneratingRef = useState<boolean>(false);
 
     useEffect(() => {
         if (params.id) {
@@ -52,10 +54,13 @@ export default function DocumentDetailPage() {
     }, [params.id]);
 
     useEffect(() => {
-        if (document) {
-            generatePreview();
+        if (document && viewMode === 'PREVIEW') {
+            const docKey = JSON.stringify({ id: document.id, updatedAt: document.updatedAt, status: document.status });
+            if (docKey !== lastGeneratedRef[0]) {
+                generatePreview();
+            }
         }
-    }, [document]);
+    }, [document, viewMode]);
 
     const fetchDocument = async () => {
         try {
@@ -90,14 +95,21 @@ export default function DocumentDetailPage() {
     };
 
     const generatePreview = async () => {
-        if (!document) return;
+        if (!document || isGeneratingRef[0]) return;
+
+        const docKey = JSON.stringify({ id: document.id, updatedAt: document.updatedAt, status: document.status });
+        isGeneratingRef[1](true);
+
         try {
             const pdfBlob = await generateDocumentPDF(document);
             if (previewUrl) URL.revokeObjectURL(previewUrl);
             const url = URL.createObjectURL(pdfBlob);
             setPreviewUrl(url);
+            lastGeneratedRef[1](docKey);
         } catch (error) {
             console.error("Failed to generate preview:", error);
+        } finally {
+            isGeneratingRef[1](false);
         }
     };
 
@@ -317,7 +329,7 @@ export default function DocumentDetailPage() {
                                     {document.value && (
                                         <div className="text-right">
                                             <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest leading-none mb-1">Value</p>
-                                            <p className="text-3xl font-black text-zinc-900">${document.value.toLocaleString()}</p>
+                                            <p className="text-3xl font-black text-zinc-900">PKR {document.value.toLocaleString()}</p>
                                         </div>
                                     )}
                                 </div>
@@ -514,7 +526,7 @@ export default function DocumentDetailPage() {
                                                             <p className="text-zinc-400 text-sm mt-1">{pkg.description}</p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <p className="text-2xl font-black">${pkg.price.toLocaleString()}</p>
+                                                            <p className="text-2xl font-black">PKR {pkg.price.toLocaleString()}</p>
                                                             <p className="text-[10px] font-black uppercase tracking-widest text-purple-400">Qty: {pkg.quantity || 1}</p>
                                                         </div>
                                                     </div>

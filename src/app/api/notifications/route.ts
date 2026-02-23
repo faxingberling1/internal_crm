@@ -11,7 +11,18 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const userData = JSON.parse(session.value);
+        let userData;
+        try {
+            userData = JSON.parse(session.value);
+        } catch (e) {
+            console.error("Failed to parse session value:", e);
+            return NextResponse.json({ error: "Invalid session format" }, { status: 401 });
+        }
+
+        if (!userData || !userData.id) {
+            console.error("Session missing user ID:", userData);
+            return NextResponse.json({ error: "Invalid session data" }, { status: 401 });
+        }
 
         const notifications = await prisma.notification.findMany({
             where: { userId: userData.id },

@@ -15,6 +15,7 @@ import {
     FileSignature,
     Sparkles,
     Check,
+    User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RichEditor } from "@/components/proposal/rich-editor";
@@ -67,6 +68,12 @@ export default function CreateProposalPage() {
             primary: "#9333ea",
             secondary: "#6366f1",
             accent: "#8b5cf6",
+        },
+        clientLogo: "",
+        clientBrandColors: {
+            primary: "#64748b",
+            secondary: "#94a3b8",
+            accent: "#cbd5e1",
         },
         headerText: "",
         footerText: "",
@@ -318,49 +325,50 @@ export default function CreateProposalPage() {
                 {/* Step 2: Branding */}
                 {currentStep === 2 && (
                     <div className="space-y-6">
-                        <div>
-                            <h2 className="text-2xl font-black text-zinc-900 mb-2">Branding & Customization</h2>
-                            <p className="text-zinc-500">Customize the look and feel of your proposal</p>
-                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            {/* Company Branding */}
+                            <div className="space-y-6">
+                                <div className="p-4 bg-purple-50 rounded-2xl border border-purple-100 mb-4 text-purple-700">
+                                    <p className="text-sm font-bold flex items-center gap-2">
+                                        <Sparkles className="h-4 w-4" />
+                                        Your Company Identity
+                                    </p>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
+                                        Company Logo URL
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.brandLogo}
+                                        onChange={(e) => setFormData({ ...formData, brandLogo: e.target.value })}
+                                        placeholder="https://example.com/logo.png"
+                                        className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                                    />
+                                    {formData.brandLogo && (
+                                        <div className="mt-2 p-4 bg-zinc-50 rounded-xl border border-dashed border-zinc-200">
+                                            <img src={formData.brandLogo} alt="Logo preview" className="h-12 object-contain mx-auto" />
+                                        </div>
+                                    )}
+                                </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                                    Company Logo URL
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formData.brandLogo}
-                                    onChange={(e) => setFormData({ ...formData, brandLogo: e.target.value })}
-                                    placeholder="https://example.com/logo.png"
-                                    className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
-                                />
-                                {formData.brandLogo && (
-                                    <div className="mt-2 p-4 bg-zinc-50 rounded-xl">
-                                        <img src={formData.brandLogo} alt="Logo preview" className="h-16 object-contain" />
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="space-y-4">
-                                <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
-                                    Brand Colors
-                                </label>
-                                <div className="grid grid-cols-3 gap-4">
-                                    {(['primary', 'secondary', 'accent'] as const).map((colorKey) => (
-                                        <div key={colorKey} className="space-y-2">
-                                            <p className="text-xs font-bold text-zinc-500 capitalize">{colorKey}</p>
-                                            <div className="relative">
+                                <div className="space-y-4">
+                                    <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
+                                        Your Brand Colors
+                                    </label>
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {(['primary', 'secondary', 'accent'] as const).map((colorKey) => (
+                                            <div key={colorKey} className="space-y-2">
                                                 <button
                                                     type="button"
-                                                    onClick={() => setShowColorPicker(showColorPicker === colorKey ? null : colorKey)}
-                                                    className="w-full h-12 rounded-xl border-2 border-zinc-200 transition-all hover:scale-105"
+                                                    onClick={() => setShowColorPicker(`brand-${colorKey}`)}
+                                                    className="w-full h-10 rounded-xl border-2 border-zinc-200 transition-all hover:scale-105"
                                                     style={{ backgroundColor: formData.brandColors[colorKey] }}
                                                 />
-                                                {showColorPicker === colorKey && (
-                                                    <div className="absolute z-10 mt-2">
+                                                {showColorPicker === `brand-${colorKey}` && (
+                                                    <div className="absolute z-50 mt-2">
                                                         <div className="fixed inset-0" onClick={() => setShowColorPicker(null)} />
-                                                        <div className="relative">
+                                                        <div className="relative bg-white p-2 rounded-2xl shadow-2xl border border-zinc-200">
                                                             <HexColorPicker
                                                                 color={formData.brandColors[colorKey]}
                                                                 onChange={(color) => setFormData({
@@ -372,8 +380,67 @@ export default function CreateProposalPage() {
                                                     </div>
                                                 )}
                                             </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Client Branding */}
+                            <div className="space-y-6">
+                                <div className="p-4 bg-zinc-900 rounded-2xl border border-zinc-800 mb-4 text-white">
+                                    <p className="text-sm font-bold flex items-center gap-2">
+                                        <User className="h-4 w-4" />
+                                        Client Branding (Optional)
+                                    </p>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
+                                        Client Logo URL
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.clientLogo}
+                                        onChange={(e) => setFormData({ ...formData, clientLogo: e.target.value })}
+                                        placeholder="https://client.com/logo.png"
+                                        className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
+                                    />
+                                    {formData.clientLogo && (
+                                        <div className="mt-2 p-4 bg-zinc-50 rounded-xl border border-dashed border-zinc-200">
+                                            <img src={formData.clientLogo} alt="Client logo preview" className="h-12 object-contain mx-auto" />
                                         </div>
-                                    ))}
+                                    )}
+                                </div>
+
+                                <div className="space-y-4">
+                                    <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">
+                                        Client Brand Colors
+                                    </label>
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {(['primary', 'secondary', 'accent'] as const).map((colorKey) => (
+                                            <div key={colorKey} className="space-y-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowColorPicker(`client-${colorKey}`)}
+                                                    className="w-full h-10 rounded-xl border-2 border-zinc-200 transition-all hover:scale-105"
+                                                    style={{ backgroundColor: formData.clientBrandColors[colorKey] }}
+                                                />
+                                                {showColorPicker === `client-${colorKey}` && (
+                                                    <div className="absolute z-50 mt-2">
+                                                        <div className="fixed inset-0" onClick={() => setShowColorPicker(null)} />
+                                                        <div className="relative bg-white p-2 rounded-2xl shadow-2xl border border-zinc-200">
+                                                            <HexColorPicker
+                                                                color={formData.clientBrandColors[colorKey]}
+                                                                onChange={(color) => setFormData({
+                                                                    ...formData,
+                                                                    clientBrandColors: { ...formData.clientBrandColors, [colorKey]: color }
+                                                                })}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -495,12 +562,12 @@ export default function CreateProposalPage() {
                                                 <p className="font-bold">{pkg.name}</p>
                                                 <p className="text-sm text-zinc-500">Quantity: {pkg.quantity}</p>
                                             </div>
-                                            <p className="font-black">${(pkg.price * pkg.quantity).toLocaleString()}</p>
+                                            <p className="font-black">PKR {(pkg.price * pkg.quantity).toLocaleString()}</p>
                                         </div>
                                     ))}
                                     <div className="flex justify-between items-center p-4 bg-zinc-900 text-white rounded-xl">
                                         <p className="font-black">Total</p>
-                                        <p className="text-2xl font-black">${totalValue.toLocaleString()}</p>
+                                        <p className="text-2xl font-black">PKR {totalValue.toLocaleString()}</p>
                                     </div>
                                 </div>
                             )}
@@ -554,6 +621,6 @@ export default function CreateProposalPage() {
                     </button>
                 )}
             </div>
-        </div>
+        </div >
     );
 }

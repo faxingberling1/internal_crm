@@ -12,7 +12,9 @@ import {
     BarChart3,
     Clock,
     ShieldCheck,
-    Package
+    Package,
+    CreditCard,
+    DollarSign
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -36,11 +38,13 @@ const operationalNavigation = [
 
 const employeeTools = [
     { name: "My Attendance", href: "/attendance", icon: Clock },
+    { name: "My Payroll", href: "/employee/payroll", icon: CreditCard },
 ];
 
 const adminTools = [
     { name: "Approvals", href: "/admin/approvals", icon: ShieldCheck },
     { name: "User Management", href: "/admin/employees", icon: Users },
+    { name: "Payroll Terminal", href: "/admin/payroll", icon: DollarSign },
     { name: "Attendance Monitor", href: "/admin/attendance", icon: BarChart3 },
 ];
 
@@ -79,12 +83,21 @@ export function Sidebar() {
 
     return (
         <div className="flex h-full w-64 flex-col bg-zinc-50 border-r border-zinc-200 relative isolate z-[100] pointer-events-auto">
-            <div className="flex h-20 items-center justify-between px-6">
-                <h1 className="text-xl font-black tracking-tighter text-zinc-900 leading-tight">
-                    INTERNAL <span className="text-purple-600 block text-xs tracking-[0.3em] font-black -mt-1 ml-0.5">PORTAL</span>
-                </h1>
-                <div className="flex items-center justify-center h-8 w-12 bg-white rounded-lg border border-zinc-200 shadow-sm">
-                    <span className="text-[10px] font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-br from-purple-600 to-blue-600">NBT</span>
+            <div className="flex h-20 items-center px-6 gap-3">
+                <div className="flex-shrink-0">
+                    <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 0L37.3205 10V30L20 40L2.67949 30V10L20 0Z" fill="#F97316" />
+                        <path d="M12 14L18 10V30L12 26V14Z" fill="white" />
+                        <path d="M18 10L28 16V24L18 30V10Z" fill="white" fillOpacity="0.8" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 className="text-lg font-bold text-[#F97316] leading-none tracking-tight">
+                        Neon Byte
+                    </h1>
+                    <p className="text-[10px] font-medium text-zinc-400 tracking-wider">
+                        Technologies
+                    </p>
                 </div>
             </div>
 
