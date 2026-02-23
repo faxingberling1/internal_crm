@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     Package as PackageIcon,
     Plus,
@@ -11,20 +11,34 @@ import {
     Tag,
     CheckCircle2,
     Sparkles,
+    X,
+    PlusCircle,
+    Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/components/user-context";
 import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal";
 
-const CATEGORIES = [
-    { id: "ALL", name: "All Packages", color: "text-zinc-600", bg: "bg-zinc-100" },
-    { id: "WEB_DESIGN", name: "Web Design", color: "text-blue-600", bg: "bg-blue-100" },
-    { id: "SEO", name: "SEO Services", color: "text-green-600", bg: "bg-green-100" },
-    { id: "MARKETING", name: "Digital Marketing", color: "text-purple-600", bg: "bg-purple-100" },
-    { id: "COPYWRITING", name: "Copywriting", color: "text-orange-600", bg: "bg-orange-100" },
-    { id: "PORTAL_DESIGN", name: "Portal Design", color: "text-cyan-600", bg: "bg-cyan-100" },
-    { id: "BRANDING", name: "Branding", color: "text-pink-600", bg: "bg-pink-100" },
-    { id: "OTHER", name: "Other Services", color: "text-zinc-600", bg: "bg-zinc-100" },
+const BASE_CATEGORIES = [
+    { id: "ALL", name: "All Packages", color: "text-zinc-600", bg: "bg-zinc-100", custom: false },
+    { id: "WEB_DESIGN", name: "Web Design", color: "text-blue-600", bg: "bg-blue-100", custom: false },
+    { id: "SEO", name: "SEO Services", color: "text-green-600", bg: "bg-green-100", custom: false },
+    { id: "MARKETING", name: "Digital Marketing", color: "text-purple-600", bg: "bg-purple-100", custom: false },
+    { id: "COPYWRITING", name: "Copywriting", color: "text-orange-600", bg: "bg-orange-100", custom: false },
+    { id: "PORTAL_DESIGN", name: "Portal Design", color: "text-cyan-600", bg: "bg-cyan-100", custom: false },
+    { id: "BRANDING", name: "Branding", color: "text-pink-600", bg: "bg-pink-100", custom: false },
+    { id: "OTHER", name: "Other Services", color: "text-zinc-600", bg: "bg-zinc-100", custom: false },
+];
+
+const CUSTOM_CAT_STORAGE_KEY = "crm_custom_package_categories";
+
+const CUSTOM_COLORS = [
+    { color: "text-teal-600", bg: "bg-teal-100" },
+    { color: "text-rose-600", bg: "bg-rose-100" },
+    { color: "text-amber-600", bg: "bg-amber-100" },
+    { color: "text-indigo-600", bg: "bg-indigo-100" },
+    { color: "text-lime-600", bg: "bg-lime-100" },
+    { color: "text-sky-600", bg: "bg-sky-100" },
 ];
 
 interface Package {
@@ -49,6 +63,41 @@ export default function PackagesPage() {
     const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
     const [editingPackage, setEditingPackage] = useState<Package | null>(null);
     const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+    const [customCategories, setCustomCategories] = useState<{ id: string; name: string; color: string; bg: string; custom: boolean }[]>([]);
+    const [showAddCategory, setShowAddCategory] = useState(false);
+    const [newCategoryInput, setNewCategoryInput] = useState("");
+    const addCatInputRef = useRef<HTMLInputElement>(null);
+
+    // Load custom categories from localStorage on mount
+    useEffect(() => {
+        try {
+            const stored = localStorage.getItem(CUSTOM_CAT_STORAGE_KEY);
+            if (stored) setCustomCategories(JSON.parse(stored));
+        } catch { /* ignore */ }
+    }, []);
+
+    const allCategories = [...BASE_CATEGORIES, ...customCategories];
+
+    const addCategory = () => {
+        const name = newCategoryInput.trim();
+        if (!name) return;
+        const id = name.toUpperCase().replace(/\s+/g, "_");
+        if (allCategories.some(c => c.id === id)) return; // duplicate guard
+        const palette = CUSTOM_COLORS[customCategories.length % CUSTOM_COLORS.length];
+        const newCat = { id, name, ...palette, custom: true };
+        const updated = [...customCategories, newCat];
+        setCustomCategories(updated);
+        localStorage.setItem(CUSTOM_CAT_STORAGE_KEY, JSON.stringify(updated));
+        setNewCategoryInput("");
+        setShowAddCategory(false);
+    };
+
+    const removeCustomCategory = (id: string) => {
+        const updated = customCategories.filter(c => c.id !== id);
+        setCustomCategories(updated);
+        localStorage.setItem(CUSTOM_CAT_STORAGE_KEY, JSON.stringify(updated));
+        if (selectedCategory === id) setSelectedCategory("ALL");
+    };
 
     const toggleExpand = (id: string) =>
         setExpandedCards(prev => {
@@ -142,21 +191,73 @@ export default function PackagesPage() {
             </div>
 
             {/* Category Filter */}
-            <div className="flex items-center space-x-3 overflow-x-auto pb-2">
-                {CATEGORIES.map((category) => (
-                    <button
-                        key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
-                        className={cn(
-                            "px-4 py-2 rounded-xl font-bold text-sm whitespace-nowrap transition-all border",
-                            selectedCategory === category.id
-                                ? `${category.bg} ${category.color} border-current shadow-sm`
-                                : "bg-white text-zinc-500 border-zinc-200 hover:bg-zinc-50"
+            <div className="flex flex-wrap items-center gap-2 pb-1">
+                {allCategories.map((category) => (
+                    <div key={category.id} className="relative group/chip flex items-center">
+                        <button
+                            onClick={() => setSelectedCategory(category.id)}
+                            className={cn(
+                                "px-4 py-2 rounded-xl font-bold text-sm whitespace-nowrap transition-all border",
+                                category.custom ? "pr-7" : "",
+                                selectedCategory === category.id
+                                    ? `${category.bg} ${category.color} border-current shadow-sm`
+                                    : "bg-white text-zinc-500 border-zinc-200 hover:bg-zinc-50"
+                            )}
+                        >
+                            {category.name}
+                        </button>
+                        {/* Delete button only for custom categories */}
+                        {category.custom && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); removeCustomCategory(category.id); }}
+                                className="absolute right-1.5 top-1/2 -translate-y-1/2 h-4 w-4 rounded-full bg-zinc-200 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-all opacity-0 group-hover/chip:opacity-100"
+                                title="Remove category"
+                            >
+                                <X className="h-2.5 w-2.5" />
+                            </button>
                         )}
-                    >
-                        {category.name}
-                    </button>
+                    </div>
                 ))}
+
+                {/* Inline add category */}
+                {showAddCategory ? (
+                    <div className="flex items-center gap-1.5 animate-in fade-in slide-in-from-left-2 duration-150">
+                        <input
+                            ref={addCatInputRef}
+                            autoFocus
+                            type="text"
+                            value={newCategoryInput}
+                            onChange={e => setNewCategoryInput(e.target.value)}
+                            onKeyDown={e => { if (e.key === "Enter") addCategory(); if (e.key === "Escape") { setShowAddCategory(false); setNewCategoryInput(""); } }}
+                            placeholder="Category name…"
+                            className="px-3 py-2 rounded-xl border border-purple-300 bg-purple-50 text-sm font-bold text-purple-700 placeholder:text-purple-300 outline-none focus:ring-2 focus:ring-purple-500/20 w-40 transition-all"
+                        />
+                        <button
+                            onClick={addCategory}
+                            className="h-8 w-8 rounded-xl bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center transition-all shadow-sm"
+                            title="Confirm"
+                        >
+                            <Check className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                            onClick={() => { setShowAddCategory(false); setNewCategoryInput(""); }}
+                            className="h-8 w-8 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-500 flex items-center justify-center transition-all"
+                            title="Cancel"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                        </button>
+                    </div>
+                ) : (
+                    isAdmin && (
+                        <button
+                            onClick={() => setShowAddCategory(true)}
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-dashed border-zinc-300 text-zinc-400 hover:border-purple-400 hover:text-purple-600 hover:bg-purple-50 text-xs font-bold transition-all"
+                        >
+                            <PlusCircle className="h-3.5 w-3.5" />
+                            Add Category
+                        </button>
+                    )
+                )}
             </div>
 
             {/* Search */}
@@ -193,7 +294,7 @@ export default function PackagesPage() {
                     </div>
                 ) : (
                     filteredPackages.map((pkg) => {
-                        const category = CATEGORIES.find((c) => c.id === pkg.category);
+                        const category = allCategories.find((c) => c.id === pkg.category);
                         const features = pkg.features ? JSON.parse(pkg.features) : [];
 
                         const isExpanded = expandedCards.has(pkg.id);
@@ -296,6 +397,7 @@ export default function PackagesPage() {
                     }}
                     onSave={fetchPackages}
                     package_={editingPackage}
+                    allCategories={allCategories.filter(c => c.id !== "ALL")}
                 />
             )}
 
@@ -320,11 +422,13 @@ function PackageModal({
     onClose,
     onSave,
     package_,
+    allCategories,
 }: {
     isOpen: boolean;
     onClose: () => void;
     onSave: () => void;
     package_?: Package | null;
+    allCategories: { id: string; name: string }[];
 }) {
     const [formData, setFormData] = useState({
         name: package_?.name || "",
@@ -398,7 +502,7 @@ function PackageModal({
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                 className="w-full bg-white border border-zinc-200 rounded-2xl py-3 px-4 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none text-zinc-900 font-medium"
                             >
-                                {CATEGORIES.filter((c) => c.id !== "ALL").map((cat) => (
+                                {allCategories.map((cat) => (
                                     <option key={cat.id} value={cat.id}>
                                         {cat.name}
                                     </option>
