@@ -21,13 +21,13 @@ import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal"
 
 const BASE_CATEGORIES = [
     { id: "ALL", name: "All Packages", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
-    { id: "WEB_DESIGN", name: "Web Systems", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
-    { id: "SEO", name: "Search Intel", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
-    { id: "MARKETING", name: "Market Ops", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
-    { id: "COPYWRITING", name: "Content Node", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
-    { id: "PORTAL_DESIGN", name: "Portal Architecture", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
-    { id: "BRANDING", name: "Identity Design", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
-    { id: "OTHER", name: "Auxiliary Nodes", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
+    { id: "WEB_DESIGN", name: "Web Design", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
+    { id: "SEO", name: "SEO Services", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
+    { id: "MARKETING", name: "Marketing", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
+    { id: "COPYWRITING", name: "Copywriting", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
+    { id: "PORTAL_DESIGN", name: "Portal Design", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
+    { id: "BRANDING", name: "Branding", color: "text-orange-500", bg: "bg-orange-500/10", custom: false },
+    { id: "OTHER", name: "Other Services", color: "text-orange-600", bg: "bg-orange-600/10", custom: false },
 ];
 
 const CUSTOM_CAT_STORAGE_KEY = "crm_custom_package_categories";
@@ -142,9 +142,9 @@ export default function PackagesPage() {
     });
 
     const stats = [
-        { label: "Matrix Nodes", value: packages.length, icon: PackageIcon, color: "text-orange-600", bg: "bg-orange-600/10" },
+        { label: "Total Packages", value: packages.length, icon: PackageIcon, color: "text-orange-600", bg: "bg-orange-600/10" },
         { label: "Active Services", value: packages.filter(p => p.isActive).length, icon: CheckCircle2, color: "text-orange-500", bg: "bg-orange-500/10" },
-        { label: "System Categories", value: new Set(packages.map(p => p.category)).size, icon: Tag, color: "text-orange-400", bg: "bg-orange-400/10" },
+        { label: "Service Categories", value: new Set(packages.map(p => p.category)).size, icon: Tag, color: "text-orange-400", bg: "bg-orange-400/10" },
     ];
 
     return (
@@ -165,7 +165,7 @@ export default function PackagesPage() {
                         className="flex items-center space-x-3 bg-orange-600 hover:bg-orange-500 text-black px-8 py-4 rounded-2xl transition-all shadow-[0_0_40px_-10px_rgba(255,122,0,0.6)] font-black uppercase text-xs tracking-widest"
                     >
                         <Plus className="h-5 w-5" />
-                        <span>Initialize Node</span>
+                        <span>Add New Package</span>
                     </button>
                 )}
             </div>
@@ -373,7 +373,7 @@ export default function PackagesPage() {
                                         {pkg.price.toLocaleString()}
                                     </div>
                                     <p className="text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em] mt-2">
-                                        Baseline Credit Requirement
+                                        Starting Price
                                     </p>
                                 </div>
                             </div>
@@ -471,27 +471,27 @@ function PackageModal({
             <div className="glass-obsidian-saturated rounded-[3rem] shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-300 border border-white/10">
                 <form onSubmit={handleSubmit} className="p-10 space-y-8">
                     <h3 className="text-2xl font-black text-white uppercase tracking-[0.2em]">
-                        {package_ ? "Reconfigure Node" : "Initialize Service Node"}
+                        {package_ ? "Edit Package" : "Create New Package"}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-3">
                             <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
-                                Node Identifier
+                                Package Name
                             </label>
                             <input
                                 type="text"
                                 required
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="e.g., SEO_PROTOCOL_ALPHA"
+                                placeholder="e.g., Alpha SEO Package"
                                 className="w-full bg-black border border-white/5 rounded-2xl py-4 px-6 focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500/20 transition-all outline-none text-white font-black uppercase text-xs tracking-widest placeholder:text-zinc-900"
                             />
                         </div>
 
                         <div className="space-y-3">
                             <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
-                                System Category
+                                Service Category
                             </label>
                             <select
                                 required
@@ -510,7 +510,7 @@ function PackageModal({
 
                     <div className="space-y-3">
                         <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
-                            Credit Requirement ($)
+                            Price ($)
                         </label>
                         <input
                             type="number"
@@ -525,7 +525,7 @@ function PackageModal({
 
                     <div className="space-y-3">
                         <label className="text-[10px] font-black text-zinc-700 uppercase tracking-[0.3em] ml-2">
-                            Operational Description
+                            Service Description
                         </label>
                         <textarea
                             required
@@ -556,13 +556,13 @@ function PackageModal({
                             onClick={onClose}
                             className="flex-1 bg-black/40 border border-white/5 text-zinc-700 hover:text-orange-500 font-black uppercase text-xs tracking-widest py-4 px-6 rounded-2xl transition-all"
                         >
-                            Abort
+                            Cancel
                         </button>
                         <button
                             type="submit"
                             className="flex-1 bg-orange-600 hover:bg-orange-500 text-black font-black uppercase text-xs tracking-widest py-4 px-6 rounded-2xl transition-all shadow-[0_0_40px_-10px_rgba(255,122,0,0.6)]"
                         >
-                            {package_ ? "Execute Manual Update" : "Authorize Node Initialization"}
+                            {package_ ? "Save Changes" : "Create Package"}
                         </button>
                     </div>
                 </form>
