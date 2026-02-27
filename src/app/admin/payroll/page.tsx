@@ -315,14 +315,14 @@ export default function AdminPayrollPage() {
                 <div className="space-y-4">
                     <div className="flex items-center space-x-3 text-orange-500 group/title">
                         <div className="h-px w-8 bg-orange-500/50 group-hover/title:w-12 transition-all" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.5em]">Treasury Operations Hub</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.5em]">Payroll Management</span>
                     </div>
                     <h1 className="text-6xl font-black tracking-tighter text-white leading-none uppercase italic">
-                        Payroll <span className="text-orange-500">Nexus</span>
+                        Payroll <span className="text-orange-500">Dashboard</span>
                     </h1>
                     <p className="text-zinc-500 font-bold text-lg max-w-xl tracking-tight leading-relaxed">
                         <span className="h-2 w-2 rounded-full bg-orange-600 inline-block animate-pulse mr-3 shadow-[0_0_8px_rgba(255,100,0,0.8)]" />
-                        Strategic management of regional compensation and fiscal data streams.
+                        Efficient management of employee compensation and payroll records.
                     </p>
                 </div>
 
@@ -361,7 +361,7 @@ export default function AdminPayrollPage() {
                         ) : (
                             <>
                                 <Zap className="h-5 w-5 fill-current" />
-                                <span>Generate Run</span>
+                                <span>Process Payroll</span>
                             </>
                         )}
                     </button>
@@ -382,7 +382,7 @@ export default function AdminPayrollPage() {
                     { label: "Total Paid", value: `$ ${totalDisbursement.toLocaleString()}`, icon: CreditCard, color: "text-orange-500", glow: "glow-orange" },
                     { label: "Drafts", value: `${draftCount}`, icon: Edit3, color: "text-orange-500/80", glow: "glow-orange" },
                     { label: "Shared Payrolls", value: `${sharedCount}`, icon: Send, color: "text-orange-500/60", glow: "glow-orange" },
-                    { label: "Stability Index", value: "Optimal", icon: CheckCircle2, color: "text-orange-400", glow: "glow-orange" }
+                    { label: "Performance Status", value: "Optimal", icon: CheckCircle2, color: "text-orange-400", glow: "glow-orange" }
                 ].map((stat) => (
                     <motion.div key={stat.label} variants={item} className="glass-premium p-10 rounded-[3rem] border border-white/5 relative overflow-hidden group hover:glow-orange transition-all duration-700">
                         <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-orange-600/5 rounded-full blur-3xl group-hover:bg-orange-600/10 transition-all duration-700" />
@@ -404,9 +404,9 @@ export default function AdminPayrollPage() {
                 <div className="absolute inset-0 bg-black/40 -z-10" />
                 <div className="flex bg-[#0c0c0c]/80 border-b border-white/5 p-2 overflow-x-auto">
                     {[
-                        { id: "MANUAL", label: "Manual Override" },
-                        { id: "HISTORY", label: "Temporal Ledger" },
-                        { id: "CONFIG", label: "Node Profiles" }
+                        { id: "MANUAL", label: "Salary Adjustments" },
+                        { id: "HISTORY", label: "Payroll History" },
+                        { id: "CONFIG", label: "Employee Salaries" }
                     ].map((tab) => (
                         <button
                             key={tab.id}
@@ -434,12 +434,12 @@ export default function AdminPayrollPage() {
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 animate-in fade-in slide-in-from-bottom-5 duration-1000">
                             <div className="lg:col-span-7 space-y-6">
                                 <div className="flex items-center justify-between mb-10 px-4">
-                                    <h3 className="text-3xl font-black text-white tracking-tighter uppercase italic">Compensation <span className="text-orange-500">Hub</span></h3>
+                                    <h3 className="text-3xl font-black text-white tracking-tighter uppercase italic">Employee <span className="text-orange-500">Salaries</span></h3>
                                     <div className="relative w-72 group/search">
                                         <Search className="absolute left-5 top-1/2 -track-y-1/2 h-4 w-4 text-zinc-600 group-hover/search:text-orange-500 transition-colors" />
                                         <input
                                             type="text"
-                                            placeholder="SEARCH EMPLOYEE ID..."
+                                            placeholder="SEARCH EMPLOYEE..."
                                             className="w-full bg-zinc-950 border border-white/5 rounded-[1.5rem] py-4 pl-14 pr-6 text-[10px] font-black tracking-widest focus:ring-4 focus:ring-orange-500/5 focus:bg-zinc-900 transition-all outline-none text-white placeholder:text-zinc-800"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -504,7 +504,7 @@ export default function AdminPayrollPage() {
                                                     </div>
                                                     <div>
                                                         <h4 className="text-3xl font-black tracking-tighter text-white uppercase italic">{employees.find(e => e.id === selectedEmployeeId)?.name}</h4>
-                                                        <p className="text-[9px] font-black uppercase text-orange-500 tracking-[0.4em]">Performance Metrics</p>
+                                                        <p className="text-[9px] font-black uppercase text-orange-500 tracking-[0.4em]">Employee Statistics</p>
                                                     </div>
                                                 </div>
 
@@ -517,10 +517,10 @@ export default function AdminPayrollPage() {
                                                     <div className="flex-1 space-y-10">
                                                         <div className="grid grid-cols-2 gap-6">
                                                             {[
-                                                                { label: "Presents", val: employeeStats.present, color: "text-orange-500" },
-                                                                { label: "Lates", val: employeeStats.late, color: "text-orange-400" },
-                                                                { label: "Absences", val: employeeStats.absent, color: "text-zinc-600" },
-                                                                { label: "Focus Hours", val: employeeStats.totalHours.toFixed(1), color: "text-white" }
+                                                                { label: "Presence", val: employeeStats.present, color: "text-orange-500" },
+                                                                { label: "Late", val: employeeStats.late, color: "text-orange-400" },
+                                                                { label: "Absence", val: employeeStats.absent, color: "text-zinc-600" },
+                                                                { label: "Total Hours", val: employeeStats.totalHours.toFixed(1), color: "text-white" }
                                                             ].map((stat) => (
                                                                 <div key={stat.label} className="p-8 bg-black/40 border border-white/5 rounded-[2rem] group/stat hover:border-orange-500/20 transition-all">
                                                                     <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest mb-2 group-hover/stat:text-orange-500/60">{stat.label}</p>
@@ -531,7 +531,7 @@ export default function AdminPayrollPage() {
 
                                                         <div className="space-y-6">
                                                             <div className="flex justify-between items-end mb-2">
-                                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Attendance Filters</span>
+                                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Attendance Rate</span>
                                                                 <p className="text-2xl font-black text-orange-500 italic">
                                                                     {employeeStats.present > 0 ? ((employeeStats.present / (employeeStats.present + employeeStats.late + employeeStats.absent)) * 100).toFixed(0) : 0}%
                                                                 </p>
@@ -549,10 +549,10 @@ export default function AdminPayrollPage() {
 
                                                         <div className="pt-10 border-t border-white/5 space-y-8">
                                                             <div className="space-y-6">
-                                                                <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em]">Core Compensation Details</p>
+                                                                <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em]">Salary Configuration</p>
                                                                 <div className="grid grid-cols-2 gap-6">
                                                                     <div className="space-y-3">
-                                                                        <label className="text-[9px] font-black text-zinc-700 uppercase tracking-widest">Base Liquidity</label>
+                                                                        <label className="text-[9px] font-black text-zinc-700 uppercase tracking-widest">Base Salary</label>
                                                                         <input
                                                                             type="number"
                                                                             className="w-full bg-zinc-950 border border-white/5 rounded-2xl p-5 text-[11px] font-black outline-none focus:ring-2 focus:ring-orange-600/50 focus:bg-black transition-all text-white placeholder:text-zinc-800"
@@ -561,14 +561,14 @@ export default function AdminPayrollPage() {
                                                                         />
                                                                     </div>
                                                                     <div className="space-y-3">
-                                                                        <label className="text-[9px] font-black text-zinc-700 uppercase tracking-widest">Stream Type</label>
+                                                                        <label className="text-[9px] font-black text-zinc-700 uppercase tracking-widest">Salary Type</label>
                                                                         <select
                                                                             className="w-full bg-zinc-950 border border-white/5 rounded-2xl p-5 text-[11px] font-black outline-none focus:ring-2 focus:ring-orange-600/50 focus:bg-black transition-all text-white appearance-none cursor-pointer"
                                                                             value={tempSalary?.type ?? "MONTHLY"}
                                                                             onChange={(e) => setTempSalary(prev => prev ? { ...prev, type: e.target.value } : null)}
                                                                         >
-                                                                            <option value="MONTHLY">MONTHLY CYCLE</option>
-                                                                            <option value="HOURLY">HOURLY RATE</option>
+                                                                            <option value="MONTHLY">MONTHLY</option>
+                                                                            <option value="HOURLY">HOURLY</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -592,7 +592,7 @@ export default function AdminPayrollPage() {
                                                                                 ) : (
                                                                                     <>
                                                                                         <CheckCircle2 className="h-5 w-5" />
-                                                                                        <span>Sync Profile Updates</span>
+                                                                                        <span>Save Salary Changes</span>
                                                                                     </>
                                                                                 )}
                                                                             </button>
@@ -604,7 +604,7 @@ export default function AdminPayrollPage() {
                                                                     <div className="flex items-center justify-center space-x-3 text-orange-500 font-black text-[9px] uppercase tracking-[0.4em] pt-4 animate-in fade-in slide-in-from-top-2">
                                                                         <div className="h-1 w-8 bg-orange-500/20 rounded-full" />
                                                                         <CheckCircle2 className="h-4 w-4" />
-                                                                        <span>Stream Synchronized</span>
+                                                                        <span>Salary Updated</span>
                                                                         <div className="h-1 w-8 bg-orange-500/20 rounded-full" />
                                                                     </div>
                                                                 )}
@@ -623,7 +623,7 @@ export default function AdminPayrollPage() {
                                             <div className="text-center space-y-4 relative z-10">
                                                 <h4 className="text-2xl font-black text-white tracking-widest uppercase italic italic">Select <span className="text-orange-500">Employee</span></h4>
                                                 <p className="text-zinc-600 font-bold text-sm max-w-xs mx-auto tracking-tight leading-relaxed">
-                                                    Select an employee profile to access performance analytics and compensation management.
+                                                    Select an employee profile to manage salary and view attendance.
                                                 </p>
                                             </div>
                                         </div>
@@ -634,12 +634,12 @@ export default function AdminPayrollPage() {
                     ) : activeTab === "MANUAL" ? (
                         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-5 duration-1000">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
-                                <h3 className="text-3xl font-black text-white tracking-tighter uppercase italic">Adjustment <span className="text-orange-500">Ledger</span></h3>
+                                <h3 className="text-3xl font-black text-white tracking-tighter uppercase italic">Salary <span className="text-orange-500">Adjustments</span></h3>
                                 <div className="relative w-80 group/search">
                                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600 group-hover/search:text-orange-500 transition-colors" />
                                     <input
                                         type="text"
-                                        placeholder="SEARCH NODES..."
+                                        placeholder="SEARCH EMPLOYEES..."
                                         className="w-full bg-zinc-950 border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-[10px] font-black tracking-widest focus:ring-4 focus:ring-orange-500/5 focus:bg-zinc-900 transition-all outline-none text-white placeholder:text-zinc-800"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -722,7 +722,7 @@ export default function AdminPayrollPage() {
                                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600 group-hover/search:text-orange-500 transition-colors" />
                                         <input
                                             type="text"
-                                            placeholder="SCAN RECORDS..."
+                                            placeholder="SEARCH RECORDS..."
                                             className="w-full bg-zinc-950 border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-[10px] font-black tracking-widest focus:ring-4 focus:ring-orange-500/5 focus:bg-zinc-900 transition-all outline-none text-white placeholder:text-zinc-800 shadow-2xl"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -733,8 +733,8 @@ export default function AdminPayrollPage() {
                                         onChange={(e) => setSortBy(e.target.value as any)}
                                         className="bg-zinc-950 border border-white/5 rounded-2xl px-6 py-4 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-orange-500/5 text-orange-500 appearance-none cursor-pointer hover:bg-zinc-900 transition-colors shadow-2xl"
                                     >
-                                        <option value="name">SORT BY IDENTITY</option>
-                                        <option value="salary">SORT BY LIQUIDITY</option>
+                                        <option value="name">SORT BY NAME</option>
+                                        <option value="salary">SORT BY SALARY</option>
                                         <option value="status">SORT BY STATUS</option>
                                     </select>
                                 </div>
@@ -787,7 +787,7 @@ export default function AdminPayrollPage() {
                                                                 {pay.employee.name}
                                                             </p>
                                                             <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.4em]">
-                                                                {pay.employee.position || "Node Entity"}
+                                                                {pay.employee.position || "Employee"}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -809,7 +809,7 @@ export default function AdminPayrollPage() {
 
                                                     <div className="p-6 bg-black/20 rounded-[2rem] border border-white/5 backdrop-blur-sm group-hover:border-orange-500/10 transition-all">
                                                         <div className="flex justify-between items-center mb-1">
-                                                            <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Net Liquidity</p>
+                                                            <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Net Salary</p>
                                                             <TrendingUp className="h-3 w-3 text-orange-500/40" />
                                                         </div>
                                                         <p className="text-3xl font-black text-white italic tracking-tighter tabular-nums group-hover:scale-105 transition-transform origin-left duration-500">
@@ -823,7 +823,7 @@ export default function AdminPayrollPage() {
                                                         onClick={() => setSelectedEmployeeId(pay.employeeId)}
                                                         className="flex-1 py-4 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-2xl text-[9px] font-black uppercase tracking-widest border border-white/5 transition-all shadow-xl"
                                                     >
-                                                        Review Run
+                                                        Review
                                                     </button>
                                                     {isDraft && (
                                                         <button
@@ -831,7 +831,7 @@ export default function AdminPayrollPage() {
                                                             className="flex-1 py-4 bg-orange-600 hover:bg-orange-500 text-black rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-500/10 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group/sh"
                                                         >
                                                             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover/sh:translate-x-[100%] transition-transform duration-700" />
-                                                            Share Node
+                                                            Share
                                                         </button>
                                                     )}
                                                     {isShared && (
@@ -839,14 +839,14 @@ export default function AdminPayrollPage() {
                                                             <button
                                                                 onClick={() => handleRedactPayroll(pay.id)}
                                                                 className="flex items-center justify-center p-4 bg-black hover:bg-zinc-950 text-zinc-600 hover:text-orange-500 rounded-2xl border border-white/5 transition-all shadow-xl"
-                                                                title="Redact"
+                                                                title="Unshare"
                                                             >
                                                                 <EyeOff className="h-4 w-4" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDeletePayroll(pay.id, pay.employee.name)}
                                                                 className="flex items-center justify-center p-4 bg-black hover:bg-rose-950 text-zinc-600 hover:text-rose-500 rounded-2xl border border-white/5 transition-all shadow-xl"
-                                                                title="Purge"
+                                                                title="Delete"
                                                             >
                                                                 <Trash2 className="h-4 w-4" />
                                                             </button>
@@ -864,9 +864,9 @@ export default function AdminPayrollPage() {
                                         <Wallet className="h-14 w-14 text-zinc-800 group-hover/empty:text-orange-600/40 transition-colors" />
                                     </div>
                                     <div className="text-center space-y-4 relative z-10">
-                                        <h3 className="text-2xl font-black text-white uppercase italic tracking-widest">Temporal <span className="text-orange-500">Void</span></h3>
+                                        <h3 className="text-2xl font-black text-white uppercase italic tracking-widest">No <span className="text-orange-500">Records</span></h3>
                                         <p className="text-zinc-600 font-bold text-sm max-w-sm mx-auto tracking-tight leading-relaxed">
-                                            No compensation sequences detected within this specific temporal coordinate. Verify filter parameters.
+                                            No payroll records found for this period.
                                         </p>
                                     </div>
                                 </div>
@@ -917,17 +917,17 @@ export default function AdminPayrollPage() {
                                     <AlertCircle className="h-10 w-10 text-orange-500 shadow-orange-500/50" />
                                 </div>
                                 <h3 className="text-3xl font-black text-white tracking-tighter mb-3 uppercase italic">
-                                    Confirm <span className="text-orange-500">Deconstruct</span>
+                                    Confirm <span className="text-orange-500">Deletion</span>
                                 </h3>
                                 <p className="text-zinc-500 font-bold text-sm tracking-tight">
-                                    This sequence will be purged from the nexus. Identity verification required.
+                                    This payroll record will be permanently deleted.
                                 </p>
                             </div>
 
                             <div className="space-y-8">
                                 <div className="space-y-4">
                                     <label className="block text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] px-2">
-                                        Node Designation
+                                        Employee Name
                                     </label>
                                     <div className="p-6 bg-zinc-950 rounded-2xl border border-white/5 mb-4 shadow-inner">
                                         <p className="text-xl font-black text-orange-500 tracking-widest italic uppercase">
@@ -938,7 +938,7 @@ export default function AdminPayrollPage() {
                                         type="text"
                                         value={deleteConfirmInput}
                                         onChange={(e) => setDeleteConfirmInput(e.target.value)}
-                                        placeholder="INPUT NODE NAME TO CONFIRM"
+                                        placeholder="TYPE EMPLOYEE NAME TO CONFIRM"
                                         className="w-full px-6 py-4 rounded-2xl bg-zinc-950 border border-white/5 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/5 outline-none font-black text-[10px] tracking-[0.2em] text-white transition-all placeholder:text-zinc-800"
                                         autoFocus
                                     />
@@ -953,7 +953,7 @@ export default function AdminPayrollPage() {
                                         }}
                                         className="flex-1 py-5 rounded-[1.5rem] bg-zinc-950 text-zinc-500 font-black text-[10px] uppercase tracking-widest hover:bg-zinc-900 border border-white/5 transition-all"
                                     >
-                                        Abort
+                                        Cancel
                                     </button>
                                     <button
                                         onClick={confirmDelete}
@@ -961,7 +961,7 @@ export default function AdminPayrollPage() {
                                         className="flex-1 py-5 rounded-[1.5rem] bg-orange-600 text-black font-black text-[10px] uppercase tracking-widest hover:bg-orange-500 shadow-xl shadow-orange-500/10 transition-all disabled:opacity-20 disabled:cursor-not-allowed relative overflow-hidden group/del"
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover/del:translate-x-[100%] transition-transform duration-700" />
-                                        Purge Run
+                                        Delete
                                     </button>
                                 </div>
                             </div>

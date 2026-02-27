@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { payrollId, employeeId, month, year, bonus, commission, deductions, status, isShared, presents, absents, lates } = body;
+        const { payrollId, employeeId, month, year, bonus, commission, deductions, status, isShared, presents, absents, lates, baseSalary: baseSalaryOverride } = body;
 
         if (!payrollId && (!employeeId || !month || !year)) {
             return NextResponse.json({ error: "Payroll ID or (EmployeeID, Month, Year) required" }, { status: 400 });
@@ -44,7 +44,15 @@ export async function POST(request: Request) {
                 const employee = await prisma.employee.findUnique({ where: { id: employeeId } });
                 if (!employee) return NextResponse.json({ error: "Employee not found" }, { status: 404 });
 
-                const baseSalary = employee.baseSalary || 0;
+                const baseSalary = baseSalaryOverride ?? (employee.baseSalary || 0);
+
+                // If base salary is overridden, update the employee record as well
+                if (baseSalaryOverride !== undefined && baseSalaryOverride !== employee.baseSalary) {
+                    await prisma.employee.update({
+                        where: { id: employeeId },
+                        data: { baseSalary: baseSalaryOverride }
+                    });
+                }
 
                 // Calculate Net Salary for new record
                 // Formula: 1 absence = -1 day, 3 lates = -1 day
@@ -87,7 +95,15 @@ export async function POST(request: Request) {
         const finalPresents = presents ?? existingPayroll.presents;
         const finalAbsents = absents ?? existingPayroll.absents;
         const finalLates = lates ?? existingPayroll.lates;
-        const finalBaseSalary = existingPayroll.baseSalary; // Base salary shouldn't change on update typically
+        const finalBaseSalary = baseSalaryOverride ?? existingPayroll.baseSalary;
+
+        // If base salary is overridden, update the employee record as well
+        if (baseSalaryOverride !== undefined && baseSalaryOverride !== existingPayroll.baseSalary) {
+            await prisma.employee.update({
+                where: { id: existingPayroll.employeeId },
+                data: { baseSalary: baseSalaryOverride }
+            });
+        }
 
         // Calculate final net salary including the advanced formula (1 absence = -1 day, 3 lates = -1 day)
         const dailyRate = finalBaseSalary / 30;
@@ -103,6 +119,7 @@ export async function POST(request: Request) {
                 presents: finalPresents,
                 absents: finalAbsents,
                 lates: finalLates,
+                baseSalary: finalBaseSalary,
                 netSalary: parseFloat(finalNetSalary.toFixed(2)),
                 status: status || "FINALIZED",
                 isShared: isShared ?? true

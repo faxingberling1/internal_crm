@@ -105,7 +105,7 @@ export default function EmployeePayrollPage() {
         <div className="flex items-center justify-center min-h-[60vh]">
             <div className="flex flex-col items-center space-y-6">
                 <div className="h-16 w-16 border-4 border-orange-600 border-t-transparent rounded-full animate-spin shadow-[0_0_30px_-5px_rgba(255,122,0,0.5)]" />
-                <p className="text-zinc-600 font-black uppercase tracking-[0.5em] text-[10px] animate-pulse">Verifying Compensation Ledger...</p>
+                <p className="text-zinc-600 font-black uppercase tracking-[0.5em] text-[10px] animate-pulse">Verifying Payroll Records...</p>
             </div>
         </div>
     );
@@ -121,19 +121,19 @@ export default function EmployeePayrollPage() {
                 <div className="space-y-4">
                     <div className="flex items-center space-x-3 text-orange-500 group">
                         <div className="h-px w-8 bg-orange-500/50 group-hover:w-12 transition-all" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.5em]">Compensation Vault 3.0</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.5em]">Earnings History</span>
                     </div>
                     <h1 className="text-6xl font-black tracking-tighter text-white leading-none">
                         My <span className="text-orange-500 italic">Earnings</span>
                     </h1>
-                    <p className="text-zinc-500 font-bold text-lg max-w-xl tracking-tight">Transparent access to your monthly payout history and digitized payslips.</p>
+                    <p className="text-zinc-500 font-bold text-lg max-w-xl tracking-tight">View and download your monthly salary details and payslips.</p>
                 </div>
 
                 <div className="hidden lg:flex items-center p-3 glass-premium rounded-[2.5rem] border border-white/5 shadow-2xl hover:glow-orange transition-all duration-700">
                     <div className="flex items-center space-x-6 px-8 py-3 border-r border-white/5">
                         <CreditCard className="h-6 w-6 text-orange-600" />
                         <div>
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Preferred Route</p>
+                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Payment Method</p>
                             <p className="text-sm font-black text-white tracking-tighter uppercase italic">Bank Transfer</p>
                         </div>
                     </div>
@@ -153,8 +153,8 @@ export default function EmployeePayrollPage() {
                                 <History className="h-12 w-12 text-zinc-800 group-hover:text-orange-600/20 transition-colors duration-700" />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">Vast <span className="text-orange-500">Silence</span></h3>
-                                <p className="text-zinc-600 font-bold max-w-sm mx-auto leading-relaxed tracking-tight">Your earnings will appear here once the administrative team completes the monthly cycle.</p>
+                                <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">No <span className="text-orange-500">History</span></h3>
+                                <p className="text-zinc-600 font-bold max-w-sm mx-auto leading-relaxed tracking-tight">Your earnings will appear here once the administrative team processes the monthly payroll.</p>
                             </div>
                         </div>
                     ) : (
@@ -173,13 +173,13 @@ export default function EmployeePayrollPage() {
                                             </div>
                                             <div>
                                                 <h4 className="text-3xl font-black text-white tracking-tighter leading-none mb-4 italic uppercase flex items-center gap-3">
-                                                    Disbursement
+                                                    Salary Paid
                                                     <div className="h-1.5 w-1.5 rounded-full bg-orange-600 shadow-[0_0_8px_rgba(255,100,0,0.8)]" />
                                                 </h4>
                                                 <div className="flex flex-wrap items-center gap-6">
                                                     <div className="flex items-center text-zinc-600 space-x-3 bg-zinc-900/40 px-3 py-1.5 rounded-lg border border-white/5">
                                                         <Clock className="h-4 w-4 text-orange-600" />
-                                                        <span className="text-xs font-black tracking-widest uppercase">{pay.totalHours.toFixed(1)} Focus Hours</span>
+                                                        <span className="text-xs font-black tracking-widest uppercase">{pay.totalHours.toFixed(1)} Total Hours</span>
                                                     </div>
                                                     <div className="flex items-center space-x-4 text-[9px] font-black uppercase tracking-[0.2em]">
                                                         <span className="text-orange-500/80">{pay.presents} PRST</span>
@@ -228,7 +228,7 @@ export default function EmployeePayrollPage() {
                                             <p className="text-xl font-black text-zinc-300 tracking-tight italic">$ {pay.baseSalary.toLocaleString()}</p>
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-[10px] font-black text-orange-600 uppercase tracking-[0.3em] mb-1">Incentive Layer</p>
+                                            <p className="text-[10px] font-black text-orange-600 uppercase tracking-[0.3em] mb-1">Bonuses & Tips</p>
                                             <p className="text-xl font-black text-orange-500 tracking-tight">
                                                 <span className="mr-1">+</span> $ {(pay.bonus + (pay.commission || 0)).toLocaleString()}
                                             </p>
@@ -256,8 +256,8 @@ export default function EmployeePayrollPage() {
                         <div className="relative z-10 space-y-12">
                             <div className="space-y-4">
                                 <Zap className="h-10 w-10 text-orange-600 fill-current mb-6 shadow-[0_0_20px_rgba(255,100,0,0.3)] group-hover:scale-110 transition-transform duration-500" />
-                                <h3 className="text-4xl font-black leading-none tracking-tighter italic uppercase">Fiscal <br /><span className="text-orange-500">Intelligence</span></h3>
-                                <p className="text-zinc-600 text-sm font-bold tracking-tight max-w-xs">Monitor your annual growth and earnings velocity directly from our premium financial hub.</p>
+                                <h3 className="text-4xl font-black leading-none tracking-tighter italic uppercase">Earnings <br /><span className="text-orange-500">Overview</span></h3>
+                                <p className="text-zinc-600 text-sm font-bold tracking-tight max-w-xs">Monitor your annual growth and earnings performance directly from your dashboard.</p>
                             </div>
 
                             <div className="space-y-6">
